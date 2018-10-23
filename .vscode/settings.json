@@ -1,5 +1,7 @@
 {
     "files.associations": {
         "cstddef": "cpp"
-    }
+    },
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
 }

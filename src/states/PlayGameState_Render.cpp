@@ -26,7 +26,7 @@ void PlayGameState::render3DigitNumber(uint16_t val) {
 void PlayGameState::drawDealerHand(StateMachine & machine, bool hideDealersFirstCard) {
 
   uint8_t width = (dealer.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING);
-  uint8_t rightHandSide = CARD_DEALER_CENTER - (width / 2);
+  uint8_t rightHandSide = CARD_DEALER_CENTER + (width / 2);
 
   for (int x = 0; x < dealer.cardCount; x++) {
 			
@@ -44,29 +44,34 @@ void PlayGameState::drawDealerHand(StateMachine & machine, bool hideDealersFirst
   }
     
 }
+/*
+void PlayGameState::drawFirstHand(StateMachine & machine) {
 
-void PlayGameState::drawFirstHand(StateMachine & machine, bool fullHeight) {
-
-  uint8_t width = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_FULL : 0);
+  uint8_t fullHeight = (handInPlay == FIRST_HAND) || (handInPlay == DEALER_HAND);
+  uint8_t width = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
 
   for (int x = 0; x < this->player.firstHand.cardCount; x++) {
-   
-    if (x == this->player.firstHand.cardCount - 1 && this->player.firstHand.doubleUp) {
-  
-      drawCard(machine, CARD_LARGE_LEFT_FIRST_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], true, true);   
-  
+
+    if (this->player.firstHand.doubleUp) {
+
+      if (x == this->player.firstHand.cardCount - 1) {
+        drawCard(machine, CARD_LARGE_LEFT_FIRST_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], true, false);   
+      }
+      else if (x == this->player.firstHand.cardCount - 2) {
+        drawCard(machine, CARD_LARGE_LEFT_FIRST_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
+      }
+			else {
+	      drawCard(machine, CARD_LARGE_LEFT_FIRST_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
+			}
+
     }
     else {
 			
 			if (x < this->player.firstHand.cardCount - 1) {
-
 	      drawCard(machine, CARD_LARGE_LEFT_FIRST_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
-
 			}
 			else {
-
 	      drawCard(machine, CARD_LARGE_LEFT_FIRST_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
-
 			}
   
     }
@@ -75,26 +80,35 @@ void PlayGameState::drawFirstHand(StateMachine & machine, bool fullHeight) {
     
 }
 
-void PlayGameState::drawSecondHand(StateMachine & machine, bool fullHeight) {
+void PlayGameState::drawSecondHand(StateMachine & machine) {
 
-  for (uint8_t x = 0; x < this->player.secondHand.cardCount; x++) {
-   
-    if (x == this->player.firstHand.cardCount - 1 && this->player.firstHand.doubleUp) {
-  
-      drawCard(machine, CARD_LARGE_LEFT_SECOND_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], true, true);   
-  
+  if (!player.hasSecondHand()) return;
+//Serial.println(F("Second Hand"));
+
+  uint8_t fullHeight = (handInPlay == SECOND_HAND) || (handInPlay == DEALER_HAND);
+
+  for (int x = 0; x < this->player.secondHand.cardCount; x++) {
+
+    if (this->player.secondHand.doubleUp) {
+
+      if (x == this->player.secondHand.cardCount - 1) {
+        drawCard(machine, CARD_LARGE_LEFT_SECOND_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], true, false);   
+      }
+      else if (x == this->player.secondHand.cardCount - 2) {
+        drawCard(machine, CARD_LARGE_LEFT_SECOND_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
+      }
+			else {
+	      drawCard(machine, CARD_LARGE_LEFT_SECOND_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
+			}
+
     }
     else {
 			
 			if (x < this->player.secondHand.cardCount - 1) {
-  
 	      drawCard(machine, CARD_LARGE_LEFT_SECOND_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
-
 			}
 			else {
-  
 	      drawCard(machine, CARD_LARGE_LEFT_SECOND_HAND + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
-
 			}
   
     }
@@ -102,7 +116,99 @@ void PlayGameState::drawSecondHand(StateMachine & machine, bool fullHeight) {
   }
       
 }
+*/
+void PlayGameState::drawPlayerHands(StateMachine & machine) {
 
+  uint8_t leftHand1 = 0;
+  uint8_t leftHand2 = 0;
+
+  uint8_t width1 = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
+  uint8_t width2 = (this->player.secondHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.secondHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
+  uint8_t widthTot = width1 + (player.hasSecondHand() ? CARD_HAND_SPACING + width2 : 0);
+  uint8_t fullHeight = (handInPlay == FIRST_HAND) || (handInPlay == DEALER_HAND);
+
+
+  // Determine left hand side of each hand ..
+
+  if (!player.hasSecondHand()) {
+
+    leftHand1 = CARD_DEALER_CENTER - (width1 / 2);
+
+  }
+  else {
+
+    leftHand1 = CARD_PLAYER_CENTER - (widthTot / 2);
+    leftHand2 = leftHand1 + width1 + CARD_HAND_SPACING;
+
+  }
+
+
+  // Render first hand ..
+
+  for (uint8_t x = 0; x < this->player.firstHand.cardCount; x++) {
+
+    if (this->player.firstHand.doubleUp) {
+
+      if (x == this->player.firstHand.cardCount - 1) {
+        drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], true, false);   
+      }
+      else if (x == this->player.firstHand.cardCount - 2) {
+        drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
+      }
+			else {
+	      drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
+			}
+
+    }
+    else {
+			
+			if (x < this->player.firstHand.cardCount - 1) {
+	      drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
+			}
+			else {
+	      drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
+			}
+  
+    }
+    
+  }
+    
+
+  // Render second hand ..
+
+  if (!player.hasSecondHand()) return;
+
+  fullHeight = (handInPlay == SECOND_HAND) || (handInPlay == DEALER_HAND);
+
+  for (uint8_t x = 0; x < this->player.secondHand.cardCount; x++) {
+
+    if (this->player.secondHand.doubleUp) {
+
+      if (x == this->player.secondHand.cardCount - 1) {
+        drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], true, false);   
+      }
+      else if (x == this->player.secondHand.cardCount - 2) {
+        drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
+      }
+			else {
+	      drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
+			}
+
+    }
+    else {
+			
+			if (x < this->player.secondHand.cardCount - 1) {
+	      drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
+			}
+			else {
+	      drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
+			}
+  
+    }
+    
+  }
+      
+}
 
 void PlayGameState::drawCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool rotated, bool fullSizeCard) {
 

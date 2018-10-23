@@ -14,7 +14,6 @@ class PlayGameState : public BaseState {
     InitDeal,
     OfferInsurance,
     PeekOnTen,
-//    OfferSplit,
     SplitCards,
     DoubleUp,
     PlayHand,
@@ -73,8 +72,9 @@ class PlayGameState : public BaseState {
   private:
   
     void drawDealerHand(StateMachine & machine, bool showDealersFirstCard);
-    void drawFirstHand(StateMachine & machine, bool fullHeight);
-    void drawSecondHand(StateMachine & machine, bool fullHeight);
+    void drawPlayerHands(StateMachine & machine);
+    // void drawFirstHand(StateMachine & machine);
+    // void drawSecondHand(StateMachine & machine);
     void drawCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool rotated, bool fullSizeCard);
     void drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool fullSizeCard, bool renderBackground);
     void drawButtons(StateMachine & machine);

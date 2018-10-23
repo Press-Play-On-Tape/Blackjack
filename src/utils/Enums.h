@@ -26,19 +26,22 @@ constexpr const static uint8_t NO_VALID_BUTTON = 255;
 
 #define CARD_LARGE_SPACING 10
 #define CARD_LARGE_SPACING_FULL 20
+#define CARD_LARGE_SPACING_ORIENTATED 25
+#define CARD_HAND_SPACING 12
 
 #define CARD_DEALER_CENTER 40
+#define CARD_PLAYER_CENTER 64
 //#define CARD_LARGE_WIDTH 98
 //#define CARD_LARGE_HEIGHT 135
 //#define CARD_LARGE_INSET 3
 
 #define CARD_LARGE_TOP_PLAYER 32
-#define CARD_SMALL_TOP_PLAYER 42
-#define CARD_LARGE_LEFT_FIRST_HAND 10
-#define CARD_LARGE_ROTATED_Y_OFFSET 20
-#define CARD_LARGE_LEFT_SECOND_HAND 130
+#define CARD_SMALL_TOP_PLAYER 37
+//#define CARD_LARGE_LEFT_FIRST_HAND 10
+//#define CARD_LARGE_ROTATED_Y_OFFSET 20
+//#define CARD_LARGE_LEFT_SECOND_HAND 65
 #define CARD_LARGE_TOP_DEALER 0
-#define CARD_LARGE_RIGHT_DEALER 50
+//#define CARD_LARGE_RIGHT_DEALER 50
 
 #define SHOW_BET_BUTTONS 0
 #define SHOW_OPTIONS_BUTTONS 1
@@ -156,6 +159,12 @@ struct Player {
   bool canSplit() {
 
     return firstHand.cardCount == 2 && secondHand.cardCount == 0 && firstHand.cards[0] % 13 == firstHand.cards[1];
+
+  }
+
+  bool hasSecondHand() {
+
+    return secondHand.cardCount > 0;
 
   }
   

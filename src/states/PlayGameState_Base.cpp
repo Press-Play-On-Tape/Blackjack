@@ -1,6 +1,6 @@
 #include "PlayGameState.h"
 #include "../images/Images.h"
-
+#define xDEBUG_CASE
 
 // ----------------------------------------------------------------------------
 //  Initialise state ..
@@ -41,7 +41,10 @@ void PlayGameState::update(StateMachine & machine) {
 	switch (this->viewState) {
 
 		case ViewState::StartHand:
-
+#ifdef DEBUG_CASE
+Serial.println(F("StartHand "));
+#endif
+      dealer.reset();
 			this->endOfHand = false;
 			this->buttonMode = SHOW_BET_BUTTONS;
 			this->flashDetails = false;
@@ -67,7 +70,9 @@ void PlayGameState::update(StateMachine & machine) {
 			arduboy.resetFrameCount();
 
 		case ViewState::InitBet:
-
+#ifdef DEBUG_CASE
+Serial.println(F("InitBet "));
+#endif
 			if (justPressed & LEFT_BUTTON) 	{ this->highlightedButton = decreaseHighlightButton_BettingButtons(this->highlightedButton); }
 			if (justPressed & RIGHT_BUTTON) { this->highlightedButton = increaseHighlightButton_BettingButtons(this->highlightedButton); }
 			if (justPressed & A_BUTTON) 		{ 
@@ -125,7 +130,9 @@ void PlayGameState::update(StateMachine & machine) {
 			break;
 
 		case ViewState::InitDeal:
-
+#ifdef DEBUG_CASE
+Serial.println(F("InitDeal "));
+#endif
 			if (arduboy.everyXFrames(15)) {
 
 				switch (this->counter) {
@@ -133,14 +140,14 @@ void PlayGameState::update(StateMachine & machine) {
 					case 0:
 					case 2:
 						getCard(DEALER, FIRST_HAND);
-//						dealer.cards[0] = 9;
-						dealer.cards[1] = 0;
+						dealer.cards[0] = 3;
+//						dealer.cards[1] = 0;
 						break;
 
 					case 1:
 					case 3:
 						getCard(PLAYER, FIRST_HAND);
-						this->player.firstHand.cards[0] = 0;
+						this->player.firstHand.cards[0] = 9;
 						this->player.firstHand.cards[1] = 9;
 						break;
 
@@ -159,6 +166,12 @@ void PlayGameState::update(StateMachine & machine) {
 						this->highlightedButton = 0;
 
 					}
+					else {
+
+						viewState = ViewState::PlayHand;
+						this->highlightedButton = 0;
+
+					}
 
 				}
 
@@ -167,7 +180,9 @@ void PlayGameState::update(StateMachine & machine) {
 			break;
 
 		case ViewState::OfferInsurance:
-
+#ifdef DEBUG_CASE
+Serial.println(F("OfferInsurance "));
+#endif
 			buttonMode = SHOW_INSURANCE_BUTTONS;
 
 			if (justPressed & LEFT_BUTTON) 	{ this->highlightedButton = decreaseHighlightButton_InsuranceButtons(this->highlightedButton); }
@@ -230,7 +245,9 @@ void PlayGameState::update(StateMachine & machine) {
 			break;
 
 		case ViewState::PeekOnTen:
-
+#ifdef DEBUG_CASE
+Serial.println(F("PeekOnTen "));
+#endif
 			if (this->counter < 32) {
 
 				switch (this->counter) {
@@ -373,104 +390,14 @@ void PlayGameState::update(StateMachine & machine) {
 			}
 
 			break;
-
-    // case ViewState::OfferSplit:
-
-    //   this->buttonMode = SHOW_OFFER_SPLIT_BUTTONS;
-
-    //   if (justPressed & LEFT_BUTTON && this->highlightedButton == 1) 	{ this->highlightedButton = 0; }
-    //   if (justPressed & RIGHT_BUTTON && this->highlightedButton == 0) { this->highlightedButton = 1; }
-		// 	if (justPressed & A_BUTTON) 		{ 
-
-    //     switch (static_cast<Buttons>(this->highlightedButton)) {
-
-    //       case Buttons::OfferSplit_YES:
-
-    //         this->vewState == ViewState::SplitCards;
-    //         break;
-
-    //       case Buttons::OfferSplit_No:
-
-    //         this->vewState == ViewState::PlayHand;
-    //         break;
-
-    //     }
-
-    //   break;
-
-    case ViewState::SplitCards:
-
-			if (arduboy.everyXFrames(15)) {
-          
-        switch (this->counter) {
-
-          case 0:
-            player.firstHand.cardCount--;
-            player.secondHand.cards[0] = player.firstHand.cards[1];
-            player.secondHand.cardCount++;
-            player.secondHand.bet = currentBetInit;
-            player.purse = player.purse - currentBetInit;
-            currentBetTotal = currentBetTotal + currentBetInit;
-            break;
-
-          case 1:
-            getCard(PLAYER, FIRST_HAND);
-            getCard(PLAYER, SECOND_HAND);
-            break;
-
-          case 2:
-            if (player.firstHand.cards[0] % 13 == 0) {
-              this->viewState == ViewState::PlayDealerHand;
-            }
-            else {
-              this->viewState == ViewState::PlayHand;
-            }           
-
-            break;
-
-        }
-
-        this->counter++;
-
-      }
-
-      break;
-
-		case ViewState::DoubleUp:
-      
-      switch (handInPlay) {
-
-        case FIRST_HAND:
-          player.firstHand.doubleUp = true;
-          player.firstHand.bet = player.firstHand.bet + currentBetInit;
-          break;
-
-        case SECOND_HAND:
-          player.secondHand.doubleUp = true;
-          player.secondHand.bet = player.secondHand.bet + currentBetInit;
-          break;
-
-      }
-
-      player.purse = player.purse - currentBetInit;
-      getCard(PLAYER, handInPlay);
-      currentBetTotal = currentBetTotal + currentBetInit;
-      
-      if (calculateHand(PLAYER, handInPlay, false) > 21) {
-        
-        bust(machine, PLAYER, handInPlay);
-      
-      }
-      else {
-  
-        playNextHand();
-    
-      }   
-
-      break;
-
+ 
 		case ViewState::PlayHand:
-
+#ifdef DEBUG_CASE
+Serial.print(F("PlayHand "));
+Serial.print(justPressed);
+Serial.print(F(", HIP "));
+Serial.println(handInPlay);
+#endif
       this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
 
       if (justPressed & LEFT_BUTTON) 	{ this->highlightedButton = decreaseHighlightButton_GamePlayButtons(this->highlightedButton); }
@@ -483,7 +410,7 @@ void PlayGameState::update(StateMachine & machine) {
 
             if (handInPlay == FIRST_HAND) {
                 
-              getCard(PLAYER, handInPlay);
+              getCard(PLAYER, this->handInPlay);
 
               if (calculateHand(PLAYER, FIRST_HAND, false) > 21) {
                 
@@ -510,10 +437,15 @@ void PlayGameState::update(StateMachine & machine) {
             break;
 
           case Buttons::PlayHand_Split:
+          Serial.println(F("Split"));
+            this->counter = 0;
+            this->highlightedButton = 0;
             viewState = ViewState::SplitCards;
             break;
 
           case Buttons::PlayHand_Double:
+            this->counter = 0;
+            this->highlightedButton = 0;
             viewState = ViewState::DoubleUp;
             break;
 
@@ -525,8 +457,104 @@ void PlayGameState::update(StateMachine & machine) {
 
 			break;
 
-    case ViewState::PlayDealerHand:
+    case ViewState::SplitCards:
 
+      if (this->counter < 3) {
+#ifdef DEBUG_CASE
+Serial.print(F("SplitCards "));
+Serial.print(F(", HIP "));
+Serial.println(handInPlay);
+#endif          
+        if (arduboy.everyXFrames(15)) {
+      Serial.println(this->counter);      
+          switch (this->counter) {
+
+            case 0:
+              player.firstHand.cardCount--;
+              player.secondHand.cards[0] = player.firstHand.cards[1];
+              player.secondHand.cardCount++;
+              player.secondHand.bet = currentBetInit;
+              player.purse = player.purse - currentBetInit;
+              currentBetTotal = currentBetTotal + currentBetInit;
+              Serial.print(F(">> HIP "));
+Serial.println(handInPlay);
+              break;
+
+            case 1:
+              getCard(PLAYER, FIRST_HAND);
+              break;
+
+            case 2:
+              getCard(PLAYER, SECOND_HAND);
+              break;
+
+          }
+
+          this->counter++;
+
+        }
+      
+      }
+      else {
+
+        this->counter++;
+        this->highlightedButton = 0;
+
+        if (player.firstHand.cards[0] % 13 == 0) {
+          player.firstHand.doubleUp = true;
+          player.secondHand.doubleUp = true;
+          this->viewState = ViewState::PlayDealerHand;
+        }
+        else {
+          this->viewState = ViewState::PlayHand;
+        }   
+
+      }
+
+      break;
+
+		case ViewState::DoubleUp:
+#ifdef DEBUG_CASE
+Serial.println(F("DoubleUp "));
+#endif
+      switch (handInPlay) {
+
+        case FIRST_HAND:
+          player.firstHand.doubleUp = true;
+          player.firstHand.bet = player.firstHand.bet + currentBetInit;
+          break;
+
+        case SECOND_HAND:
+          player.secondHand.doubleUp = true;
+          player.secondHand.bet = player.secondHand.bet + currentBetInit;
+          break;
+
+      }
+
+      player.purse = player.purse - currentBetInit;
+Serial.print(F("getCard(PLAYER, "));
+Serial.print(handInPlay);      
+Serial.println(F(")"));
+      getCard(PLAYER, handInPlay);
+      currentBetTotal = currentBetTotal + currentBetInit;
+      
+      if (calculateHand(PLAYER, handInPlay, false) > 21) {
+        
+        bust(machine, PLAYER, handInPlay);
+      
+      }
+      else {
+  
+        playNextHand();
+    
+      }   
+
+      break;
+
+    case ViewState::PlayDealerHand:
+#ifdef DEBUG_CASE
+Serial.println(F("PlayDealerHand "));
+#endif
 			this->handInPlay = DEALER_HAND;
 
 
@@ -549,7 +577,9 @@ void PlayGameState::update(StateMachine & machine) {
       break;
 
 		case ViewState::CheckForWins:
-
+#ifdef DEBUG_CASE
+Serial.println(F("CheckForWins "));
+#endif
 			// Are there two player hands ?
 			
 			if (player.secondHand.cardCount > 0) {
@@ -786,7 +816,9 @@ void PlayGameState::update(StateMachine & machine) {
 			break;
 
     case ViewState::EndOfGame:
-
+#ifdef DEBUG_CASE
+Serial.println(F("EndOfGame "));
+#endif
       if (justPressed & LEFT_BUTTON && this->highlightedButton == 1) 	{ this->highlightedButton = 0; }
 			if (justPressed & RIGHT_BUTTON && this->highlightedButton == 0) { this->highlightedButton = 1; }
 			if (justPressed & A_BUTTON) 		{ 
@@ -883,6 +915,7 @@ Serial.println(player.firstHand.bust);
     
     if (player.secondHand.cardCount > 0) {
       this->handInPlay = SECOND_HAND;
+      this->viewState = ViewState::PlayHand;
       // playSecondHand();
       
     }
@@ -953,7 +986,7 @@ void PlayGameState::render(StateMachine & machine) {
 			break;
 
 		case ViewState::OfferInsurance:
-			drawFirstHand(machine, true);
+			drawPlayerHands(machine);
 			drawDealerHand(machine, true);
 
 			font3x5.setCursor(0, 22);
@@ -966,13 +999,13 @@ void PlayGameState::render(StateMachine & machine) {
 			break;
 
 		case ViewState::InitDeal:
-			drawFirstHand(machine, true);
+			drawPlayerHands(machine);
 			drawDealerHand(machine, true);
 			break;
 
 		case ViewState::PeekOnTen:
 
-			drawFirstHand(machine, true);
+			drawPlayerHands(machine);
 			font3x5.setCursor(0, 22);
 
 			switch (this->insuranceResult) {
@@ -1007,38 +1040,36 @@ void PlayGameState::render(StateMachine & machine) {
 			}
 			break;
 
-    // case ViewState::OfferSplit:
-    //   font3x5.setCursor(0, 22);
-    //   font3x5.print(F("Split~the~pair?"));
-    //   drawFirstHand(machine, true);
-    //   drawDealerHand(machine, true);
-    //   break;
-
     case ViewState::SplitCards:
-      drawFirstHand(machine, true);
+      drawPlayerHands(machine);
+//      drawSecondHand(machine);
       drawDealerHand(machine, true);
       break;
 
     case ViewState::PlayHand:
-      if (handInPlay != DEALER_HAND) {
-        drawFirstHand(machine, true);
+//      if (handInPlay != DEALER_HAND) {
+        drawPlayerHands(machine);
+//        drawSecondHand(machine);
         drawDealerHand(machine, true);
-      }
+//      }
       break;
 
     case ViewState::PlayDealerHand:
-      drawFirstHand(machine, true);
+      drawPlayerHands(machine);
+//      drawSecondHand(machine);
       drawDealerHand(machine, false);
       break;
 
     case ViewState::CheckForWins:
-      drawFirstHand(machine, true);
+      drawPlayerHands(machine);
+//      drawSecondHand(machine);
       drawDealerHand(machine, false);
       break;
 
     case ViewState::EndOfGame:
       font3x5.setCursor(0, 22);
-      drawFirstHand(machine, true);
+      drawPlayerHands(machine);
+//      drawSecondHand(machine);
       drawDealerHand(machine, false);
 
       if (player.firstHand.bust) {
@@ -1050,7 +1081,7 @@ void PlayGameState::render(StateMachine & machine) {
       default: break;
 	}
 
-
+  arduboy.fillRect(0, 51, WIDTH, HEIGHT, BLACK);
 	drawButtons(machine);
   drawStats(machine, this->flashDetails, this->winStatus, this->winStatusAmount);
 
