@@ -20,22 +20,22 @@ uint8_t PlayGameState::getCard(uint8_t player, uint8_t hand) {
     
   if (player == DEALER) {
    
-    this->dealer[dealer_CardCount] = card;
-    this->dealer_CardCount++;
+    this->dealer.cards[dealer.cardCount] = card;
+    this->dealer.cardCount++;
     
   }
   
   if (player == PLAYER && hand == FIRST_HAND) {
    
-    this->player.firstHand[this->player.firstHand_CardCount] = card;
-    this->player.firstHand_CardCount++;
+    this->player.firstHand.cards[this->player.firstHand.cardCount] = card;
+    this->player.firstHand.cardCount++;
     
   }
   
   if (player == PLAYER && hand == SECOND_HAND) {
    
-    this->player.secondHand[this->player.secondHand_CardCount] = card;
-    this->player.secondHand_CardCount++;
+    this->player.secondHand.cards[this->player.secondHand.cardCount] = card;
+    this->player.secondHand.cardCount++;
     
   }
   
@@ -48,22 +48,22 @@ uint8_t PlayGameState::getCard(uint8_t player, uint8_t hand, uint8_t cardNumber)
   
   if (player == DEALER) {
    
-    this->dealer[dealer_CardCount] = cardNumber;
-    this->dealer_CardCount++;
+    this->dealer.cards[dealer.cardCount] = cardNumber;
+    this->dealer.cardCount++;
     
   }
   
   if (player == PLAYER && hand == FIRST_HAND) {
    
-    this->player.firstHand[this->player.firstHand_CardCount] = cardNumber;
-    this->player.firstHand_CardCount++;
+    this->player.firstHand.cards[this->player.firstHand.cardCount] = cardNumber;
+    this->player.firstHand.cardCount++;
     
   }
   
   if (player == PLAYER && hand == SECOND_HAND) {
    
-    this->player.secondHand[this->player.secondHand_CardCount] = cardNumber;
-    this->player.secondHand_CardCount++;
+    this->player.secondHand.cards[this->player.secondHand.cardCount] = cardNumber;
+    this->player.secondHand.cardCount++;
     
   }
   
@@ -73,19 +73,19 @@ uint8_t PlayGameState::getCard(uint8_t player, uint8_t hand, uint8_t cardNumber)
 
 bool PlayGameState::isBlackjack(uint8_t player, uint8_t hand) {
   
-  if (player == DEALER && calculateHand(player, hand, true) == 21 && dealer_CardCount == 2) {
+  if (player == DEALER && calculateHand(player, hand, true) == 21 && dealer.cardCount == 2) {
    
     return true;
     
   }
   
-  if (player == PLAYER && hand == FIRST_HAND && calculateHand(player, hand, true) == 21 && this->player.firstHand_CardCount == 2) {
+  if (player == PLAYER && hand == FIRST_HAND && calculateHand(player, hand, true) == 21 && this->player.firstHand.cardCount == 2) {
    
     return true;
     
   }
   
-  if (player == PLAYER && hand == SECOND_HAND && calculateHand(player, hand, true) == 21 && this->player.secondHand_CardCount == 2) {
+  if (player == PLAYER && hand == SECOND_HAND && calculateHand(player, hand, true) == 21 && this->player.secondHand.cardCount == 2) {
    
     return true;
     
@@ -108,16 +108,16 @@ uint8_t PlayGameState::calculateHand(uint8_t player, uint8_t hand, bool bestHand
     
   if (player == DEALER) {
    
-    for (uint8_t x = 0; x< dealer_CardCount; x++) {
+    for (uint8_t x = 0; x< dealer.cardCount; x++) {
        
-      switch (dealer[x] % 13) {
+      switch (dealer.cards[x] % 13) {
        
         case 0:   result = result + 1; aces++; break;
         case 9:   result = result + 10; break;
         case 10:  result = result + 10; break;
         case 11:  result = result + 10; break;
         case 12:  result = result + 10; break;
-        default:  result = result + (dealer[x] % 13) + 1; break;
+        default:  result = result + (dealer.cards[x] % 13) + 1; break;
          
       }
         
@@ -127,16 +127,16 @@ uint8_t PlayGameState::calculateHand(uint8_t player, uint8_t hand, bool bestHand
   
   if (player == PLAYER && hand == FIRST_HAND) {
    
-    for (uint8_t x = 0; x < this->player.firstHand_CardCount; x++) {
+    for (uint8_t x = 0; x < this->player.firstHand.cardCount; x++) {
        
-      switch (this->player.firstHand[x] % 13) {
+      switch (this->player.firstHand.cards[x] % 13) {
        
         case 0:   result = result + 1; aces++; break;
         case 9:   result = result + 10; break;
         case 10:  result = result + 10; break;
         case 11:  result = result + 10; break;
         case 12:  result = result + 10; break;
-        default:  result = result + (this->player.firstHand[x] % 13) + 1; break;
+        default:  result = result + (this->player.firstHand.cards[x] % 13) + 1; break;
          
       }
     
@@ -146,16 +146,16 @@ uint8_t PlayGameState::calculateHand(uint8_t player, uint8_t hand, bool bestHand
   
   if (player == PLAYER && hand == SECOND_HAND) {
    
-    for (uint8_t x = 0; x < this->player.secondHand_CardCount; x++) {
+    for (uint8_t x = 0; x < this->player.secondHand.cardCount; x++) {
        
-      switch (this->player.secondHand[x] % 13) {
+      switch (this->player.secondHand.cards[x] % 13) {
        
         case 0:   result = result + 1; aces++; break;
         case 9:   result = result + 10; break;
         case 10:  result = result + 10; break;
         case 11:  result = result + 10; break;
         case 12:  result = result + 10; break;
-        default:  result = result + (this->player.secondHand[x] % 13) + 1; break;
+        default:  result = result + (this->player.secondHand.cards[x] % 13) + 1; break;
          
       }
 

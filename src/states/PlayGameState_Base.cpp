@@ -1,23 +1,26 @@
 #include "PlayGameState.h"
 #include "../images/Images.h"
 
+
 // ----------------------------------------------------------------------------
 //  Initialise state ..
 //
 void PlayGameState::activate(StateMachine & machine) {
+  
+  auto & gameStats = machine.getContext().gameStats;
+
+  player.reset(); 
+  dealer.reset();
+  gameStats.reset();
 
 	this->counter = 0;	
-  this->purse = 80; // 1000 SJH 
   this->handInPlay = FIRST_HAND;
-  this->dealer_CardCount = 0;
 	this->flashDetails = false;
   this->insurance = 0;
 
   this->currentBetInit = 0;
   this->currentBetTotal = 0;
-
   this->currentWin = 0;
-	this->player.reset();
 
 	this->viewState = ViewState::StartHand;
 
@@ -32,6 +35,7 @@ void PlayGameState::activate(StateMachine & machine) {
 void PlayGameState::update(StateMachine & machine) {
 
   auto & arduboy = machine.getContext().arduboy;
+  auto & gameStats = machine.getContext().gameStats;
   auto justPressed = arduboy.justPressedButtons();
 
 	switch (this->viewState) {
@@ -43,8 +47,8 @@ void PlayGameState::update(StateMachine & machine) {
 			this->flashDetails = false;
 			
 			this->handInPlay = FIRST_HAND;
-			this->dealer_CardCount = 0;
-			this->player.reset();
+			this->dealer.resetHand();
+			this->player.resetHand();
 			this->insurance = 0;
 			this->currentBetInit = 0;
 			this->currentBetTotal = 0;
@@ -53,14 +57,6 @@ void PlayGameState::update(StateMachine & machine) {
   		for (uint8_t x = 0; x < 52; x++) {
 				
 				cards[x] = 0;
-				
-			}
-		
-			for (uint8_t x = 0; x < 12; x++) {
-				
-				dealer[x] = 0;
-				this->player.firstHand[x] = 0;
-				this->player.secondHand[x] = 0;
 				
 			}
 
@@ -81,29 +77,29 @@ void PlayGameState::update(StateMachine & machine) {
 					case Buttons::InitBet_1: 
 						this->currentBetInit = this->currentBetInit + 1;
 						this->currentBetTotal = this->currentBetInit;
-						player.firstHand_Bet = this->currentBetInit;
-						this->purse = purse - 1;
+						player.firstHand.bet = this->currentBetInit;
+						player.purse = player.purse - 1;
 						break;
 					
 					case Buttons::InitBet_5: 
 						this->currentBetInit = this->currentBetInit + 5;
 						this->currentBetTotal = this->currentBetInit;
-						player.firstHand_Bet = this->currentBetInit;
-						this->purse = purse - 5;
+						player.firstHand.bet = this->currentBetInit;
+						player.purse = player.purse - 5;
 						break;
 					
 					case Buttons::InitBet_10: 
 						this->currentBetInit = this->currentBetInit + 10;
 						this->currentBetTotal = this->currentBetInit;
-						player.firstHand_Bet = this->currentBetInit;
-						this->purse = purse - 10;
+						player.firstHand.bet = this->currentBetInit;
+						player.purse = player.purse - 10;
 						break;
 					
 					case Buttons::InitBet_25: 
 						this->currentBetInit = this->currentBetInit + 25;
 						this->currentBetTotal = this->currentBetInit;
-						player.firstHand_Bet = this->currentBetInit;
-						this->purse = purse - 25;
+						player.firstHand.bet = this->currentBetInit;
+						player.purse = player.purse - 25;
 						break;
 					
 					case Buttons::InitBet_PlayGame: 
@@ -113,7 +109,7 @@ void PlayGameState::update(StateMachine & machine) {
 						break;
 
 					case Buttons::InitBet_Clear:
-						this->purse = purse + currentBetInit;
+						player.purse = player.purse + currentBetInit;
 						this->currentBetInit = 0;
 						this->currentBetTotal = 0;
 						break;
@@ -137,15 +133,15 @@ void PlayGameState::update(StateMachine & machine) {
 					case 0:
 					case 2:
 						getCard(DEALER, FIRST_HAND);
-//						dealer[0] = 9;
-						dealer[1] = 0;
+//						dealer.cards[0] = 9;
+						dealer.cards[1] = 0;
 						break;
 
 					case 1:
 					case 3:
 						getCard(PLAYER, FIRST_HAND);
-						this->player.firstHand[0] = 0;
-						this->player.firstHand[1] = 9;
+						this->player.firstHand.cards[0] = 0;
+						this->player.firstHand.cards[1] = 9;
 						break;
 
 				}
@@ -154,12 +150,10 @@ void PlayGameState::update(StateMachine & machine) {
 
 				if (this->counter == 4) {
 
-					this->player.split = ((this->player.firstHand[0] % 13) == (this->player.firstHand[1] % 13));
-
 
 					// Offer insurance ?
 
-					if ((dealer[1] % 13) == 0 && purse >= 1) {
+					if ((dealer.cards[1] % 13) == 0 && player.purse >= 1) {
 
 						viewState = ViewState::OfferInsurance;
 						this->highlightedButton = 0;
@@ -185,25 +179,25 @@ void PlayGameState::update(StateMachine & machine) {
 					case Buttons::InsuranceBet_1: 
 						this->insurance = this->insurance + 1;
 						this->currentBetTotal = this->currentBetTotal + 1;
-						this->purse = purse - 1;
+						player.purse = player.purse - 1;
 						break;
 					
 					case Buttons::InsuranceBet_5: 
 						this->insurance = this->insurance + 5;
 						this->currentBetTotal = this->currentBetTotal + 5;
-						this->purse = purse - 5;
+						player.purse = player.purse - 5;
 						break;
 					
 					case Buttons::InsuranceBet_10: 
 						this->insurance = this->insurance + 10;
 						this->currentBetTotal = this->currentBetTotal + 10;
-						this->purse = purse - 10;
+						player.purse = player.purse - 10;
 						break;
 					
 					case Buttons::InsuranceBet_25: 
 						this->insurance = this->insurance + 25;
 						this->currentBetTotal = this->currentBetTotal + 25;
-						this->purse = purse - 25;
+						player.purse = player.purse - 25;
 						break;
 					
 					case Buttons::InsuranceBet_PlayGame: 
@@ -214,7 +208,7 @@ void PlayGameState::update(StateMachine & machine) {
 
 					case Buttons::InsuranceBet_Clear:
             if (this->insurance > 0) {
-              this->purse = this->purse + this->insurance;
+              player.purse = player.purse + this->insurance;
               this->insurance = 0;
               this->currentBetTotal = this->currentBetInit;
             }
@@ -256,10 +250,10 @@ void PlayGameState::update(StateMachine & machine) {
               if (calculateHand(PLAYER, FIRST_HAND, true) == 21) {
               
                 this->insuranceResult = InsuranceResult::BothHaveBlackjack;			
-                this->purse = this->purse + this->currentBetTotal + (2 * this->insurance);
-                this->numberOfGamesPush++;
+                player.purse = player.purse + this->currentBetTotal + (2 * this->insurance);
                 this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
 								this->flashDetails = true;
+                gameStats.gamesPush++;
 
 								if (this->insurance == 0) {
 	                this->winStatus = WinStatus::Push;
@@ -273,10 +267,10 @@ void PlayGameState::update(StateMachine & machine) {
               }
               else {
 
-								this->numberOfGamesLost++;
 								this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
 								this->flashDetails = true;
 								this->winStatusAmount = this->currentBetInit - (this->insurance * 2);
+                gameStats.gamesLost++;
 
 								if (this->insurance == 0) {
 									Serial.println("highlightLoss A");	
@@ -288,7 +282,7 @@ void PlayGameState::update(StateMachine & machine) {
 								else {
 
 									this->insuranceResult = InsuranceResult::DealerHasBlackjackWithInsurance;
-	                this->purse = this->purse + this->winStatusAmount;
+	                player.purse = player.purse + this->winStatusAmount;
 
 									if (this->currentBetInit - (this->insurance * 2) == 0) {
 //										this->winStatus = WinStatus::Push;
@@ -356,9 +350,21 @@ void PlayGameState::update(StateMachine & machine) {
 					}
 					else {
 
-            this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
-						this->viewState = ViewState::PlayHand;
-						this->flashDetails = false;
+            // if (((this->player.firstHand.cards[0] % 13) == (this->player.firstHand.cards[1] % 13)) && player.purse >= this->currentBetInit) {
+
+            //   this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
+	  				// 	this->viewState = ViewState::OfferSplit;
+  					// 	this->flashDetails = false;
+            //   this->counter = 0;
+
+            // }
+            // else {
+
+              this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
+	  					this->viewState = ViewState::PlayHand;
+  						this->flashDetails = false;
+
+            // }
 
 					}
 
@@ -367,6 +373,101 @@ void PlayGameState::update(StateMachine & machine) {
 			}
 
 			break;
+
+    // case ViewState::OfferSplit:
+
+    //   this->buttonMode = SHOW_OFFER_SPLIT_BUTTONS;
+
+    //   if (justPressed & LEFT_BUTTON && this->highlightedButton == 1) 	{ this->highlightedButton = 0; }
+    //   if (justPressed & RIGHT_BUTTON && this->highlightedButton == 0) { this->highlightedButton = 1; }
+		// 	if (justPressed & A_BUTTON) 		{ 
+
+    //     switch (static_cast<Buttons>(this->highlightedButton)) {
+
+    //       case Buttons::OfferSplit_YES:
+
+    //         this->vewState == ViewState::SplitCards;
+    //         break;
+
+    //       case Buttons::OfferSplit_No:
+
+    //         this->vewState == ViewState::PlayHand;
+    //         break;
+
+    //     }
+
+    //   break;
+
+    case ViewState::SplitCards:
+
+			if (arduboy.everyXFrames(15)) {
+          
+        switch (this->counter) {
+
+          case 0:
+            player.firstHand.cardCount--;
+            player.secondHand.cards[0] = player.firstHand.cards[1];
+            player.secondHand.cardCount++;
+            player.secondHand.bet = currentBetInit;
+            player.purse = player.purse - currentBetInit;
+            currentBetTotal = currentBetTotal + currentBetInit;
+            break;
+
+          case 1:
+            getCard(PLAYER, FIRST_HAND);
+            getCard(PLAYER, SECOND_HAND);
+            break;
+
+          case 2:
+            if (player.firstHand.cards[0] % 13 == 0) {
+              this->viewState == ViewState::PlayDealerHand;
+            }
+            else {
+              this->viewState == ViewState::PlayHand;
+            }           
+
+            break;
+
+        }
+
+        this->counter++;
+
+      }
+
+      break;
+
+		case ViewState::DoubleUp:
+      
+      switch (handInPlay) {
+
+        case FIRST_HAND:
+          player.firstHand.doubleUp = true;
+          player.firstHand.bet = player.firstHand.bet + currentBetInit;
+          break;
+
+        case SECOND_HAND:
+          player.secondHand.doubleUp = true;
+          player.secondHand.bet = player.secondHand.bet + currentBetInit;
+          break;
+
+      }
+
+      player.purse = player.purse - currentBetInit;
+      getCard(PLAYER, handInPlay);
+      currentBetTotal = currentBetTotal + currentBetInit;
+      
+      if (calculateHand(PLAYER, handInPlay, false) > 21) {
+        
+        bust(machine, PLAYER, handInPlay);
+      
+      }
+      else {
+  
+        playNextHand();
+    
+      }   
+
+      break;
 
 		case ViewState::PlayHand:
 
@@ -380,30 +481,24 @@ void PlayGameState::update(StateMachine & machine) {
 					
 					case Buttons::PlayHand_Hit:   // Hit machine
 
-            player.split = false;
-
             if (handInPlay == FIRST_HAND) {
                 
-//              drawCard(CARD_LARGE_LEFT_PLAYER_FIRSTHAND + (player_FirstHand_CardCount * CARD_LARGE_SPACING), CARD_LARGE_TOP_PLAYER, getCard(PLAYER, handInPlay), false, true);
               getCard(PLAYER, handInPlay);
-              // drawPlayerScores();
 
               if (calculateHand(PLAYER, FIRST_HAND, false) > 21) {
                 
-                bust(PLAYER, FIRST_HAND);
+                bust(machine, PLAYER, FIRST_HAND);
               
               }
               
             }
             else {
 
-//              drawCard(CARD_LARGE_LEFT_PLAYER_SECONDHAND + (player_SecondHand_CardCount * CARD_LARGE_SPACING), CARD_LARGE_TOP_PLAYER, getCard(PLAYER, handInPlay), false, true);
               getCard(PLAYER, this->handInPlay);
-              // drawPlayerScores();
               
               if (calculateHand(PLAYER, SECOND_HAND, false) > 21) {
                 
-                 bust(PLAYER, SECOND_HAND);
+                 bust(machine, PLAYER, SECOND_HAND);
               
               }
             
@@ -412,6 +507,14 @@ void PlayGameState::update(StateMachine & machine) {
 
           case Buttons::PlayHand_Stand:
             playNextHand();
+            break;
+
+          case Buttons::PlayHand_Split:
+            viewState = ViewState::SplitCards;
+            break;
+
+          case Buttons::PlayHand_Double:
+            viewState = ViewState::DoubleUp;
             break;
 
 					default: break;
@@ -449,9 +552,9 @@ void PlayGameState::update(StateMachine & machine) {
 
 			// Are there two player hands ?
 			
-			if (player.secondHand_CardCount > 0) {
+			if (player.secondHand.cardCount > 0) {
 
-				if (!player.firstHand_Bust && !player.secondHand_Bust) {
+				if (!player.firstHand.bust && !player.secondHand.bust) {
 					
 					switch (this->counter) {
 
@@ -463,13 +566,13 @@ void PlayGameState::update(StateMachine & machine) {
 
 								if (isBlackjack(PLAYER, FIRST_HAND)) {
 									Serial.println("highlightWin A");	
-									highlightWin(FIRST_HAND, player.firstHand_Bet * 3 / 2, player.firstHand_Bet * 5 / 2);
+									highlightWin(FIRST_HAND, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
 								}
 								else {        
 								
 									Serial.println("highlightWin B");	
-									highlightWin(FIRST_HAND, player.firstHand_Bet, player.firstHand_Bet * 2);
+									highlightWin(FIRST_HAND, player.firstHand.bet, player.firstHand.bet * 2);
 									
 								}
 								
@@ -477,7 +580,7 @@ void PlayGameState::update(StateMachine & machine) {
 							else {
 
 								Serial.println("highlightLoss D");	
-								highlightLoss(FIRST_HAND, -player.firstHand_Bet);
+								highlightLoss(FIRST_HAND, -player.firstHand.bet);
 								
 							}
 
@@ -492,13 +595,13 @@ void PlayGameState::update(StateMachine & machine) {
 								if (isBlackjack(PLAYER, SECOND_HAND)) {
 
 									Serial.println("highlightWin C");	
-									highlightWin(SECOND_HAND, player.secondHand_Bet * 3 / 2, player.secondHand_Bet * 5 / 2);
+									highlightWin(SECOND_HAND, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
 
 								}
 								else {        
 								
 									Serial.println("highlightWin D");	
-									highlightWin(SECOND_HAND, player.secondHand_Bet, player.secondHand_Bet * 2);
+									highlightWin(SECOND_HAND, player.secondHand.bet, player.secondHand.bet * 2);
 									
 								}
 								
@@ -508,13 +611,13 @@ void PlayGameState::update(StateMachine & machine) {
 								if (isBlackjack(PLAYER, SECOND_HAND)) {
 
 									Serial.println("highlightWin E");	
-									highlightWin(SECOND_HAND, player.secondHand_Bet * 3 / 2, player.secondHand_Bet * 5 / 2);
+									highlightWin(SECOND_HAND, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
 
 								}
 								else {        
 								
 									Serial.println("highlightLoss E");	
-									highlightLoss(SECOND_HAND, -player.secondHand_Bet);
+									highlightLoss(SECOND_HAND, -player.secondHand.bet);
 									
 								}
 								
@@ -535,7 +638,7 @@ void PlayGameState::update(StateMachine & machine) {
 					
 				}
 						
-				if (!player.firstHand_Bust && player.secondHand_Bust) {
+				if (!player.firstHand.bust && player.secondHand.bust) {
 
 					switch (this->counter) {
 
@@ -547,12 +650,12 @@ void PlayGameState::update(StateMachine & machine) {
 
 								if (isBlackjack(PLAYER, FIRST_HAND)) {
 									Serial.println("highlightWin F");	
-									highlightWin(FIRST_HAND, player.firstHand_Bet * 3 / 2, player.firstHand_Bet * 5 / 2);
+									highlightWin(FIRST_HAND, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
 								}
 								else {        
 									Serial.println("highlightWin G");									
-									highlightWin(FIRST_HAND, player.firstHand_Bet, player.firstHand_Bet * 2);
+									highlightWin(FIRST_HAND, player.firstHand.bet, player.firstHand.bet * 2);
 									
 								}        
 								
@@ -572,7 +675,7 @@ void PlayGameState::update(StateMachine & machine) {
 
 				}
 						
-				if (player.firstHand_Bust && !player.secondHand_Bust) {
+				if (player.firstHand.bust && !player.secondHand.bust) {
 
 					switch (this->counter) {
 
@@ -584,12 +687,12 @@ void PlayGameState::update(StateMachine & machine) {
 				
 								if (isBlackjack(PLAYER, SECOND_HAND)) {
 									Serial.println("highlightWin H");	
-									highlightWin(SECOND_HAND, player.secondHand_Bet * 3 / 2, player.secondHand_Bet * 5 / 2);
+									highlightWin(SECOND_HAND, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
 
 								}
 								else {        
 									Serial.println("highlightWin I");									
-									highlightWin(SECOND_HAND, player.secondHand_Bet, player.secondHand_Bet * 2);
+									highlightWin(SECOND_HAND, player.secondHand.bet, player.secondHand.bet * 2);
 									
 								}
 								
@@ -598,12 +701,12 @@ void PlayGameState::update(StateMachine & machine) {
 								
 								if (isBlackjack(PLAYER, SECOND_HAND)) {
 									Serial.println("highlightWin J");	
-									highlightWin(SECOND_HAND, player.secondHand_Bet * 3 / 2, player.secondHand_Bet * 5 / 2);
+									highlightWin(SECOND_HAND, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
 
 								}
 								else {        
 									Serial.println("highlightLoss F");	
-									highlightLoss(SECOND_HAND, -player.secondHand_Bet);
+									highlightLoss(SECOND_HAND, -player.secondHand.bet);
 									
 								}
 								
@@ -640,12 +743,12 @@ void PlayGameState::update(StateMachine & machine) {
 				
 							if (isBlackjack(PLAYER, FIRST_HAND)) {
 									Serial.println("highlightWin K");	
-								highlightWin(FIRST_HAND, player.firstHand_Bet * 3 / 2, player.firstHand_Bet * 5 / 2);
+								highlightWin(FIRST_HAND, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
 							}
 							else {        
 									Serial.println("highlightWin L");									
-								highlightWin(FIRST_HAND, player.firstHand_Bet, player.firstHand_Bet * 2);
+								highlightWin(FIRST_HAND, player.firstHand.bet, player.firstHand.bet * 2);
 									
 							} 
 								
@@ -654,12 +757,12 @@ void PlayGameState::update(StateMachine & machine) {
 								
 							if (isBlackjack(PLAYER, FIRST_HAND)) {
 									Serial.println("highlightWin M");	
-								highlightWin(FIRST_HAND, player.firstHand_Bet * 3 / 2, player.firstHand_Bet * 5 / 2);
+								highlightWin(FIRST_HAND, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
 							}
 							else {        
 								Serial.println("highlightLoss G");	
-								highlightLoss(FIRST_HAND, -player.firstHand_Bet);
+								highlightLoss(FIRST_HAND, -player.firstHand.bet);
 								
 							}
 								
@@ -740,30 +843,28 @@ void PlayGameState::highlightPush(uint8_t hand) {
 
 }
 
-void PlayGameState::bust(uint8_t playerNo, uint8_t hand) {
-  
-  numberOfGamesLost++;  
+void PlayGameState::bust(StateMachine & machine, uint8_t playerNo, uint8_t hand) {
   
   if (playerNo == PLAYER && hand == FIRST_HAND) {
 
-    player.firstHand_Bust = true;
+    player.firstHand.bust = true;
     this->winStatus = WinStatus::Lose;
-    this->winStatusAmount = this->player.firstHand_Bet;
+    this->winStatusAmount = this->player.firstHand.bet;
     // drawPlayerScores();
     
-    // highlightLoss(-player.firstHand_Bet);
+    // highlightLoss(-player.firstHand.bet);
     playNextHand();
   
   }
   
   if (playerNo == PLAYER && hand == SECOND_HAND) {
  
-    player.secondHand_Bust = true;
+    player.secondHand.bust = true;
     this->winStatus = WinStatus::Lose;
-    this->winStatusAmount = this->player.secondHand_Bet;
+    this->winStatusAmount = this->player.secondHand.bet;
     // drawPlayerScores();
     
-    // highlightLoss(-player.secondHand_Bet);
+    // highlightLoss(-player.secondHand.bet);
     playNextHand();
     
   }
@@ -772,22 +873,22 @@ void PlayGameState::bust(uint8_t playerNo, uint8_t hand) {
 
 void PlayGameState::playNextHand() {
 Serial.print("PlayNextHand: ");
-Serial.println(player.firstHand_Bust);
+Serial.println(player.firstHand.bust);
 
   player.split = false;
   
   if (this->handInPlay == FIRST_HAND) {
 
-    player.firstHand_Stand = true;
+    player.firstHand.stand = true;
     
-    if (player.secondHand_CardCount > 0) {
+    if (player.secondHand.cardCount > 0) {
       this->handInPlay = SECOND_HAND;
       // playSecondHand();
       
     }
     else {
 
-      if (!player.firstHand_Bust) {
+      if (!player.firstHand.bust) {
 
         this->viewState = ViewState::PlayDealerHand;
 
@@ -800,7 +901,7 @@ Serial.println(player.firstHand_Bust);
         this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
         this->viewState = ViewState::EndOfGame;
         // drawButtons(); 
-Serial.println(player.firstHand_Bust);        
+Serial.println(player.firstHand.bust);        
       }
       
     }
@@ -808,9 +909,9 @@ Serial.println(player.firstHand_Bust);
   }
   else {
 
-    if (!player.firstHand_Bust || !player.secondHand_Bust) {
+    if (!player.firstHand.bust || !player.secondHand.bust) {
 
-      player.secondHand_Stand = true;
+      player.secondHand.stand = true;
       this->viewState = ViewState::PlayDealerHand;
       // playDealerHand();
         
@@ -852,7 +953,7 @@ void PlayGameState::render(StateMachine & machine) {
 			break;
 
 		case ViewState::OfferInsurance:
-			drawFirstHand(machine);
+			drawFirstHand(machine, true);
 			drawDealerHand(machine, true);
 
 			font3x5.setCursor(0, 22);
@@ -865,13 +966,13 @@ void PlayGameState::render(StateMachine & machine) {
 			break;
 
 		case ViewState::InitDeal:
-			drawFirstHand(machine);
+			drawFirstHand(machine, true);
 			drawDealerHand(machine, true);
 			break;
 
 		case ViewState::PeekOnTen:
 
-			drawFirstHand(machine);
+			drawFirstHand(machine, true);
 			font3x5.setCursor(0, 22);
 
 			switch (this->insuranceResult) {
@@ -906,33 +1007,45 @@ void PlayGameState::render(StateMachine & machine) {
 			}
 			break;
 
-      case ViewState::PlayHand:
-        if (handInPlay != DEALER_HAND) {
-          drawFirstHand(machine);
-          drawDealerHand(machine, true);
-        }
-        break;
+    // case ViewState::OfferSplit:
+    //   font3x5.setCursor(0, 22);
+    //   font3x5.print(F("Split~the~pair?"));
+    //   drawFirstHand(machine, true);
+    //   drawDealerHand(machine, true);
+    //   break;
 
-      case ViewState::PlayDealerHand:
-				drawFirstHand(machine);
-				drawDealerHand(machine, false);
-        break;
+    case ViewState::SplitCards:
+      drawFirstHand(machine, true);
+      drawDealerHand(machine, true);
+      break;
 
-      case ViewState::CheckForWins:
-				drawFirstHand(machine);
-				drawDealerHand(machine, false);
-        break;
+    case ViewState::PlayHand:
+      if (handInPlay != DEALER_HAND) {
+        drawFirstHand(machine, true);
+        drawDealerHand(machine, true);
+      }
+      break;
 
-      case ViewState::EndOfGame:
-				font3x5.setCursor(0, 22);
-			  drawFirstHand(machine);
-        drawDealerHand(machine, false);
+    case ViewState::PlayDealerHand:
+      drawFirstHand(machine, true);
+      drawDealerHand(machine, false);
+      break;
 
-				if (player.firstHand_Bust) {
-					font3x5.print(F("Bust!"));
-				}
+    case ViewState::CheckForWins:
+      drawFirstHand(machine, true);
+      drawDealerHand(machine, false);
+      break;
 
-        break;
+    case ViewState::EndOfGame:
+      font3x5.setCursor(0, 22);
+      drawFirstHand(machine, true);
+      drawDealerHand(machine, false);
+
+      if (player.firstHand.bust) {
+        font3x5.print(F("Bust!"));
+      }
+
+      break;
 
       default: break;
 	}
@@ -958,7 +1071,7 @@ void PlayGameState::drawStats(StateMachine & machine, bool flashDetails, WinStat
     arduboy.fillRect(111, 0, 17, 7);
     font3x5.setTextColor(BLACK);
   }
-  render4DigitNumber(this->purse);
+  render4DigitNumber(player.purse);
   font3x5.setTextColor(WHITE);
 
 	font3x5.print(F("\nInit~Bet:~ "));

@@ -16,6 +16,7 @@ constexpr const static uint8_t FLASH_DELAY = 48;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
 
 
+#define STARTING_PURSE 100
 
 #define PLAYER 0
 #define DEALER 1
@@ -25,11 +26,14 @@ constexpr const static uint8_t NO_VALID_BUTTON = 255;
 
 #define CARD_LARGE_SPACING 10
 #define CARD_LARGE_SPACING_FULL 20
-#define CARD_LARGE_WIDTH 98
-#define CARD_LARGE_HEIGHT 135
-#define CARD_LARGE_INSET 3
+
+#define CARD_DEALER_CENTER 40
+//#define CARD_LARGE_WIDTH 98
+//#define CARD_LARGE_HEIGHT 135
+//#define CARD_LARGE_INSET 3
 
 #define CARD_LARGE_TOP_PLAYER 32
+#define CARD_SMALL_TOP_PLAYER 42
 #define CARD_LARGE_LEFT_FIRST_HAND 10
 #define CARD_LARGE_ROTATED_Y_OFFSET 20
 #define CARD_LARGE_LEFT_SECOND_HAND 130
@@ -71,6 +75,8 @@ enum class Buttons : uint8_t {
   EndOfGame_Quit = 1,
   PlayHand_Hit = 0,
   PlayHand_Stand,
+  PlayHand_Double,
+  PlayHand_Split,
 	InitBet_1 = 0,
   InitBet_5,
   InitBet_10,
@@ -85,6 +91,8 @@ enum class Buttons : uint8_t {
   InsuranceBet_Clear,
 	PeekOnTen_Continue = 0,
 	PeekOnTen_Quit,
+  // OfferSplit_Yes = 0,
+  // OfferSplit_No,
 };
 
 enum class GameStateType : uint8_t {
@@ -94,132 +102,103 @@ enum class GameStateType : uint8_t {
 	TitleScreen,
 };
 
+struct Hand {
+
+  bool stand = false;
+  bool doubleUp = false;
+  bool bust = false;
+  uint8_t cardCount = 0;
+  uint8_t cards[12];
+  uint16_t bet = 0;
+
+  void reset() {
+
+    stand = false;
+    doubleUp = false;
+    bust = false;
+    cardCount = 0;
+    bet = 0;
+
+    for (uint8_t i = 0; i < 12; i++) {
+
+      cards[i] = 0;  
+
+    }
+
+  }
+
+};
+
 struct Player {
 
-  uint8_t firstHand[12] = {0};
-  uint8_t secondHand[12] = {0};
+  Hand firstHand;
+  Hand secondHand;
+  uint16_t purse = STARTING_PURSE;
 
   bool split = false;
-  bool firstHand_Stand = false;
-  bool secondHand_Stand = false;
-  bool firstHand_Double = false;
-  bool secondHand_Double = false;
-  bool firstHand_Bust = false;
-  bool secondHand_Bust = false;
-
-  uint8_t firstHand_CardCount = 0;
-  uint8_t secondHand_CardCount = 0;
-  uint16_t firstHand_Bet = 0;
-  uint16_t secondHand_Bet = 0;
 
   void reset() {
   
+    purse = STARTING_PURSE;
     split = false;
-    firstHand_Stand = false;
-    secondHand_Stand = false;
-    firstHand_Double = false;
-    secondHand_Double = false;
-    firstHand_Bust = false;
-    secondHand_Bust = false;
-    firstHand_CardCount = 0;
-    secondHand_CardCount = 0;
-    firstHand_Bet = 0;
-    secondHand_Bet = 0;
+    firstHand.reset();
+    secondHand.reset();
+
+  }
+
+  void resetHand() {
+
+    firstHand.reset();
+    secondHand.reset();
+
+  }
+
+  bool canSplit() {
+
+    return firstHand.cardCount == 2 && secondHand.cardCount == 0 && firstHand.cards[0] % 13 == firstHand.cards[1];
 
   }
   
 };
 
+struct Dealer {
+  
+  uint8_t cardCount = 0;
+  uint8_t cards[12];
+
+  void reset() {
+
+    cardCount = 0;
+    resetHand();
+
+  }
+
+  void resetHand() {
+
+    for (uint8_t i = 0; i < 12; i++) {
+
+      cards[i] = 0;  
+
+    }
+
+  }
+
+};
 
 struct GameStats {
 
-  // uint8_t skillLevel = 1;
-  // uint8_t level = 1;
-  // uint8_t room = 0;
-  // uint8_t selectedCard = 0;
-  // bool monsterDefeated = false;
+  uint16_t gamesPlayed = 0;
+  uint16_t gamesWon = 0;
+  uint16_t gamesLost = 0;
+  uint16_t gamesPush = 0;
 
-  // void resetGame() {
+  void reset() {
+    
+    gamesPlayed = 0;
+    gamesWon = 0;
+    gamesLost = 0;
+    gamesPush = 0;
 
-  //   level = 0;
-  //   room = 0;
-  //   monsterDefeated = false;
-  //   selectedCard = 0;
-
-  // }
-
-  // void dropArea() {
-
-	//   static const uint8_t drops[] PROGMEM = { 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, };
-	//   level = (level < 10) ? (level + pgm_read_byte(&drops[level])) : level;
-
-  // }
-
-  // uint8_t getAreaId() {
-
-	//   static const uint8_t ids[] PROGMEM = { 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, };
-  // 	return (level < 15) ? pgm_read_byte(&ids[level]) : 5;
-
-  // }
-
-  // bool isLastLevelInArea() {
-
-  //   switch (level) {
-
-  //     case 1:
-  //     case 3:
-  //     case 6:
-  //     case 9:
-  //     case 13:
-  //       return true;
-
-  //     default:
-  //       return false;
-
-  //   }
-
-  // }
-
-  // GameStateType incRoom(PlayerStats & playerStats) {
-
-  //   room++;
-
-  //   switch (room) {
-
-  //     case 1:   selectedCard = 0;   break;
-  //     case 2:   selectedCard = 1;   break;
-  //     case 3:   selectedCard = 3;   break;
-  //     case 4:   selectedCard = 4;   break;
-  //     case 5:   selectedCard = 6;   break;
-
-  //   }
-
-  //   if ((room == 6) && (level == 13)) {
-
-  //     return GameStateType::Winner;
-
-  //   }
-  //   else {
-
-  //     if (room == 6 || (room == 5 && !isLastLevelInArea())) {
-
-  //       playerStats.decFood(1);
-  //       room = 0;
-
-  //       if (playerStats.food >= 0) {
-
-  //         level++;
-  //         selectedCard = 0;
-  //         monsterDefeated = false;
-
-  //       }
-
-  //     }
-
-  //     return GameStateType::ShowCards;
-
-  //   }
-
-  // }
+  }    
 
 };

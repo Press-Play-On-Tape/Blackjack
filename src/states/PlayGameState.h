@@ -14,6 +14,9 @@ class PlayGameState : public BaseState {
     InitDeal,
     OfferInsurance,
     PeekOnTen,
+//    OfferSplit,
+    SplitCards,
+    DoubleUp,
     PlayHand,
     PlayDealerHand,
     CheckForWins,
@@ -38,6 +41,8 @@ class PlayGameState : public BaseState {
   private:
 
     Player player;
+    Dealer dealer;
+
     InsuranceResult insuranceResult = InsuranceResult::Peeking;
     WinStatus winStatus = WinStatus::None;
     bool flashDetails;
@@ -46,25 +51,14 @@ class PlayGameState : public BaseState {
     uint8_t highlightedButton = 0;
     uint8_t counter = 0;
     uint8_t cards[52] = {0};
-    uint8_t dealer[12] = {0};
 
-    uint16_t purse = 100;
     uint16_t currentBetTotal = 0;
     uint16_t currentBetInit = 0;
     uint16_t currentWin = 0;
-    
-    uint16_t numberOfGamesPlayed = 0;
-    uint16_t numberOfGamesWon = 0;
-    uint16_t numberOfGamesLost = 0;
-    uint16_t numberOfGamesPush = 0;
     uint16_t insurance = 0;
 
     uint8_t handInPlay = FIRST_HAND;
-    uint8_t dealer_CardCount = 0;
     uint8_t buttonMode = SHOW_BET_BUTTONS;
-
-
-
 
     bool endOfHand = false;
 
@@ -79,13 +73,13 @@ class PlayGameState : public BaseState {
   private:
   
     void drawDealerHand(StateMachine & machine, bool showDealersFirstCard);
-    void drawFirstHand(StateMachine & machine);
-    void drawSecondHand(StateMachine & machine);
+    void drawFirstHand(StateMachine & machine, bool fullHeight);
+    void drawSecondHand(StateMachine & machine, bool fullHeight);
     void drawCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool rotated, bool fullSizeCard);
     void drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool fullSizeCard, bool renderBackground);
     void drawButtons(StateMachine & machine);
     void drawStats(StateMachine & machine, bool flashDetails, WinStatus winStatus, int16_t winAmount);
-    void bust(uint8_t playerNo, uint8_t hand);
+    void bust(StateMachine & machine, uint8_t playerNo, uint8_t hand);
     void playNextHand();
     
     void highlightWin(uint8_t hand, int16_t win, int16_t purseInc);
