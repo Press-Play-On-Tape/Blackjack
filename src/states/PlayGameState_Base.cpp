@@ -970,8 +970,7 @@ Serial.println(player.firstHand.bust);
 void PlayGameState::render(StateMachine & machine) {
 
 	auto & arduboy = machine.getContext().arduboy;
-
-  //ardBitmap.drawCompressed(0, 51, Images::Background, WHITE, ALIGN_NONE, MIRROR_NONE); 
+	auto & ardBitmap = machine.getContext().ardBitmap;
 
 	switch (this->viewState) {
 
@@ -1081,7 +1080,8 @@ void PlayGameState::render(StateMachine & machine) {
       default: break;
 	}
 
-  arduboy.fillRect(0, 51, WIDTH, HEIGHT, BLACK);
+//  arduboy.fillRect(0, 51, WIDTH, HEIGHT, BLACK);
+  ardBitmap.drawCompressed(0, 51, Images::Background, WHITE, ALIGN_NONE, MIRROR_NONE); 
 	drawButtons(machine);
   drawStats(machine, this->flashDetails, this->winStatus, this->winStatusAmount);
 
