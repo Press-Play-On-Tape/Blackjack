@@ -2,6 +2,8 @@
 #include "../images/Images.h"
 #define xDEBUG_CASE
 
+static const uint8_t BETS[] = { 1, 5, 10, 25 };
+
 // ----------------------------------------------------------------------------
 //  Initialise state ..
 //
@@ -79,32 +81,11 @@ Serial.println(F("InitBet "));
 				
 				switch (static_cast<Buttons>(this->highlightedButton)) {
 					
-					case Buttons::InitBet_1: 
-						this->currentBetInit = this->currentBetInit + 1;
+					case Buttons::InitBet_1 ... Buttons::InitBet_25: 
+						this->currentBetInit = this->currentBetInit + BETS[this->highlightedButton];
 						this->currentBetTotal = this->currentBetInit;
 						player.firstHand.bet = this->currentBetInit;
-						player.purse = player.purse - 1;
-						break;
-					
-					case Buttons::InitBet_5: 
-						this->currentBetInit = this->currentBetInit + 5;
-						this->currentBetTotal = this->currentBetInit;
-						player.firstHand.bet = this->currentBetInit;
-						player.purse = player.purse - 5;
-						break;
-					
-					case Buttons::InitBet_10: 
-						this->currentBetInit = this->currentBetInit + 10;
-						this->currentBetTotal = this->currentBetInit;
-						player.firstHand.bet = this->currentBetInit;
-						player.purse = player.purse - 10;
-						break;
-					
-					case Buttons::InitBet_25: 
-						this->currentBetInit = this->currentBetInit + 25;
-						this->currentBetTotal = this->currentBetInit;
-						player.firstHand.bet = this->currentBetInit;
-						player.purse = player.purse - 25;
+						player.purse = player.purse - BETS[this->highlightedButton];
 						break;
 					
 					case Buttons::InitBet_PlayGame: 
@@ -191,28 +172,10 @@ Serial.println(F("OfferInsurance "));
 				
 				switch (static_cast<Buttons>(this->highlightedButton)) {
 					
-					case Buttons::InsuranceBet_1: 
-						this->insurance = this->insurance + 1;
+					case Buttons::InsuranceBet_1 ... Buttons::InsuranceBet_25: 
+						this->insurance = this->insurance + BETS[this->highlightedButton];
 						this->currentBetTotal = this->currentBetTotal + 1;
-						player.purse = player.purse - 1;
-						break;
-					
-					case Buttons::InsuranceBet_5: 
-						this->insurance = this->insurance + 5;
-						this->currentBetTotal = this->currentBetTotal + 5;
-						player.purse = player.purse - 5;
-						break;
-					
-					case Buttons::InsuranceBet_10: 
-						this->insurance = this->insurance + 10;
-						this->currentBetTotal = this->currentBetTotal + 10;
-						player.purse = player.purse - 10;
-						break;
-					
-					case Buttons::InsuranceBet_25: 
-						this->insurance = this->insurance + 25;
-						this->currentBetTotal = this->currentBetTotal + 25;
-						player.purse = player.purse - 25;
+						player.purse = player.purse - BETS[this->highlightedButton];
 						break;
 					
 					case Buttons::InsuranceBet_PlayGame: 
@@ -367,7 +330,7 @@ Serial.println(F("PeekOnTen "));
 					}
 					else {
 
-            // if (((this->player.firstHand.cards[0] % 13) == (this->player.firstHand.cards[1] % 13)) && player.purse >= this->currentBetInit) {
+            // if (((this->player.firstHand.cardIsAce(0)) == (this->player.firstHand.cardsIsAce(1))) && player.purse >= this->currentBetInit) {
 
             //   this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
 	  				// 	this->viewState = ViewState::OfferSplit;
@@ -500,7 +463,7 @@ Serial.println(handInPlay);
         this->counter++;
         this->highlightedButton = 0;
 
-        if (player.firstHand.cards[0] % 13 == 0) {
+        if (player.firstHand.cardIsAce(0)) {
           player.firstHand.doubleUp = true;
           player.secondHand.doubleUp = true;
           this->viewState = ViewState::PlayDealerHand;

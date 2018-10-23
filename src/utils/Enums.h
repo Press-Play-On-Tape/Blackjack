@@ -130,6 +130,11 @@ struct Hand {
 
   }
 
+  bool cardIsAce(uint8_t index) {
+
+    return (cards[index] % 13 == 0);
+  }
+
 };
 
 struct Player {
