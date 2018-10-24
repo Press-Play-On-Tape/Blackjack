@@ -18,13 +18,14 @@ constexpr const static uint8_t NO_VALID_BUTTON = 255;
 
 #define STARTING_PURSE 100
 
-#define PLAYER 0
-#define DEALER 1
-#define FIRST_HAND 0
-#define SECOND_HAND 1
-#define DEALER_HAND 2
+// #define Turn::Human 0
+// #define Turn::Dealer 1
+// #define Hand::First 0
+// #define Hand::Second 1
+// #define Hand::Dealer 2
 
 #define CARD_LARGE_SPACING 12
+#define CARD_LARGE_SPACING_DEALER 10
 #define CARD_LARGE_SPACING_FULL 22
 #define CARD_LARGE_SPACING_ORIENTATED 25
 #define CARD_HAND_SPACING 12
@@ -37,11 +38,11 @@ constexpr const static uint8_t NO_VALID_BUTTON = 255;
 
 #define CARD_LARGE_TOP_PLAYER 32
 #define CARD_SMALL_TOP_PLAYER 37
-//#define CARD_LARGE_LEFT_FIRST_HAND 10
+//#define CARD_LARGE_LEFT_Hand::First 10
 //#define CARD_LARGE_ROTATED_Y_OFFSET 20
-//#define CARD_LARGE_LEFT_SECOND_HAND 65
+//#define CARD_LARGE_LEFT_Hand::Second 65
 #define CARD_LARGE_TOP_DEALER 0
-//#define CARD_LARGE_RIGHT_DEALER 50
+//#define CARD_LARGE_RIGHT_Turn::Dealer 50
 
 #define SHOW_BET_BUTTONS 0
 #define SHOW_OPTIONS_BUTTONS 1
@@ -52,6 +53,17 @@ constexpr const static uint8_t NO_VALID_BUTTON = 255;
 #define SHOW_GAME_PLAY_BUTTONS_DISABLED 6
 #define SHOW_NO_BUTTONS 7
 #define SHOW_OK_ONLY_BUTTONS 8
+
+enum class Turn : uint8_t {
+  Human,
+  Dealer
+};
+
+enum class Hand : uint8_t {
+  First,
+  Second,
+	Dealer,
+};
 
 enum class MessageNumber : uint8_t {
   None = 0,
@@ -87,7 +99,7 @@ enum class GameStateType : uint8_t {
 	TitleScreen,
 };
 
-struct Hand {
+struct PlayerHand {
 
   bool stand = false;
   bool doubleUp = false;
@@ -127,8 +139,8 @@ struct Hand {
 
 struct Player {
 
-  Hand firstHand;
-  Hand secondHand;
+  PlayerHand firstHand;
+  PlayerHand secondHand;
   uint16_t purse = STARTING_PURSE;
 
   bool split = false;

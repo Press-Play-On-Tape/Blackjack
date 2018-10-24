@@ -25,19 +25,19 @@ void PlayGameState::render3DigitNumber(uint16_t val) {
 
 void PlayGameState::drawDealerHand(StateMachine & machine, bool hideDealersFirstCard) {
 
-  uint8_t width = (dealer.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING);
+  uint8_t width = (dealer.cardCount * CARD_LARGE_SPACING_DEALER) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING_DEALER);
   uint8_t rightHandSide = CARD_DEALER_CENTER + (width / 2);
 
   for (int x = 0; x < dealer.cardCount; x++) {
 			
 		if (x < dealer.cardCount - 1) {
 
-			drawDealerCard(machine, rightHandSide - (x * CARD_LARGE_SPACING), CARD_LARGE_TOP_DEALER, dealer.cards[x], false, hideDealersFirstCard && x == 0);   
+			drawDealerCard(machine, rightHandSide - (x * CARD_LARGE_SPACING_DEALER), CARD_LARGE_TOP_DEALER, dealer.cards[x], false, hideDealersFirstCard && x == 0);   
 
 		}
 		else {
 
-			drawDealerCard(machine, rightHandSide - (x * CARD_LARGE_SPACING), CARD_LARGE_TOP_DEALER, dealer.cards[x], true, hideDealersFirstCard && x == 0);   
+			drawDealerCard(machine, rightHandSide - (x * CARD_LARGE_SPACING_DEALER), CARD_LARGE_TOP_DEALER, dealer.cards[x], true, hideDealersFirstCard && x == 0);   
 
 		}
     
@@ -53,7 +53,7 @@ void PlayGameState::drawPlayerHands(StateMachine & machine) {
   uint8_t width1 = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
   uint8_t width2 = (this->player.secondHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.secondHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
   uint8_t widthTot = width1 + (player.hasSecondHand() ? CARD_HAND_SPACING + width2 : 0);
-  uint8_t fullHeight = (handInPlay == FIRST_HAND) || (handInPlay == DEALER_HAND);
+  uint8_t fullHeight = (handInPlay == Hand::First) || (handInPlay == Hand::Dealer);
 
 
   // Determine left hand side of each hand ..
@@ -106,7 +106,7 @@ void PlayGameState::drawPlayerHands(StateMachine & machine) {
 
   if (!player.hasSecondHand()) return;
 
-  fullHeight = (handInPlay == SECOND_HAND) || (handInPlay == DEALER_HAND);
+  fullHeight = (handInPlay == Hand::Second) || (handInPlay == Hand::Dealer);
 
   for (uint8_t x = 0; x < this->player.secondHand.cardCount; x++) {
 
@@ -205,6 +205,43 @@ void PlayGameState::drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t
 
 }
 
+void PlayGameState::drawPlayerHands_Lines(StateMachine & machine) {
+
+	auto & arduboy = machine.getContext().arduboy;
+
+  if (this->player.firstHand.cardCount > 0) {
+
+    uint8_t leftHand1 = 0;
+    uint8_t leftHand2 = 0;
+
+    uint8_t width1 = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
+    uint8_t width2 = (this->player.secondHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.secondHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
+    uint8_t widthTot = width1 + (player.hasSecondHand() ? CARD_HAND_SPACING + width2 : 0);
+
+
+    // Determine left hand side of each hand ..
+
+    if (!player.hasSecondHand()) {
+
+      leftHand1 = CARD_DEALER_CENTER - (width1 / 2);
+      arduboy.drawFastHLine(leftHand1 + 1, 51, width1 - 2, BLACK);
+
+    }
+    else {
+
+      leftHand1 = CARD_PLAYER_CENTER - (widthTot / 2);
+      leftHand2 = leftHand1 + width1 + CARD_HAND_SPACING;
+
+      arduboy.drawFastHLine(leftHand1 + 1, 51, width1 - 2, BLACK);
+      arduboy.drawFastHLine(leftHand2 + 1, 51, width2 - 2, BLACK);
+
+    }
+
+  }
+
+}
+
+
 void PlayGameState::drawButtons(StateMachine & machine) {
 
 	auto & ardBitmap = machine.getContext().ardBitmap;
@@ -216,20 +253,20 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 		case SHOW_GAME_PLAY_BUTTONS:
 
-			if (handInPlay != DEALER_HAND) { 
+			if (handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(-1, 52, Images::Button_30_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(-1, 52, Images::Button_HitMe, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (handInPlay != DEALER_HAND) { 
+			if (handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(29, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(29, 52, Images::Button_Stand, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-      if (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == FIRST_HAND) || 
-                                             (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == SECOND_HAND))) {
+      if (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == Hand::First) || 
+                                             (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == Hand::Second))) {
 			  ardBitmap.drawCompressed(57, 52, Images::Button_32_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
 			  ardBitmap.drawCompressed(57, 52, Images::Button_Double, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-      if (currentBetInit <= player.purse && handInPlay == FIRST_HAND && player.canSplit()) {
+      if (currentBetInit <= player.purse && handInPlay == Hand::First && player.canSplit()) {
 			  ardBitmap.drawCompressed(89, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
 			  ardBitmap.drawCompressed(89, 52, Images::Button_Split, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
@@ -275,27 +312,27 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 		case SHOW_BET_BUTTONS:
 
-			if (currentBetInit <= 199 && player.purse >= 1 && handInPlay != DEALER_HAND) { 
+			if (currentBetInit <= 199 && player.purse >= 1 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(-1, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(-1, 52, Images::Bet_01, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (currentBetInit <= 195 && player.purse >= 5 && handInPlay != DEALER_HAND) { 
+			if (currentBetInit <= 195 && player.purse >= 5 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(17, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(17, 52, Images::Bet_05, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (currentBetInit <= 190 && player.purse >= 10 && handInPlay != DEALER_HAND) { 
+			if (currentBetInit <= 190 && player.purse >= 10 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(35, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(35, 52, Images::Bet_10, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (currentBetInit <= 175 && player.purse >= 25 && handInPlay != DEALER_HAND) { 
+			if (currentBetInit <= 175 && player.purse >= 25 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(53, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(53, 52, Images::Bet_25, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (currentBetInit > 0 && handInPlay != DEALER_HAND) { 
+			if (currentBetInit > 0 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(75, 52, Images::Button_24_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(75, 52, Images::Button_Play, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (currentBetInit > 0 && handInPlay != DEALER_HAND) { 
+			if (currentBetInit > 0 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(99, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(99, 52, Images::Button_Clear, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
@@ -336,31 +373,31 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 		case SHOW_INSURANCE_BUTTONS:
   
-			if ((this->insurance + 1) <= (this->currentBetInit / 2) && player.purse >= 1 && handInPlay != DEALER_HAND) { 
+			if ((this->insurance + 1) <= (this->currentBetInit / 2) && player.purse >= 1 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(-1, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(-1, 52, Images::Bet_01, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if ((this->insurance + 5) <= (this->currentBetInit / 2) && player.purse >= 5 && handInPlay != DEALER_HAND) { 
+			if ((this->insurance + 5) <= (this->currentBetInit / 2) && player.purse >= 5 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(17, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(17, 52, Images::Bet_05, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if ((this->insurance + 10) <= (this->currentBetInit / 2) && player.purse >= 10 && handInPlay != DEALER_HAND) { 
+			if ((this->insurance + 10) <= (this->currentBetInit / 2) && player.purse >= 10 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(35, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(35, 52, Images::Bet_10, WHITE, ALIGN_NONE, MIRROR_NONE);
       }
-			if ((this->insurance + 25) <= (this->currentBetInit / 2) && player.purse >= 25 && handInPlay != DEALER_HAND) { 
+			if ((this->insurance + 25) <= (this->currentBetInit / 2) && player.purse >= 25 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(53, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(53, 52, Images::Bet_25, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (insurance > 0 && handInPlay != DEALER_HAND) { 
+			if (insurance > 0 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(75, 52, Images::Button_24_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(75, 52, Images::Button_Play, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (insurance > 0 && handInPlay != DEALER_HAND) { 
+			if (insurance > 0 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(99, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(99, 52, Images::Button_Clear, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-			if (insurance == 0 && handInPlay != DEALER_HAND) { 
+			if (insurance == 0 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(103, 52, Images::Button_24_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(103, 52, Images::Button_Skip, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }

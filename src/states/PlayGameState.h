@@ -56,7 +56,7 @@ class PlayGameState : public BaseState {
     uint16_t currentWin = 0;
     uint16_t insurance = 0;
 
-    uint8_t handInPlay = FIRST_HAND;
+    Hand handInPlay = Hand::First;
     uint8_t buttonMode = SHOW_BET_BUTTONS;
 
     bool endOfHand = false;
@@ -73,22 +73,17 @@ class PlayGameState : public BaseState {
   
     void drawDealerHand(StateMachine & machine, bool showDealersFirstCard);
     void drawPlayerHands(StateMachine & machine);
-    // void drawFirstHand(StateMachine & machine);
-    // void drawSecondHand(StateMachine & machine);
+    void drawPlayerHands_Lines(StateMachine & machine);
     void drawCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool rotated, bool fullSizeCard);
     void drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool fullSizeCard, bool renderBackground);
     void drawButtons(StateMachine & machine);
     void drawStats(StateMachine & machine, bool flashDetails, WinStatus winStatus, int16_t winAmount);
-    void bust(StateMachine & machine, uint8_t playerNo, uint8_t hand);
+    void bust(StateMachine & machine, Turn playerNo, Hand hand);
     void playNextHand();
     
-    void highlightWin(uint8_t hand, int16_t win, int16_t purseInc);
-    void highlightLoss(uint8_t hand, int16_t loss);
-    void highlightPush(uint8_t hand);
-    
-    void highlightWin(uint8_t hand, int16_t win, int16_t purseInc, MessageNumber messageId);
-    void highlightLoss(uint8_t hand, int16_t loss, MessageNumber messageId);
-    void highlightPush(uint8_t hand, MessageNumber messageId);
+    void highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId = MessageNumber::None);
+    void highlightLoss(Hand hand, int16_t loss, MessageNumber messageId = MessageNumber::None);
+    void highlightPush(Hand hand, MessageNumber messageId = MessageNumber::None);
 
     void render4DigitNumber(uint16_t val);
     void render3DigitNumber(uint16_t val);
@@ -105,11 +100,11 @@ class PlayGameState : public BaseState {
     uint8_t decreaseHighlightButton_GamePlayButtons(uint8_t highlightedButton);
     uint8_t increaseHighlightButton_GamePlayButtons(uint8_t highlightedButton);
 
-    bool isBlackjack(uint8_t player, uint8_t hand) ;
-    uint8_t getCard(uint8_t player, uint8_t hand);
-    uint8_t getCard(uint8_t player, uint8_t hand, uint8_t cardNumber);
-    uint8_t calculateHand(uint8_t player, bool bestHand);
-    uint8_t calculateHand(uint8_t player, uint8_t hand, bool bestHand);
+    bool isBlackjack(Turn player, Hand hand) ;
+    uint8_t getCard(Turn player, Hand hand);
+    uint8_t getCard(Turn player, Hand hand, uint8_t cardNumber);
+    uint8_t calculateHand(Turn player, bool bestHand);
+    uint8_t calculateHand(Turn player, Hand hand, bool bestHand);
 
 };
 

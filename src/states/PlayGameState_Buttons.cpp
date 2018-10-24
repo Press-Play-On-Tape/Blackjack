@@ -108,8 +108,8 @@ uint8_t PlayGameState::increaseHighlightButton_InsuranceButtons(uint8_t highligh
 
 uint8_t PlayGameState::isValidButton_GamePlayButtons(uint8_t highlightedButton) {
 
-	if (highlightedButton == 3 && (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && handInPlay == FIRST_HAND) || (this->player.secondHand.cardCount == 2 && handInPlay == SECOND_HAND)))) return highlightedButton;
-	if (highlightedButton == 2 && currentBetInit <= player.purse && handInPlay == FIRST_HAND && player.canSplit()) return highlightedButton;
+	if (highlightedButton == 3 && (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && handInPlay == Hand::First) || (this->player.secondHand.cardCount == 2 && handInPlay == Hand::Second)))) return highlightedButton;
+	if (highlightedButton == 2 && currentBetInit <= player.purse && handInPlay == Hand::First && player.canSplit()) return highlightedButton;
 	if (highlightedButton == 1) return highlightedButton;
 	if (highlightedButton == 0) return highlightedButton;
 
@@ -119,8 +119,8 @@ uint8_t PlayGameState::isValidButton_GamePlayButtons(uint8_t highlightedButton) 
 
 uint8_t PlayGameState::decreaseHighlightButton_GamePlayButtons(uint8_t highlightedButton) {
 
-	if (highlightedButton == 3 && currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == FIRST_HAND) || 
-                                                                   (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == SECOND_HAND))) return 2;
+	if (highlightedButton == 3 && currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == Hand::First) || 
+                                                                   (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == Hand::Second))) return 2;
 	if (highlightedButton == 2) return 1;
 	if (highlightedButton == 1) return 0;
 
@@ -131,9 +131,9 @@ uint8_t PlayGameState::decreaseHighlightButton_GamePlayButtons(uint8_t highlight
 uint8_t PlayGameState::increaseHighlightButton_GamePlayButtons(uint8_t highlightedButton) {
 
 	if (highlightedButton <= 0) return 1;
-	if (highlightedButton <= 1 && (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == FIRST_HAND) || 
-                                                                    (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == SECOND_HAND)))) return 2;
-	if (highlightedButton <= 2 && currentBetInit <= player.purse && handInPlay == FIRST_HAND && player.canSplit()) return 3;
+	if (highlightedButton <= 1 && (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == Hand::First) || 
+                                                                    (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == Hand::Second)))) return 2;
+	if (highlightedButton <= 2 && currentBetInit <= player.purse && handInPlay == Hand::First && player.canSplit()) return 3;
 
 	return highlightedButton;
 
