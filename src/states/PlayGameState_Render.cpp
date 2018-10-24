@@ -251,7 +251,7 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 	switch (this->buttonMode) {
 
-		case SHOW_GAME_PLAY_BUTTONS:
+		case ButtonDisplay::GamePlay:
 
 			if (handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(-1, 52, Images::Button_30_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
@@ -297,7 +297,7 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			break;
 
-		case SHOW_GAME_PLAY_BUTTONS_DISABLED:
+		case ButtonDisplay::GamePlayDisabled:
     
 			// lcd.setTextColour(GREY5);
 			// lcd.drawRoundRect(BUTTONS_HITME_LEFT, BUTTONS_HITME_TOP, BUTTONS_HITME_LEFT + BUTTONS_HITME_WIDTH, BUTTONS_HITME_TOP + BUTTONS_HITME_HEIGHT, radius5, GREY5, hollowFill);
@@ -310,7 +310,7 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 			// lcd.string(BUTTONS_SPLIT_LEFT + 18, BUTTONS_SPLIT_TOP + 9, MAX_X_PORTRAIT, MAX_Y_PORTRAIT, "Split", 0);
 			break;
 
-		case SHOW_BET_BUTTONS:
+		case ButtonDisplay::BetButtons:
 
 			if (currentBetInit <= 199 && player.purse >= 1 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(-1, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
@@ -371,7 +371,7 @@ void PlayGameState::drawButtons(StateMachine & machine) {
   
 			break;
 
-		case SHOW_INSURANCE_BUTTONS:
+		case ButtonDisplay::Insurance:
   
 			if ((this->insurance + 1) <= (this->currentBetInit / 2) && player.purse >= 1 && handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(-1, 52, Images::Bet_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
@@ -441,7 +441,7 @@ void PlayGameState::drawButtons(StateMachine & machine) {
     
 			break;
 
-		case SHOW_END_OF_GAME_BUTTONS:
+		case ButtonDisplay::EndOfGame:
 
 			ardBitmap.drawCompressed(64, 52, Images::Button_40_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
 			ardBitmap.drawCompressed(64, 52, Images::Button_Continue, WHITE, ALIGN_NONE, MIRROR_NONE); 
@@ -466,7 +466,7 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			break;
 
-		case SHOW_OK_ONLY_BUTTONS:
+		case ButtonDisplay::OKOnly:
 
 			ardBitmap.drawCompressed(108, 52, Images::Button_20_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
 			ardBitmap.drawCompressed(108, 52, Images::Button_OK, WHITE, ALIGN_NONE, MIRROR_NONE); 

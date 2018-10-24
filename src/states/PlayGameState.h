@@ -57,7 +57,7 @@ class PlayGameState : public BaseState {
     uint16_t insurance = 0;
 
     Hand handInPlay = Hand::First;
-    uint8_t buttonMode = SHOW_BET_BUTTONS;
+    ButtonDisplay buttonMode = ButtonDisplay::BetButtons;
 
     bool endOfHand = false;
 

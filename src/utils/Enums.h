@@ -44,15 +44,17 @@ constexpr const static uint8_t NO_VALID_BUTTON = 255;
 #define CARD_LARGE_TOP_DEALER 0
 //#define CARD_LARGE_RIGHT_Turn::Dealer 50
 
-#define SHOW_BET_BUTTONS 0
-#define SHOW_OPTIONS_BUTTONS 1
-#define SHOW_INSURANCE_BUTTONS 2
-#define SHOW_END_OF_GAME_BUTTONS 3
-#define SHOW_OPTIONS_BUTTONS_DISABLED 4
-#define SHOW_GAME_PLAY_BUTTONS 5
-#define SHOW_GAME_PLAY_BUTTONS_DISABLED 6
-#define SHOW_NO_BUTTONS 7
-#define SHOW_OK_ONLY_BUTTONS 8
+enum class ButtonDisplay: uint8_t {
+  BetButtons,
+  Options,
+  Insurance,
+  EndOfGame,
+  OptionsDisabled,
+  GamePlay,
+  GamePlayDisabled,
+  None,
+  OKOnly
+};
 
 enum class Turn : uint8_t {
   Human,

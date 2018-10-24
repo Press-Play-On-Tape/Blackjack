@@ -47,7 +47,7 @@ Serial.println(F("StartHand "));
 #endif
       dealer.reset();
 			this->endOfHand = false;
-			this->buttonMode = SHOW_BET_BUTTONS;
+			this->buttonMode = ButtonDisplay::BetButtons;
 			this->flashDetails = false;
 			
 			this->handInPlay = Hand::First;
@@ -88,7 +88,7 @@ Serial.println(F("InitBet "));
 						break;
 					
 					case Buttons::InitBet_PlayGame: 
-						this->buttonMode = SHOW_NO_BUTTONS;
+						this->buttonMode = ButtonDisplay::None;
 						this->counter = 0;
 						this->viewState = ViewState::InitDeal;
 						break;
@@ -163,7 +163,7 @@ Serial.println(F("InitDeal "));
 #ifdef DEBUG_CASE
 Serial.println(F("OfferInsurance "));
 #endif
-			buttonMode = SHOW_INSURANCE_BUTTONS;
+			buttonMode = ButtonDisplay::Insurance;
 
 			if (justPressed & LEFT_BUTTON) 	{ this->highlightedButton = decreaseHighlightButton_InsuranceButtons(this->highlightedButton); }
 			if (justPressed & RIGHT_BUTTON) { this->highlightedButton = increaseHighlightButton_InsuranceButtons(this->highlightedButton); }
@@ -178,7 +178,7 @@ Serial.println(F("OfferInsurance "));
 						break;
 					
 					case Buttons::InsuranceBet_PlayGame: 
-						this->buttonMode = SHOW_NO_BUTTONS;
+						this->buttonMode = ButtonDisplay::None;
 						this->counter = 0;
 						this->viewState = ViewState::PeekOnTen;
 						break;
@@ -190,7 +190,7 @@ Serial.println(F("OfferInsurance "));
               this->currentBetTotal = this->currentBetInit;
             }
             else {
-              this->buttonMode = SHOW_NO_BUTTONS;
+              this->buttonMode = ButtonDisplay::None;
               this->counter = 0;
               this->viewState = ViewState::PeekOnTen;
             }
@@ -230,7 +230,7 @@ Serial.println(F("PeekOnTen "));
               
                 this->insuranceResult = InsuranceResult::BothHaveBlackjack;			
                 player.purse = player.purse + this->currentBetTotal + (2 * this->insurance);
-                this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+                this->buttonMode = ButtonDisplay::EndOfGame;
 								this->flashDetails = true;
                 gameStats.gamesPush++;
 
@@ -248,7 +248,7 @@ Serial.println(F("PeekOnTen "));
               }
               else {
 
-								this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+								this->buttonMode = ButtonDisplay::EndOfGame;
 								this->flashDetails = true;
 								this->winStatusAmount = this->currentBetInit - (this->insurance * 2);
                 gameStats.gamesLost++;
@@ -292,7 +292,7 @@ Serial.println(F("PeekOnTen "));
 								this->currentBetTotal = this->currentBetInit;
 							}
 
-							this->buttonMode = SHOW_OK_ONLY_BUTTONS;
+							this->buttonMode = ButtonDisplay::OKOnly;
 
             }
 
@@ -333,7 +333,7 @@ Serial.println(F("PeekOnTen "));
 
             // if (((this->player.firstHand.cardIsAce(0)) == (this->player.firstHand.cardsIsAce(1))) && player.purse >= this->currentBetInit) {
 
-            //   this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
+            //   this->buttonMode = ButtonDisplay::GamePlay;
 	  				// 	this->viewState = ViewState::OfferSplit;
   					// 	this->flashDetails = false;
             //   this->counter = 0;
@@ -341,7 +341,7 @@ Serial.println(F("PeekOnTen "));
             // }
             // else {
 
-              this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
+              this->buttonMode = ButtonDisplay::GamePlay;
 	  					this->viewState = ViewState::PlayHand;
   						this->flashDetails = false;
 
@@ -362,7 +362,7 @@ Serial.print(justPressed);
 Serial.print(F(", HIP "));
 Serial.println((uint8_t)handInPlay);
 #endif
-      this->buttonMode = SHOW_GAME_PLAY_BUTTONS;
+      this->buttonMode = ButtonDisplay::GamePlay;
 
       if (justPressed & LEFT_BUTTON) 	{ this->highlightedButton = decreaseHighlightButton_GamePlayButtons(this->highlightedButton); }
 			if (justPressed & RIGHT_BUTTON) { this->highlightedButton = increaseHighlightButton_GamePlayButtons(this->highlightedButton); }
@@ -492,6 +492,8 @@ Serial.println(F("DoubleUp "));
           player.secondHand.doubleUp = true;
           player.secondHand.bet = player.secondHand.bet + currentBetInit;
           break;
+
+        default: break;
 
       }
 
@@ -623,7 +625,7 @@ Serial.println(F("CheckForWins "));
 
 						case 95:
 		
-							this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+							this->buttonMode = ButtonDisplay::EndOfGame;
 							this->viewState = ViewState::EndOfGame;
 							break;
 
@@ -661,7 +663,7 @@ Serial.println(F("CheckForWins "));
 
 						case 63:
 		
-							this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+							this->buttonMode = ButtonDisplay::EndOfGame;
 							this->viewState = ViewState::EndOfGame;
 							break;
 
@@ -712,7 +714,7 @@ Serial.println(F("CheckForWins "));
 
 						case 63:
 		
-							this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+							this->buttonMode = ButtonDisplay::EndOfGame;
 							this->viewState = ViewState::EndOfGame;
 							break;
 
@@ -768,7 +770,7 @@ Serial.println(F("CheckForWins "));
 
 					case 63:
 	
-						this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+						this->buttonMode = ButtonDisplay::EndOfGame;
 						this->viewState = ViewState::EndOfGame;
 						break;
 					
@@ -869,7 +871,7 @@ Serial.println(player.firstHand.bust);
       else {
        
         // showDealerCards();
-        this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+        this->buttonMode = ButtonDisplay::EndOfGame;
         this->viewState = ViewState::EndOfGame;
         // drawButtons(); 
 Serial.println(player.firstHand.bust);        
@@ -890,7 +892,7 @@ Serial.println(player.firstHand.bust);
     else {
        
       // showDealerCards();
-      this->buttonMode = SHOW_END_OF_GAME_BUTTONS;
+      this->buttonMode = ButtonDisplay::EndOfGame;
       this->viewState = ViewState::EndOfGame;
       // drawButtons(); 
         
