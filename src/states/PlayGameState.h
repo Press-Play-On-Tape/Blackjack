@@ -85,6 +85,10 @@ class PlayGameState : public BaseState {
     void highlightWin(uint8_t hand, int16_t win, int16_t purseInc);
     void highlightLoss(uint8_t hand, int16_t loss);
     void highlightPush(uint8_t hand);
+    
+    void highlightWin(uint8_t hand, int16_t win, int16_t purseInc, MessageNumber messageId);
+    void highlightLoss(uint8_t hand, int16_t loss, MessageNumber messageId);
+    void highlightPush(uint8_t hand, MessageNumber messageId);
 
     void render4DigitNumber(uint16_t val);
     void render3DigitNumber(uint16_t val);

@@ -26,7 +26,6 @@ void PlayGameState::activate(StateMachine & machine) {
 
 	this->viewState = ViewState::StartHand;
 
-
 }
 
 
@@ -141,7 +140,7 @@ Serial.println(F("InitDeal "));
 
 					// Offer insurance ?
 
-					if ((dealer.cards[1] % 13) == 0 && player.purse >= 1) {
+					if (dealer.cardIsAce(1) && player.purse >= 1) {
 
 						viewState = ViewState::OfferInsurance;
 						this->highlightedButton = 0;
@@ -236,12 +235,14 @@ Serial.println(F("PeekOnTen "));
                 gameStats.gamesPush++;
 
 								if (this->insurance == 0) {
-	                this->winStatus = WinStatus::Push;
-									this->winStatusAmount = this->currentBetInit;
+	                // this->winStatus = WinStatus::Push;
+									// this->winStatusAmount = this->currentBetInit;
+                  highlightPush(FIRST_HAND);
 								}
 								else {
-	                this->winStatus = WinStatus::Win;
-									this->winStatusAmount = (2 * this->insurance);
+	                // this->winStatus = WinStatus::Win;
+									// this->winStatusAmount = (2 * this->insurance);
+                  highlightWin(FIRST_HAND, (2 * this->insurance), (2 * this->insurance));
 								}
 
               }
@@ -811,32 +812,6 @@ Serial.println(F("EndOfGame "));
 
 }
 
-void PlayGameState::highlightWin(uint8_t hand, int16_t win, int16_t purseInc) {
-
-	Serial.print("highlightWin: ");
-	Serial.print(hand);
-	Serial.print(", ");
-	Serial.print(win);
-	Serial.print(", ");
-	Serial.println(purseInc);
-
-}
-
-void PlayGameState::highlightLoss(uint8_t hand, int16_t loss) {
-
-	Serial.print("highlightLoss: ");
-	Serial.print(hand);
-	Serial.print(", ");
-	Serial.println(loss);
-
-}
-
-void PlayGameState::highlightPush(uint8_t hand) {
-
-	Serial.print("highlightPush: ");
-	Serial.println(hand);
-
-}
 
 void PlayGameState::bust(StateMachine & machine, uint8_t playerNo, uint8_t hand) {
   

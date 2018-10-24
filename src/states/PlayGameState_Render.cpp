@@ -224,7 +224,8 @@ void PlayGameState::drawButtons(StateMachine & machine) {
         ardBitmap.drawCompressed(29, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(29, 52, Images::Button_Stand, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-      if (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && handInPlay == FIRST_HAND) || (this->player.secondHand.cardCount == 2 && handInPlay == SECOND_HAND))) {
+      if (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == FIRST_HAND) || 
+                                             (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == SECOND_HAND))) {
 			  ardBitmap.drawCompressed(57, 52, Images::Button_32_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
 			  ardBitmap.drawCompressed(57, 52, Images::Button_Double, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }

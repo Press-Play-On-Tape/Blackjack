@@ -177,3 +177,50 @@ uint8_t PlayGameState::calculateHand(uint8_t player, uint8_t hand, bool bestHand
   return result;
   
 }
+
+
+
+void PlayGameState::highlightWin(uint8_t hand, int16_t win, int16_t purseInc) {
+
+	highlightWin(hand, win , purseInc, MessageNumber::None);
+
+}
+
+void PlayGameState::highlightWin(uint8_t hand, int16_t win, int16_t purseInc, MessageNumber messageId) {
+
+	Serial.print("highlightWin: ");
+	Serial.print(hand);
+	Serial.print(", win: ");
+	Serial.print(win);
+	Serial.print(", purse: ");
+	Serial.println(purseInc);
+
+}
+
+void PlayGameState::highlightLoss(uint8_t hand, int16_t loss) {
+
+	highlightLoss(hand, loss, MessageNumber::None);
+
+}
+
+void PlayGameState::highlightLoss(uint8_t hand, int16_t loss, MessageNumber messageId) {
+
+	Serial.print("highlightLoss: ");
+	Serial.print(hand);
+	Serial.print(", loss: ");
+	Serial.println(loss);
+
+}
+
+void PlayGameState::highlightPush(uint8_t hand) {
+
+	highlightPush(hand, MessageNumber::None);
+
+}
+
+void PlayGameState::highlightPush(uint8_t hand, MessageNumber messageId) {
+
+	Serial.print("highlightPush: ");
+	Serial.println(hand);
+
+}

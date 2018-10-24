@@ -53,25 +53,9 @@ constexpr const static uint8_t NO_VALID_BUTTON = 255;
 #define SHOW_NO_BUTTONS 7
 #define SHOW_OK_ONLY_BUTTONS 8
 
-
-// constexpr const static uint8_t FLASH_DELAY = 16;
-// constexpr const static uint8_t FLASH_COUNTER = 70;
-// constexpr const static uint8_t WINNER_LEVEL = 5;
-// constexpr const static uint8_t DO_NOT_EDIT_SLOT = 255;
-// constexpr const static uint8_t MAX_NUMBER_OF_SCORES         = 5;
-
-// const uint8_t InitSettings[] PROGMEM = {
-// 	1, 5, 5, 6,
-// 	0, 5, 3, 6,
-//   0, 4, 2, 5,
-//   0, 3, 1, 3
-// };
-
-
-// const uint8_t DiceDelay[] PROGMEM = {
-//   1, 1, 1, 1, 1, 1, 1, 1,
-//   2, 2, 2, 2, 4, 4, 4, 8, 8,
-// };
+enum class MessageNumber : uint8_t {
+  None = 0,
+};
 
 enum class Buttons : uint8_t {
   EndOfGame_Continue = 0,
@@ -94,8 +78,6 @@ enum class Buttons : uint8_t {
   InsuranceBet_Clear,
 	PeekOnTen_Continue = 0,
 	PeekOnTen_Quit,
-  // OfferSplit_Yes = 0,
-  // OfferSplit_No,
 };
 
 enum class GameStateType : uint8_t {
@@ -133,6 +115,12 @@ struct Hand {
   bool cardIsAce(uint8_t index) {
 
     return (cards[index] % 13 == 0);
+  }
+
+  bool isBlackjack() {
+
+    return (cardCount == 2 && ((cards[0] % 13 == 0 && cards[1] % 13 >= 9) || (cards[1] % 13 == 0 && cards[0] % 13 >= 9)));
+
   }
 
 };
@@ -195,6 +183,17 @@ struct Dealer {
 
     }
 
+  }
+
+  bool cardIsAce(uint8_t index) {
+
+    return (cards[index] % 13 == 0);
+  }
+
+  bool isBlackjack() {
+
+    return (cardCount == 2 && ((cards[0] % 13 == 0 && cards[1] % 13 >= 9) || (cards[1] % 13 == 0 && cards[0] % 13 >= 9)));
+    
   }
 
 };
