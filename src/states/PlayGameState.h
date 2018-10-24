@@ -19,7 +19,8 @@ class PlayGameState : public BaseState {
     PlayHand,
     PlayDealerHand,
     CheckForWins,
-    EndOfGame
+    EndOfGame,
+    Bust
   };
 
   enum class InsuranceResult : uint8_t {
@@ -30,13 +31,6 @@ class PlayGameState : public BaseState {
     DealerHasBlackjackWithInsurance,
   };
 
-  enum class WinStatus : uint8_t {
-    None,
-    Win,
-    Lose,
-    Push,
-  };
-
   private:
 
     Player player;
@@ -44,9 +38,11 @@ class PlayGameState : public BaseState {
 
     InsuranceResult insuranceResult = InsuranceResult::Peeking;
     WinStatus winStatus = WinStatus::None;
-    bool flashDetails;
-    int16_t winStatusAmount = 0;
+    HighlightEndOfGame highlightEndOfGame;
 
+    bool flashDetails;
+
+    int16_t winStatusAmount = 0;
     uint8_t highlightedButton = 0;
     uint8_t counter = 0;
     uint8_t cards[52] = {0};
@@ -77,7 +73,7 @@ class PlayGameState : public BaseState {
     void drawCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool rotated, bool fullSizeCard);
     void drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t yPos, uint8_t card, bool fullSizeCard, bool renderBackground);
     void drawButtons(StateMachine & machine);
-    void drawStats(StateMachine & machine, bool flashDetails, WinStatus winStatus, int16_t winAmount);
+    void drawStats(StateMachine & machine, HighlightEndOfGame highlightEndOfGame);
     void bust(StateMachine & machine, Turn playerNo, Hand hand);
     void playNextHand();
     

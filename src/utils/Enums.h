@@ -51,6 +51,9 @@ enum class Hand : uint8_t {
 
 enum class MessageNumber : uint8_t {
   None = 0,
+  BustFirstHand,
+  BustOnlyHand,
+  BustSecondHand
 };
 
 enum class Buttons : uint8_t {
@@ -81,6 +84,13 @@ enum class GameStateType : uint8_t {
   PlayGame,
 	SplashScreen,
 	TitleScreen,
+};
+
+enum class WinStatus : uint8_t {
+  None,
+  Win,
+  Lose,
+  Push,
 };
 
 struct PlayerHand {
@@ -209,5 +219,28 @@ struct GameStats {
     gamesPush = 0;
 
   }    
+
+};
+
+struct HighlightEndOfGame {
+
+  WinStatus status;
+  Hand hand;
+  int16_t win;
+  int16_t loss;
+  int16_t purseInc; 
+  MessageNumber messageId;
+  uint8_t counter;
+
+  void reset() {
+    
+    status = WinStatus::None;
+    win = 0;
+    loss = 0;
+    purseInc = 0;
+    messageId = MessageNumber::None;
+    counter = FLASH_DELAY * 4;
+
+  }
 
 };

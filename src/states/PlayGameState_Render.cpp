@@ -182,7 +182,7 @@ void PlayGameState::drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t
 
 		if (!renderBackground) {
 			ardBitmap.drawCompressed(xPos - 14, yPos - 1, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
-			ardBitmap.drawCompressed(xPos - 8, yPos + 6, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 10, yPos + 7, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
 		}
 		else {
 			ardBitmap.drawCompressed(xPos - 18, yPos - 1, Images::Card_Background_Full, BLACK, ALIGN_NONE, MIRROR_NONE);
@@ -194,11 +194,11 @@ void PlayGameState::drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t
 		ardBitmap.drawCompressed(xPos - CARD_LARGE_SPACING, yPos - 5, Images::Card_Outline_Half, WHITE, ALIGN_NONE, MIRROR_HOR_VER);
 
 		if (!renderBackground) {
-			ardBitmap.drawCompressed(xPos - 8, yPos - 1, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
-			ardBitmap.drawCompressed(xPos - 8, yPos + 6, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 7, yPos - 1, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 7, yPos + 7, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
 		}
 		else {
-			ardBitmap.drawCompressed(xPos - 8, yPos - 1, Images::Card_Background_Half, BLACK, ALIGN_NONE, MIRROR_NONE);
+			ardBitmap.drawCompressed(xPos - 7, yPos - 1, Images::Card_Background_Half, BLACK, ALIGN_NONE, MIRROR_NONE);
 		}
 
 	}
@@ -488,4 +488,130 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
   }
   
+}
+
+void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlightEndOfGame) {
+
+	auto & arduboy = machine.getContext().arduboy;
+	bool flash = arduboy.getFrameCountHalf(FLASH_DELAY);
+
+	font3x5.setCursor(76, 0);
+	font3x5.setHeight(7);
+
+  font3x5.setTextColor(WHITE);
+	font3x5.print(F("  ~Purse:~"));
+
+  if (flash && highlightEndOfGame.status != WinStatus::None) {
+    arduboy.fillRect(111, 0, 17, 7);
+    font3x5.setTextColor(BLACK);
+  }
+  render4DigitNumber(player.purse);
+  font3x5.setTextColor(WHITE);
+
+	font3x5.print(F("\nInit~Bet:~ "));
+	render3DigitNumber(this->currentBetInit);
+
+	font3x5.print(F("\n Tot~Bet:~ "));
+	render3DigitNumber(this->currentBetTotal);
+
+  if (highlightEndOfGame.status != WinStatus::None) {
+
+    switch (highlightEndOfGame.status) {
+
+      case WinStatus::Win:
+        font3x5.print(F("\n    ~Win:~ "));
+        break;
+
+      case WinStatus::Lose:
+        font3x5.print(F("\n   ~Lose:~ "));
+        break;
+
+      case WinStatus::Push:
+        font3x5.print(F("\n   ~Push:~ "));
+        break;
+
+			default: break;
+
+    }
+
+    if (flash) {
+      arduboy.fillRect(115, 21, 13, 7, WHITE);
+      font3x5.setTextColor(BLACK);
+    }
+
+    switch (highlightEndOfGame.status) {
+
+      case WinStatus::Win:
+        render3DigitNumber(highlightEndOfGame.win);
+        break;
+
+      case WinStatus::Lose:
+        render3DigitNumber(absT(highlightEndOfGame.loss));
+        break;
+
+      case WinStatus::Push:
+        font3x5.print(F("000"));
+        break;
+
+			default: break;
+
+    }
+
+    font3x5.setTextColor(WHITE);
+    font3x5.setCursor(0, 22);
+
+    switch (this->highlightEndOfGame.messageId) {
+      
+      case MessageNumber::None:
+        break;
+      
+      case MessageNumber::BustFirstHand:
+        font3x5.print(F("First hand is bust!"));
+        break;
+      
+      case MessageNumber::BustOnlyHand:
+        font3x5.print(F("Bust!"));
+        break;
+      
+      case MessageNumber::BustSecondHand:
+        font3x5.print(F("Second hand is bust!"));
+        break;
+
+    }
+
+
+    // If half way through flashing, update the stats ..
+
+    this->highlightEndOfGame.counter--;
+
+    if (this->highlightEndOfGame.counter == 2 * FLASH_DELAY) {
+
+      switch (highlightEndOfGame.status) {
+
+        case WinStatus::Win:
+          currentWin = currentWin + highlightEndOfGame.win;
+          player.purse = player.purse + highlightEndOfGame.purseInc;
+          break;
+
+        case WinStatus::Lose:
+          currentWin = currentWin + highlightEndOfGame.loss;
+          break;
+
+        case WinStatus::Push:
+          player.purse = player.purse + highlightEndOfGame.purseInc;
+          break;
+
+        default: break;
+
+      }
+
+    }
+    else if (this->highlightEndOfGame.counter == 0) {
+
+      this->highlightEndOfGame.reset();
+
+    }
+
+  }
+
 }

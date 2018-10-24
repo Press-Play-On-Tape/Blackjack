@@ -180,27 +180,48 @@ uint8_t PlayGameState::calculateHand(Turn player, Hand hand, bool bestHand) {
 
 void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId) {
 
-	Serial.print("highlightWin: ");
+  highlightEndOfGame.reset();
+
+  highlightEndOfGame.status = WinStatus::Win;
+  highlightEndOfGame.hand = hand;
+  highlightEndOfGame.win = win;
+  highlightEndOfGame.purseInc = purseInc;
+  highlightEndOfGame.messageId = messageId;
+
+	Serial.print(F("highlightWin: "));
 	Serial.print((uint8_t)hand);
-	Serial.print(", win: ");
+	Serial.print(F(", win: "));
 	Serial.print(win);
-	Serial.print(", purse: ");
+	Serial.print(F(", purse: "));
 	Serial.println(purseInc);
 
 }
 
 void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber messageId) {
 
-	Serial.print("highlightLoss: ");
+  highlightEndOfGame.reset();
+
+  highlightEndOfGame.status = WinStatus::Lose;
+  highlightEndOfGame.hand = hand;
+  highlightEndOfGame.loss = loss;
+  highlightEndOfGame.messageId = messageId;
+
+	Serial.print(F("highlightLoss: "));
 	Serial.print((uint8_t)hand);
-	Serial.print(", loss: ");
+	Serial.print(F(", loss: "));
 	Serial.println(loss);
 
 }
 
 void PlayGameState::highlightPush(Hand hand, MessageNumber messageId) {
 
-	Serial.print("highlightPush: ");
+  highlightEndOfGame.reset();
+
+  highlightEndOfGame.status = WinStatus::Push;
+  highlightEndOfGame.hand = hand;
+  highlightEndOfGame.messageId = messageId;
+
+	Serial.print(F("highlightPush: "));
 	Serial.println((uint8_t)hand);
 
 }
