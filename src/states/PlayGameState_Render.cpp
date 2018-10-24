@@ -181,11 +181,11 @@ void PlayGameState::drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t
 		ardBitmap.drawCompressed(xPos - CARD_LARGE_SPACING_FULL, yPos - 5, Images::Card_Outline_Full, WHITE, ALIGN_NONE, MIRROR_HOR_VER);
 
 		if (!renderBackground) {
-			ardBitmap.drawCompressed(xPos - 14, yPos + 0, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
-			ardBitmap.drawCompressed(xPos - 8, yPos + 7, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 14, yPos - 1, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 8, yPos + 6, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
 		}
 		else {
-			ardBitmap.drawCompressed(xPos - 18, yPos, Images::Card_Background_Full, BLACK, ALIGN_NONE, MIRROR_NONE);
+			ardBitmap.drawCompressed(xPos - 18, yPos - 1, Images::Card_Background_Full, BLACK, ALIGN_NONE, MIRROR_NONE);
 		}
 
 	}
@@ -194,11 +194,11 @@ void PlayGameState::drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t
 		ardBitmap.drawCompressed(xPos - CARD_LARGE_SPACING, yPos - 5, Images::Card_Outline_Half, WHITE, ALIGN_NONE, MIRROR_HOR_VER);
 
 		if (!renderBackground) {
-			ardBitmap.drawCompressed(xPos - 8, yPos + 0, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
-			ardBitmap.drawCompressed(xPos - 8, yPos + 7, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 8, yPos - 1, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 8, yPos + 6, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
 		}
 		else {
-			ardBitmap.drawCompressed(xPos - 8, yPos, Images::Card_Background_Half, BLACK, ALIGN_NONE, MIRROR_NONE);
+			ardBitmap.drawCompressed(xPos - 8, yPos - 1, Images::Card_Background_Half, BLACK, ALIGN_NONE, MIRROR_NONE);
 		}
 
 	}
@@ -224,7 +224,8 @@ void PlayGameState::drawPlayerHands_Lines(StateMachine & machine) {
     if (!player.hasSecondHand()) {
 
       leftHand1 = CARD_DEALER_CENTER - (width1 / 2);
-      arduboy.drawFastHLine(leftHand1 + 1, 51, width1 - 2, BLACK);
+      arduboy.drawFastHLine(0, 51, leftHand1 + 1, WHITE);
+      arduboy.drawFastHLine(leftHand1 + width1 - 1, 51, WIDTH, WHITE);
 
     }
     else {
@@ -232,10 +233,16 @@ void PlayGameState::drawPlayerHands_Lines(StateMachine & machine) {
       leftHand1 = CARD_PLAYER_CENTER - (widthTot / 2);
       leftHand2 = leftHand1 + width1 + CARD_HAND_SPACING;
 
-      arduboy.drawFastHLine(leftHand1 + 1, 51, width1 - 2, BLACK);
-      arduboy.drawFastHLine(leftHand2 + 1, 51, width2 - 2, BLACK);
+      arduboy.drawFastHLine(0, 51, leftHand1 + 1, WHITE);
+      arduboy.drawFastHLine(leftHand1 + width1 - 1, 51, leftHand2 - leftHand1 - width1 + 1, WHITE);
+      arduboy.drawFastHLine(leftHand2 + width2, 51, WIDTH, WHITE);
 
     }
+
+  }
+  else {
+
+    arduboy.drawFastHLine(0, 51, WIDTH, WHITE);
 
   }
 
@@ -443,21 +450,21 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 		case ButtonDisplay::EndOfGame:
 
-			ardBitmap.drawCompressed(64, 52, Images::Button_40_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
-			ardBitmap.drawCompressed(64, 52, Images::Button_Continue, WHITE, ALIGN_NONE, MIRROR_NONE); 
-			ardBitmap.drawCompressed(104, 52, Images::Button_24_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
-			ardBitmap.drawCompressed(104, 52, Images::Button_Quit, WHITE, ALIGN_NONE, MIRROR_NONE); 
+			ardBitmap.drawCompressed(63, 52, Images::Button_40_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
+			ardBitmap.drawCompressed(63, 52, Images::Button_Continue, WHITE, ALIGN_NONE, MIRROR_NONE); 
+			ardBitmap.drawCompressed(103, 52, Images::Button_24_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
+			ardBitmap.drawCompressed(103, 52, Images::Button_Quit, WHITE, ALIGN_NONE, MIRROR_NONE); 
 
 			if (flash) {
 
 				switch (this->highlightedButton) {
 
 					case 0:
-						ardBitmap.drawCompressed(64, 52, Images::Button_40_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+						ardBitmap.drawCompressed(63, 52, Images::Button_40_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
 						break;
 
 					case 1:
-						ardBitmap.drawCompressed(104, 52, Images::Button_24_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+						ardBitmap.drawCompressed(103, 52, Images::Button_24_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
 						break;
 
 				}

@@ -1020,7 +1020,7 @@ void PlayGameState::render(StateMachine & machine) {
       default: break;
 	}
 
-  arduboy.fillRect(0, 51, WIDTH, HEIGHT, BLACK);
+  arduboy.fillRect(0, 52, WIDTH, HEIGHT, BLACK);
   ardBitmap.drawCompressed(0, 51, Images::Background, WHITE, ALIGN_NONE, MIRROR_NONE); 
   drawPlayerHands_Lines(machine);
 	drawButtons(machine);
