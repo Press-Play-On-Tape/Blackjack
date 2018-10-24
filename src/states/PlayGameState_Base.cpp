@@ -126,7 +126,7 @@ Serial.println(F("InitDeal "));
 
 					case 1:
 					case 3:
-						getCard(Turn::Human, Hand::First);
+						getCard(Turn::Player, Hand::First);
 						this->player.firstHand.cards[0] = 9;
 						this->player.firstHand.cards[1] = 9;
 						break;
@@ -226,7 +226,7 @@ Serial.println(F("PeekOnTen "));
 
             if (calculateHand(Turn::Dealer, true) == 21) {
 
-              if (calculateHand(Turn::Human, Hand::First, true) == 21) {
+              if (calculateHand(Turn::Player, Hand::First, true) == 21) {
               
                 this->insuranceResult = InsuranceResult::BothHaveBlackjack;			
                 player.purse = player.purse + this->currentBetTotal + (2 * this->insurance);
@@ -374,22 +374,22 @@ Serial.println((uint8_t)handInPlay);
 
             if (handInPlay == Hand::First) {
                 
-              getCard(Turn::Human, this->handInPlay);
+              getCard(Turn::Player, this->handInPlay);
 
-              if (calculateHand(Turn::Human, Hand::First, false) > 21) {
+              if (calculateHand(Turn::Player, Hand::First, false) > 21) {
                 
-                bust(machine, Turn::Human, Hand::First);
+                bust(machine, Turn::Player, Hand::First);
               
               }
               
             }
             else {
 
-              getCard(Turn::Human, this->handInPlay);
+              getCard(Turn::Player, this->handInPlay);
               
-              if (calculateHand(Turn::Human, Hand::Second, false) > 21) {
+              if (calculateHand(Turn::Player, Hand::Second, false) > 21) {
                 
-                 bust(machine, Turn::Human, Hand::Second);
+                 bust(machine, Turn::Player, Hand::Second);
               
               }
             
@@ -445,11 +445,11 @@ Serial.println((uint8_t)handInPlay);
               break;
 
             case 1:
-              getCard(Turn::Human, Hand::First);
+              getCard(Turn::Player, Hand::First);
               break;
 
             case 2:
-              getCard(Turn::Human, Hand::Second);
+              getCard(Turn::Player, Hand::Second);
               break;
 
           }
@@ -498,15 +498,15 @@ Serial.println(F("DoubleUp "));
       }
 
       player.purse = player.purse - currentBetInit;
-Serial.print(F("getCard(Turn::Human, "));
+Serial.print(F("getCard(Turn::Player, "));
 Serial.print((uint8_t)handInPlay);      
 Serial.println(F(")"));
-      getCard(Turn::Human, handInPlay);
+      getCard(Turn::Player, handInPlay);
       currentBetTotal = currentBetTotal + currentBetInit;
       
-      if (calculateHand(Turn::Human, handInPlay, false) > 21) {
+      if (calculateHand(Turn::Player, handInPlay, false) > 21) {
         
-        bust(machine, Turn::Human, handInPlay);
+        bust(machine, Turn::Player, handInPlay);
       
       }
       else {
@@ -558,9 +558,9 @@ Serial.println(F("CheckForWins "));
 
 						case 31:
 							
-							if (calculateHand(Turn::Human, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
+							if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
-								if (isBlackjack(Turn::Human, Hand::First)) {
+								if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println("highlightWin A");	
 									highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
@@ -586,9 +586,9 @@ Serial.println(F("CheckForWins "));
 
 						case 63:
 						
-							if (calculateHand(Turn::Human, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
+							if (calculateHand(Turn::Player, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
-								if (isBlackjack(Turn::Human, Hand::Second)) {
+								if (isBlackjack(Turn::Player, Hand::Second)) {
 
 									Serial.println("highlightWin C");	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
@@ -604,7 +604,7 @@ Serial.println(F("CheckForWins "));
 							}
 							else {
 								
-								if (isBlackjack(Turn::Human, Hand::Second)) {
+								if (isBlackjack(Turn::Player, Hand::Second)) {
 
 									Serial.println("highlightWin E");	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
@@ -642,9 +642,9 @@ Serial.println(F("CheckForWins "));
 
 						case 31:
 
-							if (calculateHand(Turn::Human, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
+							if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
-								if (isBlackjack(Turn::Human, Hand::First)) {
+								if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println("highlightWin F");	
 									highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
@@ -679,9 +679,9 @@ Serial.println(F("CheckForWins "));
 
 						case 31:					
 
-							if (calculateHand(Turn::Human, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
+							if (calculateHand(Turn::Player, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 				
-								if (isBlackjack(Turn::Human, Hand::Second)) {
+								if (isBlackjack(Turn::Player, Hand::Second)) {
 									Serial.println("highlightWin H");	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
 
@@ -695,7 +695,7 @@ Serial.println(F("CheckForWins "));
 							}
 							else {
 								
-								if (isBlackjack(Turn::Human, Hand::Second)) {
+								if (isBlackjack(Turn::Player, Hand::Second)) {
 									Serial.println("highlightWin J");	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
 
@@ -735,9 +735,9 @@ Serial.println(F("CheckForWins "));
 
 					case 31:	
 												
-						if (calculateHand(Turn::Human, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
+						if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 				
-							if (isBlackjack(Turn::Human, Hand::First)) {
+							if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println("highlightWin K");	
 								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
@@ -751,7 +751,7 @@ Serial.println(F("CheckForWins "));
 						}
 						else {
 								
-							if (isBlackjack(Turn::Human, Hand::First)) {
+							if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println("highlightWin M");	
 								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
@@ -817,7 +817,7 @@ Serial.println(F("EndOfGame "));
 
 void PlayGameState::bust(StateMachine & machine, Turn playerNo, Hand hand) {
   
-  if (playerNo == Turn::Human && hand == Hand::First) {
+  if (playerNo == Turn::Player && hand == Hand::First) {
 
     player.firstHand.bust = true;
     this->winStatus = WinStatus::Lose;
@@ -829,7 +829,7 @@ void PlayGameState::bust(StateMachine & machine, Turn playerNo, Hand hand) {
   
   }
   
-  if (playerNo == Turn::Human && hand == Hand::Second) {
+  if (playerNo == Turn::Player && hand == Hand::Second) {
  
     player.secondHand.bust = true;
     this->winStatus = WinStatus::Lose;

@@ -25,14 +25,14 @@ uint8_t PlayGameState::getCard(Turn player, Hand hand) {
     
   }
   
-  if (player == Turn::Human && hand == Hand::First) {
+  if (player == Turn::Player && hand == Hand::First) {
    
     this->player.firstHand.cards[this->player.firstHand.cardCount] = card;
     this->player.firstHand.cardCount++;
     
   }
   
-  if (player == Turn::Human && hand == Hand::Second) {
+  if (player == Turn::Player && hand == Hand::Second) {
    
     this->player.secondHand.cards[this->player.secondHand.cardCount] = card;
     this->player.secondHand.cardCount++;
@@ -53,14 +53,14 @@ uint8_t PlayGameState::getCard(Turn player, Hand hand, uint8_t cardNumber) {
     
   }
   
-  if (player == Turn::Human && hand == Hand::First) {
+  if (player == Turn::Player && hand == Hand::First) {
    
     this->player.firstHand.cards[this->player.firstHand.cardCount] = cardNumber;
     this->player.firstHand.cardCount++;
     
   }
   
-  if (player == Turn::Human && hand == Hand::Second) {
+  if (player == Turn::Player && hand == Hand::Second) {
    
     this->player.secondHand.cards[this->player.secondHand.cardCount] = cardNumber;
     this->player.secondHand.cardCount++;
@@ -79,13 +79,13 @@ bool PlayGameState::isBlackjack(Turn player, Hand hand) {
     
   }
   
-  if (player == Turn::Human && hand == Hand::First && this->player.firstHand.isBlackjack()) {
+  if (player == Turn::Player && hand == Hand::First && this->player.firstHand.isBlackjack()) {
    
     return true;
     
   }
   
-  if (player == Turn::Human && hand == Hand::Second && this->player.secondHand.isBlackjack()) {
+  if (player == Turn::Player && hand == Hand::Second && this->player.secondHand.isBlackjack()) {
    
     return true;
     
@@ -125,7 +125,7 @@ uint8_t PlayGameState::calculateHand(Turn player, Hand hand, bool bestHand) {
     
   }
   
-  if (player == Turn::Human && hand == Hand::First) {
+  if (player == Turn::Player && hand == Hand::First) {
    
     for (uint8_t x = 0; x < this->player.firstHand.cardCount; x++) {
        
@@ -144,7 +144,7 @@ uint8_t PlayGameState::calculateHand(Turn player, Hand hand, bool bestHand) {
     
   }
   
-  if (player == Turn::Human && hand == Hand::Second) {
+  if (player == Turn::Player && hand == Hand::Second) {
    
     for (uint8_t x = 0; x < this->player.secondHand.cardCount; x++) {
        

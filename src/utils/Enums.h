@@ -4,7 +4,6 @@
 #include "Utils.h"
 
 #define _DEBUG
-#define USE_LEDS
 #define SOUND_ON_OFF
 #define SOUND
 
@@ -14,35 +13,18 @@ extern uint8_t hpISR;
 
 constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
+constexpr const static uint8_t STARTING_PURSE = 100;
 
-
-#define STARTING_PURSE 100
-
-// #define Turn::Human 0
-// #define Turn::Dealer 1
-// #define Hand::First 0
-// #define Hand::Second 1
-// #define Hand::Dealer 2
-
-#define CARD_LARGE_SPACING 12
-#define CARD_LARGE_SPACING_DEALER 10
-#define CARD_LARGE_SPACING_FULL 22
-#define CARD_LARGE_SPACING_ORIENTATED 25
-#define CARD_HAND_SPACING 12
-
-#define CARD_DEALER_CENTER 40
-#define CARD_PLAYER_CENTER 64
-//#define CARD_LARGE_WIDTH 98
-//#define CARD_LARGE_HEIGHT 135
-//#define CARD_LARGE_INSET 3
-
-#define CARD_LARGE_TOP_PLAYER 32
-#define CARD_SMALL_TOP_PLAYER 37
-//#define CARD_LARGE_LEFT_Hand::First 10
-//#define CARD_LARGE_ROTATED_Y_OFFSET 20
-//#define CARD_LARGE_LEFT_Hand::Second 65
-#define CARD_LARGE_TOP_DEALER 0
-//#define CARD_LARGE_RIGHT_Turn::Dealer 50
+constexpr const static uint8_t CARD_LARGE_SPACING = 12;
+constexpr const static uint8_t CARD_LARGE_SPACING_DEALER = 10;
+constexpr const static uint8_t CARD_LARGE_SPACING_FULL = 22;
+constexpr const static uint8_t CARD_LARGE_SPACING_ORIENTATED = 25;
+constexpr const static uint8_t CARD_HAND_SPACING = 12;
+constexpr const static uint8_t CARD_DEALER_CENTER = 40;
+constexpr const static uint8_t CARD_PLAYER_CENTER = 64;
+constexpr const static uint8_t CARD_LARGE_TOP_PLAYER = 32;
+constexpr const static uint8_t CARD_SMALL_TOP_PLAYER = 37;
+constexpr const static uint8_t CARD_LARGE_TOP_DEALER = 0;
 
 enum class ButtonDisplay: uint8_t {
   BetButtons,
@@ -57,7 +39,7 @@ enum class ButtonDisplay: uint8_t {
 };
 
 enum class Turn : uint8_t {
-  Human,
+  Player,
   Dealer
 };
 
