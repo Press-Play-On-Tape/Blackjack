@@ -12,7 +12,7 @@
 extern uint8_t hpISR;
 #endif
 
-constexpr const static uint8_t FLASH_DELAY = 48;
+constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
 
 

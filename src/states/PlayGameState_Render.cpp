@@ -181,11 +181,11 @@ void PlayGameState::drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t
 		ardBitmap.drawCompressed(xPos - CARD_LARGE_SPACING_FULL, yPos - 5, Images::Card_Outline_Full, WHITE, ALIGN_NONE, MIRROR_HOR_VER);
 
 		if (!renderBackground) {
-			ardBitmap.drawCompressed(xPos - 14, yPos + 1, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
-			ardBitmap.drawCompressed(xPos - 8, yPos + 8, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 14, yPos + 0, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 8, yPos + 7, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
 		}
 		else {
-			ardBitmap.drawCompressed(xPos - 16, yPos, Images::Card_Background_Full, BLACK, ALIGN_NONE, MIRROR_NONE);
+			ardBitmap.drawCompressed(xPos - 18, yPos, Images::Card_Background_Full, BLACK, ALIGN_NONE, MIRROR_NONE);
 		}
 
 	}
@@ -194,11 +194,11 @@ void PlayGameState::drawDealerCard(StateMachine & machine, uint8_t xPos, uint8_t
 		ardBitmap.drawCompressed(xPos - CARD_LARGE_SPACING, yPos - 5, Images::Card_Outline_Half, WHITE, ALIGN_NONE, MIRROR_HOR_VER);
 
 		if (!renderBackground) {
-			ardBitmap.drawCompressed(xPos - 8, yPos + 1, Images::Suits[card / 13], WHITE, ALIGN_NONE, MIRROR_HOR_VER);
-			ardBitmap.drawCompressed(xPos - 8, yPos + 8, Images::Pips[cardNumber], WHITE, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 8, yPos + 0, Images::Suits[card / 13], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
+			ardBitmap.drawCompressed(xPos - 8, yPos + 7, Images::Pips[cardNumber], BLACK, ALIGN_NONE, MIRROR_HOR_VER);
 		}
 		else {
-			ardBitmap.drawCompressed(xPos - 9, yPos, Images::Card_Background_Half, WHITE, ALIGN_NONE, MIRROR_NONE);
+			ardBitmap.drawCompressed(xPos - 8, yPos, Images::Card_Background_Half, BLACK, ALIGN_NONE, MIRROR_NONE);
 		}
 
 	}
