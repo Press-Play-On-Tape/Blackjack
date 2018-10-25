@@ -6,6 +6,24 @@
 #include "../images/Images.h"
 #include "BaseState.h"
 
+char const messageText_01[] PROGMEM = "First~hand~is~bust!";
+char const messageText_02[] PROGMEM = "Bust!";
+char const messageText_03[] PROGMEM = "Second~hand~is~bust!";
+char const messageText_04[] PROGMEM = "Two~blackjacks!";
+char const messageText_05[] PROGMEM = "Dealer~has~Blackjack!";
+char const messageText_06[] PROGMEM = "Dealer~has~nothing!";
+char const messageText_07[] PROGMEM = "Insured Blackjack!";
+
+char const * const messageTexts[] = {
+	messageText_01,
+	messageText_02,
+	messageText_03,
+	messageText_04,
+	messageText_05,
+	messageText_06,
+  messageText_07
+};
+
 class PlayGameState : public BaseState {
   
   enum class ViewState : uint8_t {

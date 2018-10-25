@@ -57,7 +57,12 @@ enum class MessageNumber : uint8_t {
   None = 0,
   BustFirstHand,
   BustOnlyHand,
-  BustSecondHand
+  BustSecondHand,
+  BothHaveBlackjack,
+  DealerHasBlackjack,
+	DealerNoBlackjack,
+  DealerHasBlackjackWithInsurance
+
 };
 
 enum class Buttons : uint8_t {

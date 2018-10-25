@@ -205,7 +205,7 @@ Serial.println(F("PeekOnTen "));
 				switch (this->counter) {
 
 					case 0:
-						this->insuranceResult = InsuranceResult::Peeking;	
+//						this->insuranceResult = InsuranceResult::Peeking;	
 						this->highlightedButton = 0;
 						break;
 
@@ -218,7 +218,7 @@ Serial.println(F("PeekOnTen "));
 
               if (calculateHand(Turn::Player, Hand::First, true) == 21) {
               
-                this->insuranceResult = InsuranceResult::BothHaveBlackjack;			
+//                this->insuranceResult = InsuranceResult::BothHaveBlackjack;			
                 player.purse = player.purse + this->currentBetTotal + (2 * this->insurance);
                 this->buttonMode = ButtonDisplay::EndOfGame;
 								this->flashDetails = true;
@@ -227,41 +227,41 @@ Serial.println(F("PeekOnTen "));
 								if (this->insurance == 0) {
 	                // this->winStatus = WinStatus::Push;
 									// this->winStatusAmount = this->currentBetInit;
-                  highlightPush(Hand::First);
+                  highlightPush(Hand::First, MessageNumber::BothHaveBlackjack);
 								}
 								else {
 	                // this->winStatus = WinStatus::Win;
 									// this->winStatusAmount = (2 * this->insurance);
-                  highlightWin(Hand::First, (2 * this->insurance), (2 * this->insurance));
+                  highlightWin(Hand::First, (2 * this->insurance), (2 * this->insurance),  MessageNumber::BothHaveBlackjack);
 								}
 
               }
               else {
 
 								this->buttonMode = ButtonDisplay::EndOfGame;
-								this->flashDetails = true;
-								this->winStatusAmount = this->currentBetInit - (this->insurance * 2);
+								// this->flashDetails = true;
+								// this->winStatusAmount = this->currentBetInit - (this->insurance * 2);
                 gameStats.gamesLost++;
 
 								if (this->insurance == 0) {
 									Serial.println(F("highlightLoss A"));	
-									highlightLoss(Hand::First, -currentBetInit);
-									this->insuranceResult = InsuranceResult::DealerHasBlackjack;
+									highlightLoss(Hand::First, -currentBetInit, MessageNumber::DealerHasBlackjack);
+//									this->insuranceResult = InsuranceResult::DealerHasBlackjack;
 									// this->winStatus = WinStatus::Lose;
 
 								}
 								else {
 
-									this->insuranceResult = InsuranceResult::DealerHasBlackjackWithInsurance;
-	                player.purse = player.purse + this->winStatusAmount;
+									// this->insuranceResult = InsuranceResult::DealerHasBlackjackWithInsurance;
+	                // player.purse = player.purse + this->winStatusAmount;
 
 									if (this->currentBetInit - (this->insurance * 2) == 0) {
 //										this->winStatus = WinStatus::Push;
-										highlightPush(Hand::First);
+										highlightPush(Hand::First, MessageNumber::DealerHasBlackjackWithInsurance);
 									}
 									else {
 									Serial.println(F("highlightLoss B"));	
-										highlightLoss(Hand::First, -(this->currentBetInit - (this->insurance * 2)));
+										highlightLoss(Hand::First, -(this->currentBetInit - (this->insurance * 2)), MessageNumber::DealerHasBlackjack);
 //										this->winStatus = WinStatus::Lose;
 									}
 
@@ -273,12 +273,12 @@ Serial.println(F("PeekOnTen "));
             else {
 
 							if (this->insurance != 0) {
-								this->insuranceResult = InsuranceResult::DealerNoBlackjack;
+								// this->insuranceResult = InsuranceResult::DealerNoBlackjack;
 								// this->winStatus = WinStatus::Lose;
 								// this->flashDetails = true;
 								// this->winStatusAmount = this->insurance;
 								Serial.println(F("highlightLoss C"));	
-								highlightLoss(Hand::First, -this->insurance);
+								highlightLoss(Hand::First, -this->insurance, MessageNumber::DealerNoBlackjack);
 								this->currentBetTotal = this->currentBetInit;
 							}
 
@@ -858,8 +858,6 @@ Serial.println(this->counter);
         
         }
 
-
-        
       }
 
       break;

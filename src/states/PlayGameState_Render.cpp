@@ -565,16 +565,8 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
       case MessageNumber::None:
         break;
       
-      case MessageNumber::BustFirstHand:
-        font3x5.print(F("First hand is bust!"));
-        break;
-      
-      case MessageNumber::BustOnlyHand:
-        font3x5.print(F("Bust!"));
-        break;
-      
-      case MessageNumber::BustSecondHand:
-        font3x5.print(F("Second hand is bust!"));
+      default:
+        font3x5.print(FlashString(messageTexts[static_cast<uint8_t>(this->highlightEndOfGame.messageId) - 1]));
         break;
 
     }
