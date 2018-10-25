@@ -116,15 +116,57 @@ Serial.println(F("InitDeal "));
 					case 0:
 					case 2:
 						getCard(Turn::Dealer, Hand::First);
+
+            #ifdef DEBUG_DEALER_BLACKJACK_10_A
+						dealer.cards[0] = 9;
+						dealer.cards[1] = 0;
+            #endif
+
+            #ifdef DEBUG_DEALER_BLACKJACK_A_10
+						dealer.cards[0] = 0;
+						dealer.cards[1] = 9;
+            #endif
+
+            #ifdef DEBUG_DEALER_PAIR_10
+						dealer.cards[0] = 9;
+						dealer.cards[1] = 9;
+            #endif
+
+            #ifdef DEBUG_DEALER_LOW_HAND
 						dealer.cards[0] = 3;
-//						dealer.cards[1] = 0;
+						dealer.cards[1] = 4;
+            #endif
+
 						break;
 
 					case 1:
 					case 3:
 						getCard(Turn::Player, Hand::First);
-						this->player.firstHand.cards[0] = 9;
-						this->player.firstHand.cards[1] = 9;
+
+            #ifdef DEBUG_PLAYER_INIT_BLACKJACK_10_A
+						player.firstHand.cards[0] = 9;
+						player.firstHand.cards[1] = 0;
+            #endif
+
+            #ifdef DEBUG_PLAYER_INIT_BLACKJACK_A_10
+						player.firstHand.cards[0] = 0;
+						player.firstHand.cards[1] = 9;
+            #endif
+
+            #ifdef DEBUG_PLAYER_INIT_PAIR_10
+						player.firstHand.cards[0] = 9;
+						player.firstHand.cards[1] = 9;
+            #endif
+
+            #ifdef DEBUG_PLAYER_INIT_PAIR_A
+						player.firstHand.cards[0] = 0;
+						player.firstHand.cards[1] = 0;
+            #endif
+
+            #ifdef DEBUG_PLAYER_INIT_LOW_HAND
+						player.firstHand.cards[0] = 3;
+						player.firstHand.cards[1] = 4;
+            #endif
 						break;
 
 				}
@@ -353,6 +395,14 @@ Serial.println((uint8_t)handInPlay);
                 
               getCard(Turn::Player, this->handInPlay);
 
+              #ifdef DEBUG_PLAYER_PLAY_FIRST_A
+               if (this->player.firstHand.cardCount == 2) player.firstHand.cards[2] = 0;
+              #endif
+
+              #ifdef DEBUG_PLAYER_PLAY_FIRST_10
+               if (this->player.firstHand.cardCount == 2) player.firstHand.cards[2] = 11;
+              #endif
+
               if (calculateHand(Turn::Player, Hand::First, false) > 21) {
                 
                 changeView(machine, ViewState::Bust);
@@ -363,6 +413,14 @@ Serial.println((uint8_t)handInPlay);
             else {
 
               getCard(Turn::Player, this->handInPlay);
+
+              #ifdef DEBUG_PLAYER_PLAY_SECOND_A
+               if (this->player.secondHand.cardCount == 2) player.secondHand.cards[2] = 0;
+              #endif
+
+              #ifdef DEBUG_PLAYER_PLAY_SECOND_10
+               if (this->player.secondHand.cardCount == 2) player.secondHand.cards[2] = 11;
+              #endif
               
               if (calculateHand(Turn::Player, Hand::Second, false) > 21) {
                 
@@ -421,10 +479,28 @@ Serial.println((uint8_t)handInPlay);
 
             case 1:
               getCard(Turn::Player, Hand::First);
+            
+              #ifdef DEBUG_PLAYER_SPLIT_FIRST_A
+              player.firstHand.cards[1] = 0;
+              #endif
+            
+              #ifdef DEBUG_PLAYER_SPLIT_FIRST_10
+              player.firstHand.cards[1] = 10;
+              #endif
+              
               break;
 
             case 2:
               getCard(Turn::Player, Hand::Second);
+            
+              #ifdef DEBUG_PLAYER_SPLIT_SECOND_A
+              player.secondHand.cards[1] = 0;
+              #endif
+            
+              #ifdef DEBUG_PLAYER_SPLIT_SECOND_10
+              player.secondHand.cards[1] = 10;
+              #endif
+
               break;
 
           }

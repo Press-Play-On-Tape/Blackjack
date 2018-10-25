@@ -11,6 +11,33 @@
 extern uint8_t hpISR;
 #endif
 
+// ------------------------------------------------------------------------------------------------
+
+#define DEBUG_DEALER_BLACKJACK_10_A
+//#define DEBUG_DEALER_BLACKJACK_A_10
+//#define DEBUG_DEALER_PAIR_10
+//#define DEBUG_DEALER_LOW_HAND
+
+#define DEBUG_PLAYER_INIT_BLACKJACK_10_A
+//#define DEBUG_PLAYER_INIT_BLACKJACK_A_10
+//#define DEBUG_PLAYER_INIT_PAIR_10
+//#define DEBUG_PLAYER_INIT_PAIR_A
+//#define DEBUG_PLAYER_INIT_LOW_HAND
+//#define DEBUG_PLAYER_SPLIT_FIRST_A
+//#define DEBUG_PLAYER_SPLIT_FIRST_10
+//#define DEBUG_PLAYER_SPLIT_SECOND_A
+//#define DEBUG_PLAYER_SPLIT_SECOND_10
+//#define DEBUG_PLAYER_PLAY_FIRST_A
+//#define DEBUG_PLAYER_PLAY_FIRST_10
+//#define DEBUG_PLAYER_PLAY_SECOND_A
+//#define DEBUG_PLAYER_PLAY_SECOND_10
+
+// ------------------------------------------------------------------------------------------------
+
+
+
+
+
 constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
 constexpr const static uint8_t STARTING_PURSE = 100;
