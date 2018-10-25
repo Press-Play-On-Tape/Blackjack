@@ -1,6 +1,19 @@
 #include "PlayGameState.h"
 #include "../images/Images.h"
 
+void PlayGameState::changeView(StateMachine & machine, ViewState viewState, uint8_t highlightButton, ButtonDisplay buttonMode) {
+
+  auto & arduboy = machine.getContext().arduboy;
+
+  this->viewState = viewState;
+  this->counter = 0;
+  arduboy.resetFrameCount();
+
+  if (highlightButton != HIGHLIGHT_BUTTON_DO_NOT_CHANGE) this->highlightedButton = highlightButton;
+  if (buttonMode != ButtonDisplay::DoNotChange) this->buttonMode = buttonMode;
+
+}
+
 uint8_t PlayGameState::getCard(Turn player, Hand hand) {
 
   uint8_t card = 0;

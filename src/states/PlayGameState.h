@@ -67,6 +67,8 @@ class PlayGameState : public BaseState {
 
   private:
   
+    void changeView(StateMachine & machine, ViewState viewState, uint8_t highlightButton = 0, ButtonDisplay buttonMode = ButtonDisplay::DoNotChange);
+
     void drawDealerHand(StateMachine & machine, bool showDealersFirstCard);
     void drawPlayerHands(StateMachine & machine);
     void drawPlayerHands_Lines(StateMachine & machine);
@@ -75,7 +77,7 @@ class PlayGameState : public BaseState {
     void drawButtons(StateMachine & machine);
     void drawStats(StateMachine & machine, HighlightEndOfGame highlightEndOfGame);
     void bust(StateMachine & machine, Turn playerNo, Hand hand);
-    void playNextHand();
+    void playNextHand(StateMachine & machine);
     
     void highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId = MessageNumber::None);
     void highlightLoss(Hand hand, int16_t loss, MessageNumber messageId = MessageNumber::None);

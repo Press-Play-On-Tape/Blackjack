@@ -24,7 +24,7 @@ void PlayGameState::activate(StateMachine & machine) {
   this->currentBetTotal = 0;
   this->currentWin = 0;
 
-	this->viewState = ViewState::StartHand;
+	changeView(machine, ViewState::StartHand);
 
 }
 
@@ -65,11 +65,8 @@ Serial.println(F("StartHand "));
 				
 			}
 
-			this->counter = 0;
-			this->viewState = ViewState::InitBet;
-			this->highlightedButton = 0;
-
-			arduboy.resetFrameCount();
+      changeView(machine, ViewState::InitBet);
+      // fall through intentional
 
 		case ViewState::InitBet:
 #ifdef DEBUG_CASE
@@ -89,9 +86,7 @@ Serial.println(F("InitBet "));
 						break;
 					
 					case Buttons::InitBet_PlayGame: 
-						this->buttonMode = ButtonDisplay::None;
-						this->counter = 0;
-						this->viewState = ViewState::InitDeal;
+						changeView(machine, ViewState::InitDeal, 0, ButtonDisplay::None);
 						break;
 
 					case Buttons::InitBet_Clear:
@@ -143,14 +138,12 @@ Serial.println(F("InitDeal "));
 
 					if (dealer.cardIsAce(1) && player.purse >= 1) {
 
-						viewState = ViewState::OfferInsurance;
-						this->highlightedButton = 0;
+						changeView(machine, ViewState::OfferInsurance);
 
 					}
 					else {
 
-						viewState = ViewState::PlayHand;
-						this->highlightedButton = 0;
+						changeView(machine, ViewState::PlayHand);
 
 					}
 
@@ -179,9 +172,7 @@ Serial.println(F("OfferInsurance "));
 						break;
 					
 					case Buttons::InsuranceBet_PlayGame: 
-						this->buttonMode = ButtonDisplay::None;
-						this->counter = 0;
-						this->viewState = ViewState::PeekOnTen;
+						changeView(machine, ViewState::PeekOnTen, 0, ButtonDisplay::None);
 						break;
 
 					case Buttons::InsuranceBet_Clear:
@@ -191,9 +182,7 @@ Serial.println(F("OfferInsurance "));
               this->currentBetTotal = this->currentBetInit;
             }
             else {
-              this->buttonMode = ButtonDisplay::None;
-              this->counter = 0;
-              this->viewState = ViewState::PeekOnTen;
+              changeView(machine, ViewState::PeekOnTen, 0, ButtonDisplay::None);
             }
 						break;
 
@@ -318,7 +307,7 @@ Serial.println(F("PeekOnTen "));
 							case Buttons::PeekOnTen_Continue:
 								this->flashDetails = true;
 								this->winStatus = WinStatus::None;
-								this->viewState = ViewState::StartHand; 
+								changeView(machine, ViewState::StartHand); 
 								break;
 
 							case Buttons::PeekOnTen_Quit:
@@ -332,21 +321,8 @@ Serial.println(F("PeekOnTen "));
 					}
 					else {
 
-            // if (((this->player.firstHand.cardIsAce(0)) == (this->player.firstHand.cardsIsAce(1))) && player.purse >= this->currentBetInit) {
-
-            //   this->buttonMode = ButtonDisplay::GamePlay;
-	  				// 	this->viewState = ViewState::OfferSplit;
-  					// 	this->flashDetails = false;
-            //   this->counter = 0;
-
-            // }
-            // else {
-
-              this->buttonMode = ButtonDisplay::GamePlay;
-	  					this->viewState = ViewState::PlayHand;
-  						this->flashDetails = false;
-
-            // }
+            changeView(machine, ViewState::PlayHand, 0, ButtonDisplay::GamePlay);
+            this->flashDetails = false;
 
 					}
 
@@ -379,9 +355,7 @@ Serial.println((uint8_t)handInPlay);
 
               if (calculateHand(Turn::Player, Hand::First, false) > 21) {
                 
-//                bust(machine, Turn::Player, Hand::First);
-                this->counter = 0;
-                viewState = ViewState::Bust;
+                changeView(machine, ViewState::Bust);
               
               }
               
@@ -392,9 +366,7 @@ Serial.println((uint8_t)handInPlay);
               
               if (calculateHand(Turn::Player, Hand::Second, false) > 21) {
                 
-//                 bust(machine, Turn::Player, Hand::Second);
-                this->counter = 0;
-                viewState = ViewState::Bust;
+                changeView(machine, ViewState::Bust);
               
               }
             
@@ -402,20 +374,16 @@ Serial.println((uint8_t)handInPlay);
             break;
 
           case Buttons::PlayHand_Stand:
-            playNextHand();
+            playNextHand(machine);
             break;
 
           case Buttons::PlayHand_Split:
           Serial.println(F("Split"));
-            this->counter = 0;
-            this->highlightedButton = 0;
-            viewState = ViewState::SplitCards;
+            changeView(machine, ViewState::SplitCards);
             break;
 
           case Buttons::PlayHand_Double:
-            this->counter = 0;
-            this->highlightedButton = 0;
-            viewState = ViewState::DoubleUp;
+            changeView(machine, ViewState::DoubleUp);
             break;
 
 					default: break;
@@ -474,10 +442,10 @@ Serial.println((uint8_t)handInPlay);
         if (player.firstHand.cardIsAce(0)) {
           player.firstHand.doubleUp = true;
           player.secondHand.doubleUp = true;
-          this->viewState = ViewState::PlayDealerHand;
+          changeView(machine, ViewState::PlayDealerHand);
         }
         else {
-          this->viewState = ViewState::PlayHand;
+          changeView(machine, ViewState::PlayHand);
         }   
 
       }
@@ -516,14 +484,12 @@ Serial.println(F(")"));
       
       if (calculateHand(Turn::Player, handInPlay, false) > 21) {
         
-//        bust(machine, Turn::Player, handInPlay);
-        this->counter = 0;
-        viewState = ViewState::Bust;
+        changeView(machine, ViewState::Bust);
       
       }
       else {
   
-        playNextHand();
+        playNextHand(machine);
     
       }   
 
@@ -546,8 +512,7 @@ Serial.println(F("PlayDealerHand "));
 				}
 				else {
 
-					this->viewState = ViewState::CheckForWins;
-					this->counter = 0;
+					changeView(machine, ViewState::CheckForWins);
 
 				}
 
@@ -643,8 +608,7 @@ Serial.println(F("CheckForWins "));
 
 						case 95:
 		
-							this->buttonMode = ButtonDisplay::EndOfGame;
-							this->viewState = ViewState::EndOfGame;
+							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
 							break;
 
 
@@ -681,8 +645,7 @@ Serial.println(F("CheckForWins "));
 
 						case 63:
 		
-							this->buttonMode = ButtonDisplay::EndOfGame;
-							this->viewState = ViewState::EndOfGame;
+							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
 							break;
 
 					}
@@ -732,8 +695,7 @@ Serial.println(F("CheckForWins "));
 
 						case 63:
 		
-							this->buttonMode = ButtonDisplay::EndOfGame;
-							this->viewState = ViewState::EndOfGame;
+							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
 							break;
 
 					}
@@ -787,7 +749,7 @@ Serial.println(F("CheckForWins "));
 					case 32 ... 62: break;
 
 					case 63:
-						this->viewState = ViewState::EndOfGame;
+						changeView(machine, ViewState::EndOfGame);
 						break;
 					
 				}
@@ -810,8 +772,7 @@ Serial.println(F("EndOfGame "));
 				switch (static_cast<Buttons>(this->highlightedButton)) {
 					
 					case Buttons::EndOfGame_Continue:
-						this->viewState = ViewState::StartHand; 
-						this->counter = 0;
+						changeView(machine, ViewState::StartHand); 
 						break;
 
 					case Buttons::EndOfGame_Quit:
@@ -846,7 +807,7 @@ Serial.println(this->counter);
             case 4:
               Serial.println(F("Bust::playNextHand 12"));
               this->counter = 0;
-              playNextHand();
+              playNextHand(machine);
               break;
 
           }
@@ -873,7 +834,7 @@ Serial.println(this->counter);
         
         // // highlightLoss(-player.firstHand.bet);
 
-        // if (this->highlightEndOfGame.counter == 0) playNextHand();
+        // if (this->highlightEndOfGame.counter == 0) playNextHand(machine);
 
         if (arduboy.everyXFrames(FLASH_DELAY) && this->counter <= 4) {
 Serial.println(this->counter);
@@ -888,7 +849,7 @@ Serial.println(this->counter);
 
             case 4:
               Serial.println(F("Bust::playNextHand 22"));
-              playNextHand();
+              playNextHand(machine);
               break;
 
           }
@@ -911,7 +872,7 @@ Serial.println(this->counter);
 }
 
 
-void PlayGameState::playNextHand() {
+void PlayGameState::playNextHand(StateMachine & machine) {
 Serial.print(F("PlayNextHand: "));
 Serial.println(player.firstHand.bust);
 
@@ -922,16 +883,16 @@ Serial.println(player.firstHand.bust);
     player.firstHand.stand = true;
     
     if (player.secondHand.cardCount > 0) {
+
       this->handInPlay = Hand::Second;
-      this->viewState = ViewState::PlayHand;
-      // playSecondHand();
+      changeView(machine, ViewState::PlayHand);
       
     }
     else {
 
       if (!player.firstHand.bust) {
 
-        this->viewState = ViewState::PlayDealerHand;
+        changeView(machine, ViewState::PlayDealerHand);
 
         // playDealerHand();
         
@@ -939,9 +900,7 @@ Serial.println(player.firstHand.bust);
       else {
        
         // showDealerCards();
-        this->buttonMode = ButtonDisplay::EndOfGame;
-        this->viewState = ViewState::EndOfGame;
-        // drawButtons(); 
+        changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
 Serial.println(player.firstHand.bust);        
       }
       
@@ -953,15 +912,14 @@ Serial.println(player.firstHand.bust);
     if (!player.firstHand.bust || !player.secondHand.bust) {
 
       player.secondHand.stand = true;
-      this->viewState = ViewState::PlayDealerHand;
+      changeView(machine, ViewState::PlayDealerHand);
       // playDealerHand();
         
     }
     else {
        
       // showDealerCards();
-      this->buttonMode = ButtonDisplay::EndOfGame;
-      this->viewState = ViewState::EndOfGame;
+      changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
       // drawButtons(); 
         
     }

@@ -26,7 +26,12 @@ constexpr const static uint8_t CARD_LARGE_TOP_PLAYER = 32;
 constexpr const static uint8_t CARD_SMALL_TOP_PLAYER = 37;
 constexpr const static uint8_t CARD_LARGE_TOP_DEALER = 0;
 
+constexpr const static uint8_t HIGHLIGHT_BUTTON_DO_NOT_CHANGE = 255;
+
+
 enum class ButtonDisplay: uint8_t {
+  DoNotChange,
+  None,
   BetButtons,
   Options,
   Insurance,
@@ -34,7 +39,6 @@ enum class ButtonDisplay: uint8_t {
   OptionsDisabled,
   GamePlay,
   GamePlayDisabled,
-  None,
   OKOnly
 };
 
