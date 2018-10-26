@@ -13,6 +13,7 @@ char const messageText_04[] PROGMEM = "Two~blackjacks!";
 char const messageText_05[] PROGMEM = "Dealer~has~Blackjack!";
 char const messageText_06[] PROGMEM = "Dealer~has~nothing!";
 char const messageText_07[] PROGMEM = "Insured Blackjack!";
+char const messageText_08[] PROGMEM = "Push~on~two~Blackjacks!";
 
 char const * const messageTexts[] = {
 	messageText_01,
@@ -21,7 +22,8 @@ char const * const messageTexts[] = {
 	messageText_04,
 	messageText_05,
 	messageText_06,
-  messageText_07
+  messageText_07,
+  messageText_08
 };
 
 class PlayGameState : public BaseState {
@@ -100,7 +102,7 @@ class PlayGameState : public BaseState {
     
     void highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId = MessageNumber::None);
     void highlightLoss(Hand hand, int16_t loss, MessageNumber messageId = MessageNumber::None);
-    void highlightPush(Hand hand, MessageNumber messageId = MessageNumber::None);
+    void highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId = MessageNumber::None);
 
     void render4DigitNumber(uint16_t val);
     void render3DigitNumber(uint16_t val);

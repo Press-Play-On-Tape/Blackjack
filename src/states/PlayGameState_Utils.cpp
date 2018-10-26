@@ -226,12 +226,13 @@ void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber message
 
 }
 
-void PlayGameState::highlightPush(Hand hand, MessageNumber messageId) {
+void PlayGameState::highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId) {
 
   highlightEndOfGame.reset();
 
   highlightEndOfGame.status = WinStatus::Push;
   highlightEndOfGame.hand = hand;
+  highlightEndOfGame.purseInc = purseInc;  
   highlightEndOfGame.messageId = messageId;
 
 	Serial.print(F("highlightPush: "));

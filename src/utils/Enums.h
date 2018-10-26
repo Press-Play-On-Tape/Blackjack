@@ -13,8 +13,8 @@ extern uint8_t hpISR;
 
 // ------------------------------------------------------------------------------------------------
 
-#define DEBUG_DEALER_BLACKJACK_10_A
-//#define DEBUG_DEALER_BLACKJACK_A_10
+//#define DEBUG_DEALER_BLACKJACK_10_A
+#define DEBUG_DEALER_BLACKJACK_A_10
 //#define DEBUG_DEALER_PAIR_10
 //#define DEBUG_DEALER_LOW_HAND
 
@@ -88,8 +88,8 @@ enum class MessageNumber : uint8_t {
   BothHaveBlackjack,
   DealerHasBlackjack,
 	DealerNoBlackjack,
-  DealerHasBlackjackWithInsurance
-
+  DealerHasBlackjackWithInsurance,
+  PushOnBlackjack
 };
 
 enum class Buttons : uint8_t {

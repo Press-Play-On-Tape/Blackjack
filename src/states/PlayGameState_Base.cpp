@@ -259,20 +259,20 @@ Serial.println(F("PeekOnTen "));
               if (calculateHand(Turn::Player, Hand::First, true) == 21) {
               
 //                this->insuranceResult = InsuranceResult::BothHaveBlackjack;			
-                player.purse = player.purse + this->currentBetTotal + (2 * this->insurance);
+                //player.purse = player.purse + this->currentBetTotal + (2 * this->insurance);
                 this->buttonMode = ButtonDisplay::EndOfGame;
-								this->flashDetails = true;
+								this->flashDetails = true;  
                 gameStats.gamesPush++;
 
 								if (this->insurance == 0) {
 	                // this->winStatus = WinStatus::Push;
 									// this->winStatusAmount = this->currentBetInit;
-                  highlightPush(Hand::First, MessageNumber::BothHaveBlackjack);
+                  highlightPush(Hand::First, currentBetInit, MessageNumber::BothHaveBlackjack);
 								}
 								else {
 	                // this->winStatus = WinStatus::Win;
 									// this->winStatusAmount = (2 * this->insurance);
-                  highlightWin(Hand::First, (2 * this->insurance), (2 * this->insurance),  MessageNumber::BothHaveBlackjack);
+                  highlightWin(Hand::First, (2 * this->insurance), (2 * this->insurance) + currentBetInit,  MessageNumber::BothHaveBlackjack);
 								}
 
               }
@@ -297,7 +297,7 @@ Serial.println(F("PeekOnTen "));
 
 									if (this->currentBetInit - (this->insurance * 2) == 0) {
 //										this->winStatus = WinStatus::Push;
-										highlightPush(Hand::First, MessageNumber::DealerHasBlackjackWithInsurance);
+										highlightPush(Hand::First, 0, MessageNumber::DealerHasBlackjackWithInsurance);
 									}
 									else {
 									Serial.println(F("highlightLoss B"));	
@@ -573,24 +573,33 @@ Serial.println(F(")"));
 #ifdef DEBUG_CASE
 Serial.println(F("PlayDealerHand "));
 #endif
-
+  
       this->buttonMode = ButtonDisplay::None;
 			this->handInPlay = Hand::Dealer;
 
-			if (arduboy.everyXFrames(15)) {
+      if (calculateHand(Turn::Dealer, true) != 21) {
 
-				if (calculateHand(Turn::Dealer, false) <= 16) {
-					
-					getCard(Turn::Dealer, Hand::First);
+        if (arduboy.everyXFrames(15)) {
 
-				}
-				else {
+          if (calculateHand(Turn::Dealer, false) <= 16) {
+            
+            getCard(Turn::Dealer, Hand::First);
 
-					changeView(machine, ViewState::CheckForWins);
+          }
+          else {
 
-				}
+            changeView(machine, ViewState::CheckForWins);
 
-			}
+          }
+
+        }
+
+      }
+      else {
+
+        changeView(machine, ViewState::CheckForWins);
+
+      }
 
       break;
 
@@ -804,8 +813,13 @@ Serial.println(F("CheckForWins "));
 								
 						}
 						else {
-								
-							if (isBlackjack(Turn::Player, Hand::First)) {
+
+							if (isBlackjack(Turn::Player, Hand::First) && isBlackjack(Turn::Dealer, Hand::First)) {
+									Serial.println(F("highlightPush M1"));	
+								highlightPush(Hand::First, currentBetInit, MessageNumber::PushOnBlackjack);
+
+              }
+							else if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println(F("highlightWin M"));	
 								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
 
