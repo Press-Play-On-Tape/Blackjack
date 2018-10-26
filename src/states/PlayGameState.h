@@ -31,6 +31,7 @@ class PlayGameState : public BaseState {
     InitBet,
     InitDeal,
     OfferInsurance,
+    Peeking,
     PeekOnTen,
     SplitCards,
     DoubleUp,

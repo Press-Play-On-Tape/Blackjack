@@ -214,18 +214,13 @@ Serial.println(F("OfferInsurance "));
 						break;
 					
 					case Buttons::InsuranceBet_PlayGame: 
-						changeView(machine, ViewState::PeekOnTen, 0, ButtonDisplay::None);
+						changeView(machine, ViewState::Peeking, 0, ButtonDisplay::None);
 						break;
 
 					case Buttons::InsuranceBet_Clear:
-            if (this->insurance > 0) {
-              player.purse = player.purse + this->insurance;
-              this->insurance = 0;
-              this->currentBetTotal = this->currentBetInit;
-            }
-            else {
-              changeView(machine, ViewState::PeekOnTen, 0, ButtonDisplay::None);
-            }
+            player.purse = player.purse + this->insurance;
+            this->insurance = 0;
+            this->currentBetTotal = this->currentBetInit;
 						break;
 
 					default: break;
@@ -238,6 +233,7 @@ Serial.println(F("OfferInsurance "));
 
 			break;
 
+		case ViewState::Peeking:
 		case ViewState::PeekOnTen:
 #ifdef DEBUG_CASE
 Serial.println(F("PeekOnTen "));
@@ -255,6 +251,8 @@ Serial.println(F("PeekOnTen "));
 						break;
 
 					case 31:
+
+            viewState = ViewState::PeekOnTen;
 
             if (calculateHand(Turn::Dealer, true) == 21) {
 
@@ -1042,42 +1040,91 @@ void PlayGameState::render(StateMachine & machine) {
 			drawDealerHand(machine, true);
 			break;
 
-		case ViewState::PeekOnTen:
+		case ViewState::Peeking:
 
 			drawPlayerHands(machine);
 			font3x5.setCursor(0, 22);
 
-			switch (this->insuranceResult) {
+      font3x5.print(F("Dealer~is~peeking~"));
+      for (uint8_t x = 0; x < (this->counter / 8); x++) {
+        font3x5.print(F("."));
+      }
+
+      drawDealerHand(machine, true);
+      break;
 				
-				case InsuranceResult::Peeking:
-					font3x5.print(F("Dealer~is~peeking~"));
-					for (uint8_t x = 0; x < (this->counter / 8); x++) {
-						font3x5.print(F("."));
-					}
+			// 	case InsuranceResult::BothHaveBlackjack:
+			// 		font3x5.print(F("Two~blackjacks!"));
+			// 		drawDealerHand(machine, false);
+			// 		break;
+				
+			// 	case InsuranceResult::DealerHasBlackjack:
+			// 		font3x5.print(F("Dealer~has~Blackjack!"));
+			// 		drawDealerHand(machine, false);
+			// 		break;
+
+			// 	case InsuranceResult::DealerNoBlackjack:
+			// 		font3x5.print(F("Dealer~has~nothing!"));
+			// 		drawDealerHand(machine, true);
+			// 		break;
+
+			// 	case InsuranceResult::DealerHasBlackjackWithInsurance:
+			// 		font3x5.print(F("Insured Blackjack!"));
+			// 		drawDealerHand(machine, false);
+			// 		break;
+
+			// }
+			// break;
+
+		case ViewState::PeekOnTen:
+
+			drawPlayerHands(machine);
+			font3x5.setCursor(0, 22);
+  
+			switch (this->highlightEndOfGame.status) {
+				
+				case WinStatus::None:
 					drawDealerHand(machine, true);
 					break;
 				
-				case InsuranceResult::BothHaveBlackjack:
-					font3x5.print(F("Two~blackjacks!"));
-					drawDealerHand(machine, false);
-					break;
-				
-				case InsuranceResult::DealerHasBlackjack:
-					font3x5.print(F("Dealer~has~Blackjack!"));
-					drawDealerHand(machine, false);
-					break;
-
-				case InsuranceResult::DealerNoBlackjack:
-					font3x5.print(F("Dealer~has~nothing!"));
-					drawDealerHand(machine, true);
-					break;
-
-				case InsuranceResult::DealerHasBlackjackWithInsurance:
-					font3x5.print(F("Insured Blackjack!"));
+				default:
 					drawDealerHand(machine, false);
 					break;
 
 			}
+
+			// switch (this->insuranceResult) {
+				
+			// 	case InsuranceResult::Peeking:
+			// 		font3x5.print(F("Dealer~is~peeking~"));
+			// 		for (uint8_t x = 0; x < (this->counter / 8); x++) {
+			// 			font3x5.print(F("."));
+			// 		}
+			// 		drawDealerHand(machine, true);
+			// 		break;
+				
+			// 	case InsuranceResult::BothHaveBlackjack:
+			// 		font3x5.print(F("Two~blackjacks!"));
+			// 		drawDealerHand(machine, false);
+			// 		break;
+				
+			// 	case InsuranceResult::DealerHasBlackjack:
+			// 		font3x5.print(F("Dealer~has~Blackjack!"));
+			// 		drawDealerHand(machine, false);
+			// 		break;
+
+			// 	case InsuranceResult::DealerNoBlackjack:
+			// 		font3x5.print(F("Dealer~has~nothing!"));
+			// 		drawDealerHand(machine, true);
+			// 		break;
+
+			// 	case InsuranceResult::DealerHasBlackjackWithInsurance:
+			// 		font3x5.print(F("Insured Blackjack!"));
+			// 		drawDealerHand(machine, false);
+			// 		break;
+
+			// }
+
 			break;
 
     case ViewState::SplitCards:
