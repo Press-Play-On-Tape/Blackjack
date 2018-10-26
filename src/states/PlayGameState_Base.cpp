@@ -209,7 +209,7 @@ Serial.println(F("OfferInsurance "));
 					
 					case Buttons::InsuranceBet_1 ... Buttons::InsuranceBet_25: 
 						this->insurance = this->insurance + BETS[this->highlightedButton];
-						this->currentBetTotal = this->currentBetTotal + 1;
+						this->currentBetTotal = this->currentBetTotal + BETS[this->highlightedButton];
 						player.purse = player.purse - BETS[this->highlightedButton];
 						break;
 					
