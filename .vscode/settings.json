@@ -1,6 +1,8 @@
 {
     "files.associations": {
-        "cstddef": "cpp"
+      "cstddef": "cpp",
+      "limits": "cpp",
+      "type_traits": "cpp"
     },
     "editor.detectIndentation": false,
     "editor.tabSize": 2

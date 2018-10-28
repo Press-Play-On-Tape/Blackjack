@@ -191,7 +191,7 @@ uint8_t PlayGameState::calculateHand(Turn player, Hand hand, bool bestHand) {
   
 }
 
-void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId) {
+void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId, uint8_t delay) {
 
   highlightEndOfGame.reset();
 
@@ -200,6 +200,7 @@ void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, Messa
   highlightEndOfGame.win = win;
   highlightEndOfGame.purseInc = purseInc;
   highlightEndOfGame.messageId = messageId;
+  highlightEndOfGame.setCounter(delay);
 
 	Serial.print(F("highlightWin: "));
 	Serial.print((uint8_t)hand);
@@ -210,7 +211,7 @@ void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, Messa
 
 }
 
-void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber messageId) {
+void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber messageId, uint8_t delay) {
 
   highlightEndOfGame.reset();
 
@@ -218,6 +219,7 @@ void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber message
   highlightEndOfGame.hand = hand;
   highlightEndOfGame.loss = loss;
   highlightEndOfGame.messageId = messageId;
+  highlightEndOfGame.setCounter(delay);
 
 	Serial.print(F("highlightLoss: "));
 	Serial.print((uint8_t)hand);
@@ -226,7 +228,7 @@ void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber message
 
 }
 
-void PlayGameState::highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId) {
+void PlayGameState::highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId, uint8_t delay) {
 
   highlightEndOfGame.reset();
 
@@ -234,6 +236,7 @@ void PlayGameState::highlightPush(Hand hand, int16_t purseInc, MessageNumber mes
   highlightEndOfGame.hand = hand;
   highlightEndOfGame.purseInc = purseInc;  
   highlightEndOfGame.messageId = messageId;
+  highlightEndOfGame.setCounter(delay);
 
 	Serial.print(F("highlightPush: "));
 	Serial.println((uint8_t)hand);

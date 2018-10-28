@@ -620,66 +620,78 @@ Serial.println(F("CheckForWins "));
 					
 					switch (this->counter) {
 
-						case 0 ... 30: break;
+						case 0 ... 64: break;
 
-						case 31:
+						case 65:
 							
 							if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
 								if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println(F("highlightWin A"));	
-									highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
+									highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2, MessageNumber::FirstHandBlackjack, FLASH_DELAY * 2);
 
 								}
 								else {        
 								
-									Serial.println(F("highlightWin B"));	
-									highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2);
+									Serial.println(F("highlightWin B1"));	
+									highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2, MessageNumber::FirstHandWinner, FLASH_DELAY * 2);
 									
 								}
 								
 							}
+							else if (calculateHand(Turn::Player, Hand::First, true) == calculateHand(Turn::Dealer, true)) {
+								
+                Serial.println(F("highlightWin B2"));	
+                highlightPush(Hand::First, player.firstHand.bet, MessageNumber::FirstHandPush, FLASH_DELAY * 2);
+                
+              }
 							else {
 
 								Serial.println(F("highlightLoss D"));	
-								highlightLoss(Hand::First, -player.firstHand.bet);
+								highlightLoss(Hand::First, -player.firstHand.bet, MessageNumber::FirstHandLoser, FLASH_DELAY * 2);
 								
 							}
 
 							break;
 
-						case 32 ... 62: break;
+						case 66 ... 128: break;
 
-						case 63:
+						case 129:
 						
 							if (calculateHand(Turn::Player, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
 								if (isBlackjack(Turn::Player, Hand::Second)) {
 
 									Serial.println(F("highlightWin C"));	
-									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
+									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandBlackjack, FLASH_DELAY * 2);
 
 								}
 								else {        
 								
 									Serial.println(F("highlightWin D"));	
-									highlightWin(Hand::Second, player.secondHand.bet, player.secondHand.bet * 2);
+									highlightWin(Hand::Second, player.secondHand.bet, player.secondHand.bet * 2, MessageNumber::SecondHandWinner, FLASH_DELAY * 2);
 									
 								}
 								
 							}
+              else if (calculateHand(Turn::Player, Hand::Second, true) == calculateHand(Turn::Dealer, true)) {
+								
+                Serial.println(F("highlightWin D2"));	
+                highlightPush(Hand::Second, player.secondHand.bet, MessageNumber::SecondHandPush, FLASH_DELAY * 2);
+                
+              }
 							else {
 								
 								if (isBlackjack(Turn::Player, Hand::Second)) {
 
 									Serial.println(F("highlightWin E"));	
-									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
+									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandWinner, FLASH_DELAY * 2);
 
 								}
 								else {        
 								
 									Serial.println(F("highlightLoss E"));	
-									highlightLoss(Hand::Second, -player.secondHand.bet);
+									highlightLoss(Hand::Second, -player.secondHand.bet, MessageNumber::SecondHandLoser, FLASH_DELAY * 2);
 									
 								}
 								
@@ -687,9 +699,9 @@ Serial.println(F("CheckForWins "));
 
 							break;
 
-						case 64 ... 94: break;
+						case 130 ... 192: break;
 
-						case 95:
+						case 193:
 		
 							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
 							break;
@@ -747,12 +759,12 @@ Serial.println(F("CheckForWins "));
 				
 								if (isBlackjack(Turn::Player, Hand::Second)) {
 									Serial.println(F("highlightWin H"));	
-									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
+									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandBlackjack);
 
 								}
 								else {        
 									Serial.println(F("highlightWin I"));									
-									highlightWin(Hand::Second, player.secondHand.bet, player.secondHand.bet * 2);
+									highlightWin(Hand::Second, player.secondHand.bet, player.secondHand.bet * 2, MessageNumber::SecondHandWinner);
 									
 								}
 								
@@ -761,12 +773,12 @@ Serial.println(F("CheckForWins "));
 								
 								if (isBlackjack(Turn::Player, Hand::Second)) {
 									Serial.println(F("highlightWin J"));	
-									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2);
+									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandBlackjack);
 
 								}
 								else {        
 									Serial.println(F("highlightLoss F"));	
-									highlightLoss(Hand::Second, -player.secondHand.bet);
+									highlightLoss(Hand::Second, -player.secondHand.bet, MessageNumber::SecondHandLoser);
 									
 								}
 								

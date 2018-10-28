@@ -583,8 +583,8 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
     // If half way through flashing, update the stats ..
 
     this->highlightEndOfGame.counter--;
-
-    if (this->highlightEndOfGame.counter == 2 * FLASH_DELAY) {
+Serial.println(this->highlightEndOfGame.counter);
+    if (this->highlightEndOfGame.counter == this->highlightEndOfGame.changeScore) {
 
       switch (highlightEndOfGame.status) {
 
