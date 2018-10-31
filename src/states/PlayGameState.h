@@ -136,9 +136,9 @@ class PlayGameState : public BaseState {
     void bust(StateMachine & machine, Turn playerNo, Hand hand);
     void playNextHand(StateMachine & machine);
     
-    void highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId = MessageNumber::None, uint8_t delay = FLASH_DELAY * 4);
-    void highlightLoss(Hand hand, int16_t loss, MessageNumber messageId = MessageNumber::None, uint8_t delay = FLASH_DELAY * 4);
-    void highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId = MessageNumber::None, uint8_t delay = FLASH_DELAY * 4);
+    void highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId/* = MessageNumber::None*/, uint8_t delay = FLASH_DELAY * 4);
+    void highlightLoss(Hand hand, int16_t loss, MessageNumber messageId /*= MessageNumber::None*/, uint8_t delay = FLASH_DELAY * 4);
+    void highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId /*= MessageNumber::None*/, uint8_t delay = FLASH_DELAY * 4);
 
     void render4DigitNumber(uint16_t val);
     void render3DigitNumber(uint16_t val);

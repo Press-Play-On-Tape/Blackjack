@@ -723,12 +723,12 @@ Serial.println(F("CheckForWins "));
 
 								if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println(F("highlightWin F"));	
-									highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
+									highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2, MessageNumber::FirstHandBlackjack);
 
 								}
 								else {        
 									Serial.println(F("highlightWin G"));									
-									highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2);
+									highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2, MessageNumber::FirstHandWinner);
 									
 								}        
 								
@@ -814,12 +814,12 @@ Serial.println(F("CheckForWins "));
 				
 							if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println(F("highlightWin K"));	
-								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
+								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2, MessageNumber::OnlyHandBlackjack);
 
 							}
 							else {        
 									Serial.println(F("highlightWin L"));									
-								highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2);
+								highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2, MessageNumber::OnlytHandWinner);
 									
 							} 
 								
@@ -833,12 +833,12 @@ Serial.println(F("CheckForWins "));
               }
 							else if (isBlackjack(Turn::Player, Hand::First)) {
 									Serial.println(F("highlightWin M"));	
-								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2);
+								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2, MessageNumber::OnlytHandWinner);
 
 							}
 							else {        
 								Serial.println(F("highlightLoss G"));	
-								highlightLoss(Hand::First, -player.firstHand.bet);
+								highlightLoss(Hand::First, -player.firstHand.bet, MessageNumber::OnlyHandLoser);
 								
 							}
 								

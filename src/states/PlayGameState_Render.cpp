@@ -50,8 +50,8 @@ void PlayGameState::drawPlayerHands(StateMachine & machine) {
   uint8_t leftHand1 = 0;
   uint8_t leftHand2 = 0;
 
-  uint8_t width1 = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
-  uint8_t width2 = (this->player.secondHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.secondHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
+  uint8_t width1 = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ROTATED : 0);
+  uint8_t width2 = (this->player.secondHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.secondHand.doubleUp ? CARD_LARGE_SPACING_ROTATED : 0);
   uint8_t widthTot = width1 + (player.hasSecondHand() ? CARD_HAND_SPACING + width2 : 0);
   uint8_t fullHeight = (handInPlay == Hand::First) || (handInPlay == Hand::Dealer);
 
@@ -153,10 +153,14 @@ void PlayGameState::drawCard(StateMachine & machine, uint8_t xPos, uint8_t yPos,
 	}
 	else if (rotated) {
 
-		ardBitmap.drawCompressed(xPos, yPos + 6, Images::Card_Outline_Rotated_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
-		ardBitmap.drawCompressed(xPos, yPos + 6, Images::Card_Outline_Rotated, WHITE, ALIGN_NONE, MIRROR_NONE);
-		ardBitmap.drawCompressed(xPos + 13, yPos + 16, Images::Suits_Rot[card / 13], BLACK, ALIGN_NONE, MIRROR_NONE);
-		ardBitmap.drawCompressed(xPos + 23, yPos + 10, Images::Pips_Rot[cardNumber], BLACK, ALIGN_NONE, MIRROR_NONE);
+		// ardBitmap.drawCompressed(xPos, yPos + 6, Images::Card_Outline_Rotated_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+		// ardBitmap.drawCompressed(xPos, yPos + 6, Images::Card_Outline_Rotated, WHITE, ALIGN_NONE, MIRROR_NONE);
+		// ardBitmap.drawCompressed(xPos + 13, yPos + 16, Images::Suits_Rot[card / 13], BLACK, ALIGN_NONE, MIRROR_NONE);
+		// ardBitmap.drawCompressed(xPos + 23, yPos + 10, Images::Pips_Rot[cardNumber], BLACK, ALIGN_NONE, MIRROR_NONE);
+		ardBitmap.drawCompressed(xPos - 4, yPos + 6, Images::Card_Outline_Rotated_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+		ardBitmap.drawCompressed(xPos - 4, yPos + 6, Images::Card_Outline_Rotated, WHITE, ALIGN_NONE, MIRROR_NONE);
+		ardBitmap.drawCompressed(xPos + 9, yPos + 16, Images::Suits_Rot[card / 13], BLACK, ALIGN_NONE, MIRROR_NONE);
+		ardBitmap.drawCompressed(xPos + 19, yPos + 10, Images::Pips_Rot[cardNumber], BLACK, ALIGN_NONE, MIRROR_NONE);
 
 	}
 	else {
@@ -214,8 +218,8 @@ void PlayGameState::drawPlayerHands_Lines(StateMachine & machine) {
     uint8_t leftHand1 = 0;
     uint8_t leftHand2 = 0;
 
-    uint8_t width1 = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
-    uint8_t width2 = (this->player.secondHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.secondHand.doubleUp ? CARD_LARGE_SPACING_ORIENTATED : 0);
+    uint8_t width1 = (this->player.firstHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.firstHand.doubleUp ? CARD_LARGE_SPACING_ROTATED : 0);
+    uint8_t width2 = (this->player.secondHand.cardCount * CARD_LARGE_SPACING) + (CARD_LARGE_SPACING_FULL - CARD_LARGE_SPACING) + (this->player.secondHand.doubleUp ? CARD_LARGE_SPACING_ROTATED : 0);
     uint8_t widthTot = width1 + (player.hasSecondHand() ? CARD_HAND_SPACING + width2 : 0);
 
 
@@ -508,13 +512,16 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
   render4DigitNumber(player.purse);
   font3x5.setTextColor(WHITE);
 
-	font3x5.print(F("\nInit~Bet:~ "));
-	render3DigitNumber(this->currentBetInit);
+  if (highlightEndOfGame.status == WinStatus::None) {
 
-	font3x5.print(F("\n Tot~Bet:~ "));
-	render3DigitNumber(this->currentBetTotal);
+    font3x5.print(F("\nInit~Bet:~ "));
+    render3DigitNumber(this->currentBetInit);
 
-  if (highlightEndOfGame.status != WinStatus::None) {
+    font3x5.print(F("\n Tot~Bet:~ "));
+    render3DigitNumber(this->currentBetTotal);
+
+  }
+  else {
 
     switch (highlightEndOfGame.status) {
 

@@ -35,9 +35,6 @@ extern uint8_t hpISR;
 // ------------------------------------------------------------------------------------------------
 
 
-
-
-
 constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
 constexpr const static uint8_t STARTING_PURSE = 100;
@@ -45,7 +42,7 @@ constexpr const static uint8_t STARTING_PURSE = 100;
 constexpr const static uint8_t CARD_LARGE_SPACING = 12;
 constexpr const static uint8_t CARD_LARGE_SPACING_DEALER = 10;
 constexpr const static uint8_t CARD_LARGE_SPACING_FULL = 22;
-constexpr const static uint8_t CARD_LARGE_SPACING_ORIENTATED = 13;
+constexpr const static uint8_t CARD_LARGE_SPACING_ROTATED = 9;
 constexpr const static uint8_t CARD_HAND_SPACING = 12;
 constexpr const static uint8_t CARD_DEALER_CENTER = 40;
 constexpr const static uint8_t CARD_PLAYER_CENTER = 64;
@@ -65,6 +62,10 @@ enum class MessageNumber : uint8_t {
 	DealerNoBlackjack,
   DealerHasBlackjackWithInsurance,
   PushOnBlackjack,
+  OnlytHandWinner,
+  OnlyHandLoser,
+  OnlyHandPush,
+  OnlyHandBlackjack,
   FirstHandWinner,
   FirstHandLoser,
   FirstHandPush,
@@ -83,14 +84,18 @@ char const messageText_05[] PROGMEM = "Dealer~has~Blackjack!";
 char const messageText_06[] PROGMEM = "Dealer~has~nothing!";
 char const messageText_07[] PROGMEM = "Insured Blackjack!";
 char const messageText_08[] PROGMEM = "Push~on~two~Blackjacks!";
-char const messageText_09[] PROGMEM = "First~hand~wins!";
-char const messageText_10[] PROGMEM = "First~hand~loses!";
-char const messageText_11[] PROGMEM = "First~hand~pushes!";
-char const messageText_12[] PROGMEM = "First~hand~has~Blackjack!";
-char const messageText_13[] PROGMEM = "Second~hand~wins!";
-char const messageText_14[] PROGMEM = "Second~hand~loses!";
-char const messageText_15[] PROGMEM = "Second~hand~pushes!";
-char const messageText_16[] PROGMEM = "Second~hand~has~Blackjack!";
+char const messageText_09[] PROGMEM = "Your~hand~wins!";
+char const messageText_10[] PROGMEM = "Your~hand~loses!";
+char const messageText_11[] PROGMEM = "Your~hand~pushes!";
+char const messageText_12[] PROGMEM = "You~have~Blackjack!";
+char const messageText_13[] PROGMEM = "First~hand~wins!";
+char const messageText_14[] PROGMEM = "First~hand~loses!";
+char const messageText_15[] PROGMEM = "First~hand~pushes!";
+char const messageText_16[] PROGMEM = "First~hand~has~Blackjack!";
+char const messageText_17[] PROGMEM = "Second~hand~wins!";
+char const messageText_18[] PROGMEM = "Second~hand~loses!";
+char const messageText_19[] PROGMEM = "Second~hand~pushes!";
+char const messageText_20[] PROGMEM = "Second~hand~has~Blackjack!";
 
 char const * const messageTexts[] = {
 	messageText_01,
@@ -109,6 +114,10 @@ char const * const messageTexts[] = {
   messageText_14,
   messageText_15,
   messageText_16,
+  messageText_17,
+  messageText_18,
+  messageText_19,
+  messageText_20,
 };
 
 
