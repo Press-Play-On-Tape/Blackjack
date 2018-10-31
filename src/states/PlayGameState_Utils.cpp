@@ -193,14 +193,16 @@ uint8_t PlayGameState::calculateHand(Turn player, Hand hand, bool bestHand) {
 
 void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId, uint8_t delay) {
 
-  highlightEndOfGame.reset();
+  this->highlightEndOfGame.reset();
 
-  highlightEndOfGame.status = WinStatus::Win;
-  highlightEndOfGame.hand = hand;
-  highlightEndOfGame.win = win;
-  highlightEndOfGame.purseInc = purseInc;
-  highlightEndOfGame.messageId = messageId;
-  highlightEndOfGame.setCounter(delay);
+  this->highlightEndOfGame.status = WinStatus::Win;
+  this->highlightEndOfGame.hand = hand;
+  this->highlightEndOfGame.win = win;
+  this->highlightEndOfGame.purseInc = purseInc;
+  this->highlightEndOfGame.messageId = messageId;
+  this->highlightEndOfGame.setCounter(delay);
+
+  this->counter++;
 
 	Serial.print(F("highlightWin: "));
 	Serial.print((uint8_t)hand);
@@ -213,13 +215,15 @@ void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, Messa
 
 void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber messageId, uint8_t delay) {
 
-  highlightEndOfGame.reset();
+  this->highlightEndOfGame.reset();
 
-  highlightEndOfGame.status = WinStatus::Lose;
-  highlightEndOfGame.hand = hand;
-  highlightEndOfGame.loss = loss;
-  highlightEndOfGame.messageId = messageId;
-  highlightEndOfGame.setCounter(delay);
+  this->highlightEndOfGame.status = WinStatus::Lose;
+  this->highlightEndOfGame.hand = hand;
+  this->highlightEndOfGame.loss = loss;
+  this->highlightEndOfGame.messageId = messageId;
+  this->highlightEndOfGame.setCounter(delay);
+
+  this->counter++;
 
 	Serial.print(F("highlightLoss: "));
 	Serial.print((uint8_t)hand);
@@ -230,13 +234,15 @@ void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber message
 
 void PlayGameState::highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId, uint8_t delay) {
 
-  highlightEndOfGame.reset();
+  this->highlightEndOfGame.reset();
 
-  highlightEndOfGame.status = WinStatus::Push;
-  highlightEndOfGame.hand = hand;
-  highlightEndOfGame.purseInc = purseInc;  
-  highlightEndOfGame.messageId = messageId;
-  highlightEndOfGame.setCounter(delay);
+  this->highlightEndOfGame.status = WinStatus::Push;
+  this->highlightEndOfGame.hand = hand;
+  this->highlightEndOfGame.purseInc = purseInc;  
+  this->highlightEndOfGame.messageId = messageId;
+  this->highlightEndOfGame.setCounter(delay);
+
+  this->counter++;
 
 	Serial.print(F("highlightPush: "));
 	Serial.println((uint8_t)hand);

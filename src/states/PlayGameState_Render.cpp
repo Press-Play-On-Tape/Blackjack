@@ -497,11 +497,25 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlightEndOfGame) {
 
 	auto & arduboy = machine.getContext().arduboy;
-	bool flash = arduboy.getFrameCountHalf(FLASH_DELAY);
+  auto justPressed = arduboy.justPressedButtons();
+	auto flash = arduboy.getFrameCountHalf(FLASH_DELAY);
+
+
+  // Exit if the player has bressed a button ..
+
+  if (justPressed > 0 && this->highlightEndOfGame.counter > 0) {
+
+    updateStats();
+    this->highlightEndOfGame.reset();
+    return;
+
+  }
+
+
+  // Otherwise render the statistics ..
 
 	font3x5.setCursor(76, 0);
 	font3x5.setHeight(7);
-
   font3x5.setTextColor(WHITE);
 	font3x5.print(F("  ~Purse:~"));
 
@@ -595,24 +609,7 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
 Serial.println(this->highlightEndOfGame.counter);
     if (this->highlightEndOfGame.counter == this->highlightEndOfGame.changeScore) {
 
-      switch (highlightEndOfGame.status) {
-
-        case WinStatus::Win:
-          currentWin = currentWin + highlightEndOfGame.win;
-          player.purse = player.purse + highlightEndOfGame.purseInc;
-          break;
-
-        case WinStatus::Lose:
-          currentWin = currentWin + highlightEndOfGame.loss;
-          break;
-
-        case WinStatus::Push:
-          player.purse = player.purse + highlightEndOfGame.purseInc;
-          break;
-
-        default: break;
-
-      }
+      updateStats();
 
     }
     else if (this->highlightEndOfGame.counter == 0) {
@@ -620,6 +617,29 @@ Serial.println(this->highlightEndOfGame.counter);
       this->highlightEndOfGame.reset();
 
     }
+
+  }
+
+}
+
+void PlayGameState::updateStats() {
+
+  switch (highlightEndOfGame.status) {
+
+    case WinStatus::Win:
+      currentWin = currentWin + highlightEndOfGame.win;
+      player.purse = player.purse + highlightEndOfGame.purseInc;
+      break;
+
+    case WinStatus::Lose:
+      currentWin = currentWin + highlightEndOfGame.loss;
+      break;
+
+    case WinStatus::Push:
+      player.purse = player.purse + highlightEndOfGame.purseInc;
+      break;
+
+    default: break;
 
   }
 

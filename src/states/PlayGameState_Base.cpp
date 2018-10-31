@@ -606,7 +606,9 @@ Serial.println(F("PlayDealerHand "));
 		case ViewState::CheckForWins:
 #ifdef DEBUG_CASE
 Serial.print(F("CheckForWins "));
-Serial.println(this->counter);
+Serial.print(this->counter);
+Serial.print(F(", "));
+Serial.println(this->highlightEndOfGame.counter);
 #endif
 
 
@@ -655,9 +657,9 @@ Serial.println(this->counter);
 
 							break;
 
-						case 12 ... 86: break;
+						case 12 ... 22: break;
 
-						case 87:
+						case 23:
 						
 							if (calculateHand(Turn::Player, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
@@ -700,11 +702,11 @@ Serial.println(this->counter);
 
 							break;
 
-						case 88 ... 142: break;
+						case 24 ... 34: break;
 
-						case 143:
+						case 35:
 		
-							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
+							changeView(machine, ViewState::OverallWinOrLose, 0, ButtonDisplay::None);
 							break;
 
 
@@ -737,11 +739,11 @@ Serial.println(this->counter);
 
 							break;
 
-						case 12 ... 44: break;
+						case 12 ... 22: break;
 
-						case 45:
+						case 23:
 		
-							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
+							changeView(machine, ViewState::OverallWinOrLose, 0, ButtonDisplay::None);
 							break;
 
 					}
@@ -752,9 +754,9 @@ Serial.println(this->counter);
 
 					switch (this->counter) {
 
-						case 0 ... 30: break;
+						case 0 ... 10: break;
 
-						case 31:					
+						case 11:					
 
 							if (calculateHand(Turn::Player, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 				
@@ -787,11 +789,11 @@ Serial.println(this->counter);
 
 							break;
 
-						case 32 ... 62: break;
+						case 12 ... 22: break;
 
-						case 63:
+						case 23:
 		
-							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
+							changeView(machine, ViewState::OverallWinOrLose, 0, ButtonDisplay::None);
 							break;
 
 					}
@@ -807,9 +809,9 @@ Serial.println(this->counter);
 
 				switch (this->counter) {
 
-					case 0 ... 30: break;
+					case 0 ... 10: break;
 
-					case 31:	
+					case 11:	
 												
 						if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 				
@@ -847,18 +849,38 @@ Serial.println(this->counter);
 
 						break;
 
-					case 32 ... 62: break;
+					case 12 ... 22: break;
 
-					case 63:
-						changeView(machine, ViewState::EndOfGame);
+					case 23:
+						changeView(machine, ViewState::OverallWinOrLose);
 						break;
 					
 				}
 
 			}
 			
-			this->counter++;
+      if (highlightEndOfGame.counter == 0) this->counter++;
 			break;
+
+
+    case ViewState::OverallWinOrLose:
+
+      if (this->player.purse >= GAME_WINNING_AMOUNT) {
+
+        machine.changeState(GameStateType::GameWin); 
+
+      }
+      else if (this->player.purse <= 0) {
+
+        machine.changeState(GameStateType::GameLose); 
+
+      }
+      else {
+  		
+      	changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
+      
+      }
+
 
     case ViewState::EndOfGame:
 #ifdef DEBUG_CASE
@@ -896,18 +918,18 @@ Serial.println(F("Bust "));
           
       if (this->handInPlay == Hand::First) {
 
-        if (arduboy.everyXFrames(FLASH_DELAY) && this->counter <= 4) {
+        this->player.firstHand.bust = true;
+        //if (arduboy.everyXFrames(FLASH_DELAY) && this->counter <= 4) {
 Serial.println(this->counter);
 
           switch (this->counter) {
 
-            case 0:
-              this->player.firstHand.bust = true;
+            case 0 ... 10:
               Serial.println(F("Bust::playNextHand 11"));
               highlightLoss(this->handInPlay, this->player.firstHand.bet, (this->player.hasSecondHand() ? MessageNumber::BustFirstHand: MessageNumber::BustOnlyHand));
               break;
 
-            case 4:
+            case 11:
               Serial.println(F("Bust::playNextHand 12"));
               this->counter = 0;
               playNextHand(machine);
@@ -915,51 +937,35 @@ Serial.println(this->counter);
 
           }
 
-          this->counter++;
+          if (highlightEndOfGame.counter == 0) this->counter++;
         
-        }
+        //}
 
       }
       else if (this->handInPlay == Hand::Second) {
     
         this->player.secondHand.bust = true;
-        // // this->winStatus = WinStatus::Lose;
-        // // this->winStatusAmount = this->player.secondHand.bet;
-        // // // drawPlayerScores();
-        
-        // // // highlightLoss(-player.secondHand.bet);
-        // // playNextHand();
-        // this->buttonMode = ButtonDisplay::None;
-        // highlightLoss(this->handInPlay, this->player.secondHand.bet, MessageNumber::BustSecondHand);
 
-
-        // // drawPlayerScores();
-        
-        // // highlightLoss(-player.firstHand.bet);
-
-        // if (this->highlightEndOfGame.counter == 0) playNextHand(machine);
-
-        if (arduboy.everyXFrames(FLASH_DELAY) && this->counter <= 4) {
+        //if (arduboy.everyXFrames(FLASH_DELAY) && this->counter <= 4) {
 Serial.println(this->counter);
 
           switch (this->counter) {
 
-            case 0:
-              this->player.secondHand.bust = true;
+            case 0 ... 10:
               Serial.println(F("Bust::playNextHand 21"));
               highlightLoss(this->handInPlay, this->player.secondHand.bet, MessageNumber::BustSecondHand);
               break;
 
-            case 4:
+            case 11:
               Serial.println(F("Bust::playNextHand 22"));
               playNextHand(machine);
               break;
 
           }
 
-          this->counter++;
+          if (highlightEndOfGame.counter == 0) this->counter++;
         
-        }
+        //}
 
       }
 
@@ -1001,7 +1007,7 @@ Serial.println(player.firstHand.bust);
       else {
        
         // showDealerCards();
-        changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
+        changeView(machine, ViewState::OverallWinOrLose, 0, ButtonDisplay::None);
 Serial.println(player.firstHand.bust);        
       }
       
@@ -1020,7 +1026,7 @@ Serial.println(player.firstHand.bust);
     else {
        
       // showDealerCards();
-      changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
+      changeView(machine, ViewState::OverallWinOrLose, 0, ButtonDisplay::None);
       // drawButtons(); 
         
     }

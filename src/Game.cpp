@@ -107,6 +107,28 @@ void Game::loop(void) {
 			this->titleScreenState.render(*this);
 			break;
 
+		case GameStateType::GameWin: 
+
+			if (currentState != savedCurrentState) {
+				this->context.gameState = this->currentState;
+				this->gameWinState.activate(*this);
+				this->savedCurrentState = this->currentState;
+			}
+			this->gameWinState.update(*this);
+			this->gameWinState.render(*this);
+			break;
+
+		case GameStateType::GameLose: 
+
+			if (currentState != savedCurrentState) {
+				this->context.gameState = this->currentState;
+				this->gameLoseState.activate(*this);
+				this->savedCurrentState = this->currentState;
+			}
+			this->gameLoseState.update(*this);
+			this->gameLoseState.render(*this);
+			break;
+
 		default: break;	
 
 	}

@@ -4,7 +4,7 @@
 #include "Utils.h"
 
 #define _DEBUG
-#define DEBUG_CASE
+#define _DEBUG_CASE
 #define SOUND_ON_OFF
 #define SOUND
 
@@ -17,16 +17,16 @@ extern uint8_t hpISR;
 //#define DEBUG_DEALER_BLACKJACK_10_A
 //#define DEBUG_DEALER_BLACKJACK_A_10
 //#define DEBUG_DEALER_PAIR_10
-#define DEBUG_DEALER_LOW_HAND
+//#define DEBUG_DEALER_LOW_HAND
 
 //#define DEBUG_PLAYER_INIT_BLACKJACK_10_A
 //#define DEBUG_PLAYER_INIT_BLACKJACK_A_10
-#define DEBUG_PLAYER_INIT_PAIR_10
+//#define DEBUG_PLAYER_INIT_PAIR_10
 //#define DEBUG_PLAYER_INIT_PAIR_A
 //#define DEBUG_PLAYER_INIT_LOW_HAND
-#define DEBUG_PLAYER_SPLIT_FIRST_A
+//#define DEBUG_PLAYER_SPLIT_FIRST_A
 //#define DEBUG_PLAYER_SPLIT_FIRST_10
-#define DEBUG_PLAYER_SPLIT_SECOND_A
+//#define DEBUG_PLAYER_SPLIT_SECOND_A
 //#define DEBUG_PLAYER_SPLIT_SECOND_10
 //#define DEBUG_PLAYER_PLAY_FIRST_A
 //#define DEBUG_PLAYER_PLAY_FIRST_10
@@ -39,6 +39,8 @@ extern uint8_t hpISR;
 constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
 constexpr const static uint8_t STARTING_PURSE = 100;
+constexpr const static uint8_t GAME_WINNING_AMOUNT = 110;
+
 
 constexpr const static uint8_t CARD_LARGE_SPACING = 12;
 constexpr const static uint8_t CARD_LARGE_SPACING_DEALER = 10;
@@ -174,6 +176,8 @@ enum class GameStateType : uint8_t {
   PlayGame,
 	SplashScreen,
 	TitleScreen,
+  GameWin,
+  GameLose
 };
 
 enum class WinStatus : uint8_t {
@@ -225,7 +229,7 @@ struct Player {
 
   PlayerHand firstHand;
   PlayerHand secondHand;
-  uint16_t purse = STARTING_PURSE;
+  int16_t purse = STARTING_PURSE;
 
   bool split = false;
 
@@ -247,7 +251,7 @@ struct Player {
 
   bool canSplit() {
 
-    return firstHand.cardCount == 2 && secondHand.cardCount == 0 && firstHand.cards[0] % 13 == firstHand.cards[1];
+    return firstHand.cardCount == 2 && secondHand.cardCount == 0 && firstHand.cards[0] % 13 == firstHand.cards[1] % 13;
 
   }
 
@@ -330,6 +334,7 @@ struct HighlightEndOfGame {
     loss = 0;
     purseInc = 0;
     messageId = MessageNumber::None;
+    counter = 0;
 
   }
 

@@ -56,7 +56,7 @@ void TitleScreenState::update(StateMachine & machine) {
 
 	if (justPressed & A_BUTTON) {
 
-	  machine.changeState(GameStateType::PlayGame);
+	  machine.changeState(GameStateType::PlayGame); 
 
   }
 

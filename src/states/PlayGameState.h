@@ -76,6 +76,7 @@ class PlayGameState : public BaseState {
     PlayHand,
     PlayDealerHand,
     CheckForWins,
+    OverallWinOrLose,
     EndOfGame,
     Bust
   };
@@ -135,6 +136,7 @@ class PlayGameState : public BaseState {
     void drawStats(StateMachine & machine, HighlightEndOfGame highlightEndOfGame);
     void bust(StateMachine & machine, Turn playerNo, Hand hand);
     void playNextHand(StateMachine & machine);
+    void updateStats();
     
     void highlightWin(Hand hand, int16_t win, int16_t purseInc, MessageNumber messageId/* = MessageNumber::None*/, uint8_t delay = FLASH_DELAY * 4);
     void highlightLoss(Hand hand, int16_t loss, MessageNumber messageId /*= MessageNumber::None*/, uint8_t delay = FLASH_DELAY * 4);
