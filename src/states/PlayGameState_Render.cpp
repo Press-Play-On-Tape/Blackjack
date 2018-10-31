@@ -523,18 +523,20 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
   }
   else {
 
+	  font3x5.setCursor(76, 8);
+
     switch (highlightEndOfGame.status) {
 
       case WinStatus::Win:
-        font3x5.print(F("\n    ~Win:~ "));
+        font3x5.print(F("    ~Win:~ "));
         break;
 
       case WinStatus::Lose:
-        font3x5.print(F("\n   ~Lose:~ "));
+        font3x5.print(F("   ~Lose:~ "));
         break;
 
       case WinStatus::Push:
-        font3x5.print(F("\n         "));
+        font3x5.print(F("         "));
         break;
 
 			default: break;
@@ -546,7 +548,7 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
       case WinStatus::Win:
 
         if (flash) {
-          arduboy.fillRect(115, 21, 13, 7, WHITE);
+          arduboy.fillRect(115, 8, 13, 7, WHITE);
           font3x5.setTextColor(BLACK);
         }
         render3DigitNumber(highlightEndOfGame.win);
@@ -554,7 +556,7 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
 
       case WinStatus::Lose:
         if (flash) {
-          arduboy.fillRect(115, 21, 13, 7, WHITE);
+          arduboy.fillRect(115, 8, 13, 7, WHITE);
           font3x5.setTextColor(BLACK);
         }
         render3DigitNumber(absT(highlightEndOfGame.loss));
@@ -562,7 +564,7 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
 
       case WinStatus::Push:
         if (flash) {
-          arduboy.fillRect(111, 21, 17, 7, WHITE);
+          arduboy.fillRect(111, 8, 17, 7, WHITE);
           font3x5.setTextColor(BLACK);
         }
         font3x5.print(F("Push"));

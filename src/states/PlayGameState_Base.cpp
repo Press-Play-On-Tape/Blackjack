@@ -605,7 +605,8 @@ Serial.println(F("PlayDealerHand "));
 
 		case ViewState::CheckForWins:
 #ifdef DEBUG_CASE
-Serial.println(F("CheckForWins "));
+Serial.print(F("CheckForWins "));
+Serial.println(this->counter);
 #endif
 
 
@@ -620,9 +621,9 @@ Serial.println(F("CheckForWins "));
 					
 					switch (this->counter) {
 
-						case 0 ... 64: break;
+						case 0 ... 10: break;
 
-						case 65:
+						case 11:
 							
 							if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
@@ -654,9 +655,9 @@ Serial.println(F("CheckForWins "));
 
 							break;
 
-						case 66 ... 128: break;
+						case 12 ... 86: break;
 
-						case 129:
+						case 87:
 						
 							if (calculateHand(Turn::Player, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
@@ -699,9 +700,9 @@ Serial.println(F("CheckForWins "));
 
 							break;
 
-						case 130 ... 192: break;
+						case 88 ... 142: break;
 
-						case 193:
+						case 143:
 		
 							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
 							break;
@@ -715,9 +716,9 @@ Serial.println(F("CheckForWins "));
 
 					switch (this->counter) {
 
-						case 0 ... 30: break;
+						case 0 ... 10: break;
 
-						case 31:
+						case 11:
 
 							if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
@@ -736,9 +737,9 @@ Serial.println(F("CheckForWins "));
 
 							break;
 
-						case 32 ... 62: break;
+						case 12 ... 44: break;
 
-						case 63:
+						case 45:
 		
 							changeView(machine, ViewState::EndOfGame, 0, ButtonDisplay::EndOfGame);
 							break;
@@ -888,7 +889,9 @@ Serial.println(F("EndOfGame "));
       break;
 
     case ViewState::Bust:
-      
+#ifdef DEBUG_CASE
+Serial.println(F("Bust "));
+#endif     
       this->buttonMode = ButtonDisplay::None;
           
       if (this->handInPlay == Hand::First) {

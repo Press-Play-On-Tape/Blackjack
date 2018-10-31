@@ -4,6 +4,7 @@
 #include "Utils.h"
 
 #define _DEBUG
+#define DEBUG_CASE
 #define SOUND_ON_OFF
 #define SOUND
 
