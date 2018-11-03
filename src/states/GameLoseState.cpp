@@ -74,12 +74,14 @@ void GameLoseState::render(StateMachine & machine) {
 	auto & arduboy = machine.getContext().arduboy;
 	auto & ardBitmap = machine.getContext().ardBitmap;
 
-	Sprites::drawOverwrite(11, 16, Images::YouBusted, 0);
+	Sprites::drawOverwrite(19, 9, Images::YouAreBroke_01, 0);
+	Sprites::drawOverwrite(28, 36, Images::YouAreBroke_02, 0);
+  ardBitmap.drawCompressed(0, 53, Images::Background, WHITE, ALIGN_NONE, MIRROR_NONE); 
 
   for (uint8_t i = 0; i <= 12; i++) {
 
     uint8_t j = (i + this->counter) % 4;
-  	ardBitmap.drawCompressed(13 + (i * 8), 34, Images::Suits[j], WHITE, ALIGN_NONE, MIRROR_NONE);
+  	ardBitmap.drawCompressed(13 + (i * 8), 26, Images::Suits[j], WHITE, ALIGN_NONE, MIRROR_NONE);
 
   }
 

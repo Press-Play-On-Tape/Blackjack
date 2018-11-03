@@ -42,8 +42,13 @@ static const int8_t BET_BUTTONS_LEFT[] = { -1, 17, 35, 53 };
 constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
 constexpr const static uint8_t STARTING_PURSE = 100;
-constexpr const static uint8_t GAME_WINNING_AMOUNT = 110;
+constexpr const static uint8_t GAME_WINNING_AMOUNT = 200;
 
+constexpr const static uint8_t DEALER_COMMENT_LENGTH = 64;
+constexpr const static uint8_t DEALER_BLINK_IMAGE = 3;
+constexpr const static uint8_t DEALER_COMMENT_YPOS_TOP = 13;
+constexpr const static uint8_t DEALER_COMMENT_YPOS_MID = 22;
+constexpr const static uint8_t DEALER_COMMENT_YPOS_BOT = 33;
 
 constexpr const static uint8_t CARD_LARGE_SPACING = 12;
 constexpr const static uint8_t CARD_LARGE_SPACING_DEALER = 10;
@@ -58,11 +63,28 @@ constexpr const static uint8_t CARD_LARGE_TOP_DEALER = 0;
 
 constexpr const static uint8_t HIGHLIGHT_BUTTON_DO_NOT_CHANGE = 255;
 
+enum class DealerComment : uint8_t {
+  Welcome,
+  DealerHas21,
+  DealerWins,
+  PlayerHas21,
+  PlayerWins,
+  PlayerPushes,
+  PlayerBust,
+  Insurance
+};
+
+enum class DealerFace : uint8_t {
+  Normal,
+  Angry,
+  RaisedEye,
+};
+
 enum class MessageNumber : uint8_t {
   None = 0,
-  BustFirstHand,
-  BustOnlyHand,
-  BustSecondHand,
+  // BustFirstHand,
+  // BustOnlyHand,
+  // BustSecondHand,
   BothHaveBlackjack,
   DealerHasBlackjack,
 	DealerNoBlackjack,
@@ -82,48 +104,48 @@ enum class MessageNumber : uint8_t {
   SecondHandBlackjack
 };
 
-char const messageText_01[] PROGMEM = "First~hand~is~bust!";
-char const messageText_02[] PROGMEM = "Bust!";
-char const messageText_03[] PROGMEM = "Second~hand~is~bust!";
+// char const messageText_01[] PROGMEM = "First~hand~is~bust!";
+// char const messageText_02[] PROGMEM = "Bust!";
+// char const messageText_03[] PROGMEM = "Second~hand~is~bust!";
 char const messageText_04[] PROGMEM = "Two~blackjacks!";
 char const messageText_05[] PROGMEM = "Dealer~has~Blackjack!";
 char const messageText_06[] PROGMEM = "Dealer~has~nothing!";
 char const messageText_07[] PROGMEM = "Insured Blackjack!";
 char const messageText_08[] PROGMEM = "Push~on~two~Blackjacks!";
-char const messageText_09[] PROGMEM = "Your~hand~wins!";
-char const messageText_10[] PROGMEM = "Your~hand~loses!";
-char const messageText_11[] PROGMEM = "Your~hand~pushes!";
-char const messageText_12[] PROGMEM = "You~have~Blackjack!";
-char const messageText_13[] PROGMEM = "First~hand~wins!";
-char const messageText_14[] PROGMEM = "First~hand~loses!";
-char const messageText_15[] PROGMEM = "First~hand~pushes!";
-char const messageText_16[] PROGMEM = "First~hand~has~Blackjack!";
-char const messageText_17[] PROGMEM = "Second~hand~wins!";
-char const messageText_18[] PROGMEM = "Second~hand~loses!";
-char const messageText_19[] PROGMEM = "Second~hand~pushes!";
-char const messageText_20[] PROGMEM = "Second~hand~has~Blackjack!";
+// char const messageText_09[] PROGMEM = "Your~hand~wins!";
+// char const messageText_10[] PROGMEM = "Your~hand~loses!";
+// char const messageText_11[] PROGMEM = "Your~hand~pushes!";
+// char const messageText_12[] PROGMEM = "You~have~Blackjack!";
+// char const messageText_13[] PROGMEM = "First~hand~wins!";
+// char const messageText_14[] PROGMEM = "First~hand~loses!";
+// char const messageText_15[] PROGMEM = "First~hand~pushes!";
+// char const messageText_16[] PROGMEM = "First~hand~has~Blackjack!";
+// char const messageText_17[] PROGMEM = "Second~hand~wins!";
+// char const messageText_18[] PROGMEM = "Second~hand~loses!";
+// char const messageText_19[] PROGMEM = "Second~hand~pushes!";
+// char const messageText_20[] PROGMEM = "Second~hand~has~Blackjack!";
 
 char const * const messageTexts[] = {
-	messageText_01,
-	messageText_02,
-	messageText_03,
+	// messageText_01,
+	// messageText_02,
+	// messageText_03,
 	messageText_04,
 	messageText_05,
 	messageText_06,
   messageText_07,
   messageText_08,
-  messageText_09,
-  messageText_10,
-  messageText_11,
-  messageText_12,
-  messageText_13,
-  messageText_14,
-  messageText_15,
-  messageText_16,
-  messageText_17,
-  messageText_18,
-  messageText_19,
-  messageText_20,
+  // messageText_09,
+  // messageText_10,
+  // messageText_11,
+  // messageText_12,
+  // messageText_13,
+  // messageText_14,
+  // messageText_15,
+  // messageText_16,
+  // messageText_17,
+  // messageText_18,
+  // messageText_19,
+  // messageText_20,
 };
 
 
@@ -136,7 +158,6 @@ enum class ButtonDisplay: uint8_t {
   EndOfGame,
   OptionsDisabled,
   GamePlay,
-  GamePlayDisabled,
   OKOnly
 };
 
@@ -263,6 +284,17 @@ struct Player {
     return secondHand.cardCount > 0;
 
   }
+
+  PlayerHand * getPlayerHand(Hand hand) {
+
+    if (hand == Hand::First) {
+      return &firstHand;
+    }
+    else {
+      return &secondHand;
+    }
+
+  }
   
 };
 
@@ -270,6 +302,26 @@ struct Dealer {
   
   uint8_t cardCount = 0;
   uint8_t cards[12];
+
+  DealerComment comment;
+  DealerFace face;
+  uint8_t counter;
+  uint8_t yPos;
+
+  void setComment(DealerComment comment, DealerFace face, uint8_t yPos = DEALER_COMMENT_YPOS_MID) {
+    this->counter = DEALER_COMMENT_LENGTH;
+    this->comment = comment;
+    this->face = face;
+    this->yPos = yPos;
+  }
+
+  bool hasComment() {
+    return counter != 0;
+  }
+
+  bool noComment() {
+    return counter == 0;
+  }
 
   void reset() {
 

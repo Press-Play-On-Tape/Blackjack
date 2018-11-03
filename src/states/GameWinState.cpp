@@ -64,7 +64,7 @@ void GameWinState::render(StateMachine & machine) {
 	auto & ardBitmap = machine.getContext().ardBitmap;
 
 	Sprites::drawOverwrite(4, 4, Images::YouWon_01, 0);
-	Sprites::drawOverwrite(10, 20, Images::YouWon_02, 0);
+	Sprites::drawOverwrite(10, 33, Images::YouWon_02, 0);
 	Sprites::drawOverwrite(0, 48, Images::YouWon_03, 0);
 
   for (uint8_t i = 0; i <= 12; i++) {

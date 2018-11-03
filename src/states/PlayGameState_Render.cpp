@@ -2,6 +2,104 @@
 #include "../images/Images.h"
 
 
+
+// ---------------------------------------------------------------------------------------------------------------------------
+//  Render the state .. 
+// ---------------------------------------------------------------------------------------------------------------------------
+//
+void PlayGameState::render(StateMachine & machine) {
+
+	auto & arduboy = machine.getContext().arduboy;
+	auto & ardBitmap = machine.getContext().ardBitmap;
+
+	font3x5.setCursor(0, 22);
+
+	switch (this->viewState) {
+
+		case ViewState::InitBet:
+      if (dealer.noComment()) {
+        font3x5.print(F("Initial~bet? "));
+        arduboy.fillRect(49, 22, 13, 7);
+        font3x5.setTextColor(BLACK);
+        render3DigitNumber(this->currentBetInit);
+        font3x5.setTextColor(WHITE);
+      }
+			break;
+
+		case ViewState::OfferInsurance:
+			drawPlayerHands(machine);
+			drawDealerHand(machine, true);
+      if (dealer.noComment()) {
+        font3x5.print(F("Insurance? "));
+        arduboy.fillRect(43, 22, 13, 7);
+        font3x5.setTextColor(BLACK);
+        render3DigitNumber(this->insurance);
+        font3x5.setTextColor(WHITE);
+      }
+			break;
+
+		case ViewState::InitDeal:
+			drawPlayerHands(machine);
+			drawDealerHand(machine, true);
+			break;
+
+		case ViewState::Peeking:
+			drawPlayerHands(machine);
+      drawDealerHand(machine, true);
+      font3x5.print(F("Dealer~is~peeking~"));
+
+      for (uint8_t x = 0; x < (this->counter / 8); x++) {
+        font3x5.print(F("."));
+      }
+
+      break;
+				
+		case ViewState::PeekOnTen:
+			drawPlayerHands(machine);
+      drawDealerHand(machine, this->highlightEndOfGame.status == WinStatus::None);
+			break;
+
+    case ViewState::SplitCards:
+    case ViewState::PlayHand:
+      drawPlayerHands(machine);
+      drawDealerHand(machine, true);
+      break;
+
+    case ViewState::PlayDealerHand:
+    case ViewState::CheckForWins:
+      drawPlayerHands(machine);
+      drawDealerHand(machine, false);
+      break;
+
+    case ViewState::Bust:
+      drawPlayerHands(machine);
+      drawDealerHand(machine, 
+        (this->player.firstHand.bust && !this->player.hasSecondHand()) ||
+        (this->player.firstHand.bust && this->player.hasSecondHand() && this->player.secondHand.bust)
+      );
+      break;
+
+    case ViewState::OverallWinOrLose:
+    case ViewState::EndOfGame:
+      drawPlayerHands(machine);
+      drawDealerHand(machine, false);
+      break;
+
+    default: break;
+
+	}
+
+  arduboy.fillRect(0, 52, WIDTH, HEIGHT, BLACK);
+  ardBitmap.drawCompressed(0, 51, Images::Background, WHITE, ALIGN_NONE, MIRROR_NONE); 
+  drawPlayerHands_Lines(machine);
+	drawButtons(machine);
+  drawStats(machine, this->highlightEndOfGame);
+
+  if (!dealer.noComment()) renderDealer(machine);
+
+}
+
+
 void PlayGameState::render4DigitNumber(uint16_t val) {
 	
 	uint8_t digits[4] = {};
@@ -312,19 +410,6 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			break;
 
-		case ButtonDisplay::GamePlayDisabled:
-    
-			// lcd.setTextColour(GREY5);
-			// lcd.drawRoundRect(BUTTONS_HITME_LEFT, BUTTONS_HITME_TOP, BUTTONS_HITME_LEFT + BUTTONS_HITME_WIDTH, BUTTONS_HITME_TOP + BUTTONS_HITME_HEIGHT, radius5, GREY5, hollowFill);
-			// lcd.drawRoundRect(BUTTONS_STAND_LEFT, BUTTONS_STAND_TOP, BUTTONS_STAND_LEFT + BUTTONS_STAND_WIDTH, BUTTONS_STAND_TOP + BUTTONS_STAND_HEIGHT, radius5, GREY5, hollowFill);
-			// lcd.drawRoundRect(BUTTONS_DOUBLE_LEFT, BUTTONS_DOUBLE_TOP, BUTTONS_DOUBLE_LEFT + BUTTONS_DOUBLE_WIDTH, BUTTONS_DOUBLE_TOP + BUTTONS_DOUBLE_HEIGHT, radius5, GREY5, hollowFill);
-			// lcd.drawRoundRect(BUTTONS_SPLIT_LEFT, BUTTONS_SPLIT_TOP, BUTTONS_SPLIT_LEFT + BUTTONS_SPLIT_WIDTH, BUTTONS_SPLIT_TOP + BUTTONS_SPLIT_HEIGHT, radius5, GREY5, hollowFill);
-			// lcd.string(BUTTONS_HITME_LEFT + 12, BUTTONS_HITME_TOP + 9, MAX_X_PORTRAIT, MAX_Y_PORTRAIT, "Hit Me", 0);
-			// lcd.string(BUTTONS_STAND_LEFT + 12, BUTTONS_STAND_TOP + 9, MAX_X_PORTRAIT, MAX_Y_PORTRAIT, "Stand", 0);
-			// lcd.string(BUTTONS_DOUBLE_LEFT + 11, BUTTONS_DOUBLE_TOP + 9, MAX_X_PORTRAIT, MAX_Y_PORTRAIT, "Double", 0);
-			// lcd.string(BUTTONS_SPLIT_LEFT + 18, BUTTONS_SPLIT_TOP + 9, MAX_X_PORTRAIT, MAX_Y_PORTRAIT, "Split", 0);
-			break;
-
 		case ButtonDisplay::BetButtons:
 
 			if (currentBetInit <= 199 && player.purse >= 1 && handInPlay != Hand::Dealer) { 
@@ -501,7 +586,7 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
 
 	auto & arduboy = machine.getContext().arduboy;
   auto justPressed = arduboy.justPressedButtons();
-	auto flash = arduboy.getFrameCountHalf(FLASH_DELAY);
+	auto flash = arduboy.getFrameCountHalf(FLASH_DELAY) || !dealer.noComment();
 
 
   // Exit if the player has bressed a button ..
@@ -594,14 +679,18 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
     font3x5.setTextColor(WHITE);
     font3x5.setCursor(0, 22);
 
-    switch (this->highlightEndOfGame.messageId) {
-      
-      case MessageNumber::None:
-        break;
-      
-      default:
-        font3x5.print(FlashString(messageTexts[static_cast<uint8_t>(this->highlightEndOfGame.messageId) - 1]));
-        break;
+    if (dealer.noComment()) {
+
+      switch (this->highlightEndOfGame.messageId) {
+        
+        case MessageNumber::None:
+          break;
+        
+        default:
+          font3x5.print(FlashString(messageTexts[static_cast<uint8_t>(this->highlightEndOfGame.messageId) - 1]));
+          break;
+
+      }
 
     }
 
@@ -609,21 +698,16 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
     // If half way through flashing, update the stats ..
 
     this->highlightEndOfGame.counter--;
-Serial.println(this->highlightEndOfGame.counter);
+
     if (this->highlightEndOfGame.counter == this->highlightEndOfGame.changeScore) {
-
       updateStats();
-
     }
     else if (this->highlightEndOfGame.counter == 0) {
-
       this->highlightEndOfGame.reset();
-
     }
 
   }
-//SJH
- //renderDealer(machine, 0, 0);
+
 }
 
 void PlayGameState::updateStats() {
@@ -649,15 +733,27 @@ void PlayGameState::updateStats() {
 
 }
 
-void PlayGameState::renderDealer(StateMachine & machine, uint8_t dealerFace, uint8_t comment) {
+void PlayGameState::renderDealer(StateMachine & machine) {
 
+	auto & arduboy = machine.getContext().arduboy;
 	auto & ardBitmap = machine.getContext().ardBitmap;
+  auto justPressed = arduboy.justPressedButtons();
 
   ardBitmap.drawCompressed(79, 8, Images::Dealer_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
   ardBitmap.drawCompressed(79, 8, Images::Dealer_BlankFace, WHITE, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(91, 18, Images::Dealer_Face[dealerFace], WHITE, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(91, 18, Images::Dealer_Face[arduboy.getFrameCount(32) == 0 ? DEALER_BLINK_IMAGE : static_cast<uint8_t>(dealer.face)], WHITE, ALIGN_NONE, MIRROR_NONE);
 
-  ardBitmap.drawCompressed(10, 22, Images::Speech_Blank_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(10, 22, Images::Speech_Blank, WHITE, ALIGN_NONE, MIRROR_NONE);
+  if (dealer.comment != DealerComment::Insurance) {
+    ardBitmap.drawCompressed(10, dealer.yPos, Images::Speech_Blank_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+    ardBitmap.drawCompressed(10, dealer.yPos, Images::Dealer_Comment[static_cast<uint8_t>(dealer.comment)], WHITE, ALIGN_NONE, MIRROR_NONE);
+  }
+  else {
+    ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_Insurance_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+    ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_Insurance, WHITE, ALIGN_NONE, MIRROR_NONE);
+  }
+
+  dealer.counter--;
+
+  if (justPressed > 0) { dealer.counter = 0; }
 
 }
