@@ -204,13 +204,14 @@ void PlayGameState::highlightWin(Hand hand, int16_t win, int16_t purseInc, Messa
 
   this->counter++;
 
+  #ifdef DEBUG                  
 	Serial.print(F("highlightWin: "));
 	Serial.print((uint8_t)hand);
 	Serial.print(F(", win: "));
 	Serial.print(win);
 	Serial.print(F(", purse: "));
 	Serial.println(purseInc);
-
+  #endif
 }
 
 void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber messageId, uint8_t delay) {
@@ -225,11 +226,12 @@ void PlayGameState::highlightLoss(Hand hand, int16_t loss, MessageNumber message
 
   this->counter++;
 
+  #ifdef DEBUG                  
 	Serial.print(F("highlightLoss: "));
 	Serial.print((uint8_t)hand);
 	Serial.print(F(", loss: "));
 	Serial.println(loss);
-
+  #endif
 }
 
 void PlayGameState::highlightPush(Hand hand, int16_t purseInc, MessageNumber messageId, uint8_t delay) {
@@ -244,7 +246,8 @@ void PlayGameState::highlightPush(Hand hand, int16_t purseInc, MessageNumber mes
 
   this->counter++;
 
+  #ifdef DEBUG                  
 	Serial.print(F("highlightPush: "));
 	Serial.println((uint8_t)hand);
-
+  #endif
 }

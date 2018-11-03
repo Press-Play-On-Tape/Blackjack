@@ -111,6 +111,11 @@ void PlayGameState::update(StateMachine & machine) {
 						dealer.cards[1] = 9;
             #endif
 
+            #ifdef DEBUG_DEALER_6_A
+						dealer.cards[0] = 5;
+						dealer.cards[1] = 0;
+            #endif
+
             #ifdef DEBUG_DEALER_PAIR_10
 						dealer.cards[0] = 9;
 						dealer.cards[1] = 9;
@@ -187,7 +192,7 @@ void PlayGameState::update(StateMachine & machine) {
 			if (justPressed & LEFT_BUTTON) 	{ this->highlightedButton = decreaseHighlightButton_InsuranceButtons(this->highlightedButton); }
 			if (justPressed & RIGHT_BUTTON) { this->highlightedButton = increaseHighlightButton_InsuranceButtons(this->highlightedButton); }
 			if (justPressed & A_BUTTON) 		{ 
-				
+
 				switch (static_cast<Buttons>(this->highlightedButton)) {
 					
 					case Buttons::InsuranceBet_1 ... Buttons::InsuranceBet_25: 
@@ -201,9 +206,14 @@ void PlayGameState::update(StateMachine & machine) {
 						break;
 
 					case Buttons::InsuranceBet_Clear:
-            player.purse = player.purse + this->insurance;
-            this->insurance = 0;
-            this->currentBetTotal = this->currentBetInit;
+            if (this->insurance == 0) {
+  						changeView(machine, ViewState::Peeking, 0, ButtonDisplay::None);
+            }
+            else {
+              player.purse = player.purse + this->insurance;
+              this->insurance = 0;
+              this->currentBetTotal = this->currentBetInit;
+            }
 						break;
 
 					default: break;
@@ -236,13 +246,18 @@ void PlayGameState::update(StateMachine & machine) {
 
             if (calculateHand(Turn::Dealer, true) == 21) {
 
+              dealer.cardsShown = true;
+              this->buttonMode = ButtonDisplay::EndOfGame;
+
               if (calculateHand(Turn::Player, Hand::First, true) == 21) {
               
-                this->buttonMode = ButtonDisplay::EndOfGame;
                 gameStats.gamesPush++;
 
 								if (this->insurance == 0) {
                   dealer.setComment(DealerComment::PlayerPushes, DealerFace::RaisedEye);
+#ifdef DEBUG                  
+Serial.println(F("highlightPush A"));	
+#endif
                   highlightPush(Hand::First, currentBetInit, MessageNumber::BothHaveBlackjack);
 								}
 								else {
@@ -253,21 +268,28 @@ void PlayGameState::update(StateMachine & machine) {
               }
               else {
 
-								this->buttonMode = ButtonDisplay::EndOfGame;
                 gameStats.gamesLost++;
 
 								if (this->insurance == 0) {
+#ifdef DEBUG                  
 Serial.println(F("highlightLoss A"));	
-									highlightLoss(Hand::First, -currentBetInit, MessageNumber::DealerHasBlackjack);
+#endif
+                  dealer.setComment(DealerComment::DealerHas21, DealerFace::RaisedEye);
+									highlightLoss(Hand::First, -currentBetInit, MessageNumber::None);
 								}
 								else {
 
 									if (this->currentBetInit - (this->insurance * 2) == 0) {
-                    dealer.setComment(DealerComment::PlayerPushes, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_BOT);
-										highlightPush(Hand::First, 0, MessageNumber::DealerHasBlackjackWithInsurance);
+#ifdef DEBUG                  
+Serial.println(F("highlightPush B"));	
+#endif
+                    dealer.setComment(DealerComment::InsurancePaysHandLoses, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_TOP);
+										highlightPush(Hand::First, this->insurance * 2, MessageNumber::DealerHasBlackjackWithInsurance);
 									}
 									else {
-  Serial.println(F("highlightLoss B"));	
+#ifdef DEBUG                  
+Serial.println(F("highlightLoss B"));	
+#endif
                     dealer.setComment(DealerComment::DealerWins, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_BOT);
 										highlightLoss(Hand::First, -(this->currentBetInit - (this->insurance * 2)), MessageNumber::DealerHasBlackjack);
 									}
@@ -280,10 +302,16 @@ Serial.println(F("highlightLoss A"));
             else {
 
 							if (this->insurance != 0) {
+#ifdef DEBUG                  
 Serial.println(F("highlightLoss C"));	
+#endif
+                dealer.setComment(DealerComment::PlayerLosesInsurance, DealerFace::RaisedEye);
 								highlightLoss(Hand::First, -this->insurance, MessageNumber::DealerNoBlackjack);
 								this->currentBetTotal = this->currentBetInit;
 							}
+              else {
+                dealer.setComment(DealerComment::DealerDoesNotHave21, DealerFace::RaisedEye);
+              }
 
 							this->buttonMode = ButtonDisplay::OKOnly;
 
@@ -303,7 +331,7 @@ Serial.println(F("highlightLoss C"));
 
 				if (justPressed & A_BUTTON) {
 					
-					if (this->insuranceResult != InsuranceResult::DealerNoBlackjack) {
+					if (this->buttonMode != ButtonDisplay::OKOnly) {
 
 						switch (static_cast<Buttons>(this->highlightedButton)) {
 						
@@ -777,6 +805,9 @@ void PlayGameState::checkForWinOrLoss(Hand hand, uint16_t playerBet) {
   else if (calculateHand(Turn::Player, hand, true) == calculateHand(Turn::Dealer, true)) {
     
     dealer.setComment(DealerComment::PlayerPushes, DealerFace::RaisedEye);
+#ifdef DEBUG                  
+Serial.println(F("highlightPush C"));	
+#endif
     highlightPush(hand, playerBet, MessageNumber::None, FLASH_DELAY * 2);
     
   }

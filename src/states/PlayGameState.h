@@ -25,20 +25,11 @@ class PlayGameState : public BaseState {
     Bust
   };
 
-  enum class InsuranceResult : uint8_t {
-    Peeking,
-    BothHaveBlackjack,
-    DealerHasBlackjack,
-    DealerNoBlackjack,
-    DealerHasBlackjackWithInsurance,
-  };
-
   private:
 
     Player player;
     Dealer dealer;
 
-    InsuranceResult insuranceResult = InsuranceResult::Peeking;
     WinStatus winStatus = WinStatus::None;
     HighlightEndOfGame highlightEndOfGame;
 

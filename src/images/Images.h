@@ -2,3 +2,4 @@
 #include "Cards.h"
 #include "Dealer.h"
 #include "Splash.h"
+#include "Speech.h"

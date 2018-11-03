@@ -2,7 +2,9 @@
     "files.associations": {
       "cstddef": "cpp",
       "limits": "cpp",
-      "type_traits": "cpp"
+      "type_traits": "cpp",
+      "__config": "cpp",
+      "__nullptr": "cpp"
     },
     "editor.detectIndentation": false,
     "editor.tabSize": 2,

@@ -17,11 +17,12 @@ extern uint8_t hpISR;
 //#define DEBUG_DEALER_BLACKJACK_10_A
 //#define DEBUG_DEALER_BLACKJACK_A_10
 //#define DEBUG_DEALER_PAIR_10
-//#define DEBUG_DEALER_LOW_HAND
+#define DEBUG_DEALER_LOW_HAND
+//#define DEBUG_DEALER_6_A
 
 //#define DEBUG_PLAYER_INIT_BLACKJACK_10_A
 //#define DEBUG_PLAYER_INIT_BLACKJACK_A_10
-//#define DEBUG_PLAYER_INIT_PAIR_10
+#define DEBUG_PLAYER_INIT_PAIR_10
 //#define DEBUG_PLAYER_INIT_PAIR_A
 //#define DEBUG_PLAYER_INIT_LOW_HAND
 //#define DEBUG_PLAYER_SPLIT_FIRST_A
@@ -67,11 +68,14 @@ enum class DealerComment : uint8_t {
   Welcome,
   DealerHas21,
   DealerWins,
+  DealerDoesNotHave21,
   PlayerHas21,
   PlayerWins,
   PlayerPushes,
   PlayerBust,
-  Insurance
+  PlayerLosesInsurance,
+  Insurance,
+  InsurancePaysHandLoses
 };
 
 enum class DealerFace : uint8_t {
@@ -82,72 +86,26 @@ enum class DealerFace : uint8_t {
 
 enum class MessageNumber : uint8_t {
   None = 0,
-  // BustFirstHand,
-  // BustOnlyHand,
-  // BustSecondHand,
   BothHaveBlackjack,
   DealerHasBlackjack,
 	DealerNoBlackjack,
   DealerHasBlackjackWithInsurance,
   PushOnBlackjack,
-  OnlytHandWinner,
-  OnlyHandLoser,
-  OnlyHandPush,
-  OnlyHandBlackjack,
-  FirstHandWinner,
-  FirstHandLoser,
-  FirstHandPush,
-  FirstHandBlackjack,
-  SecondHandWinner,
-  SecondHandLoser,
-  SecondHandPush,
-  SecondHandBlackjack
 };
 
-// char const messageText_01[] PROGMEM = "First~hand~is~bust!";
-// char const messageText_02[] PROGMEM = "Bust!";
-// char const messageText_03[] PROGMEM = "Second~hand~is~bust!";
-char const messageText_04[] PROGMEM = "Two~blackjacks!";
-char const messageText_05[] PROGMEM = "Dealer~has~Blackjack!";
-char const messageText_06[] PROGMEM = "Dealer~has~nothing!";
-char const messageText_07[] PROGMEM = "Insured Blackjack!";
-char const messageText_08[] PROGMEM = "Push~on~two~Blackjacks!";
-// char const messageText_09[] PROGMEM = "Your~hand~wins!";
-// char const messageText_10[] PROGMEM = "Your~hand~loses!";
-// char const messageText_11[] PROGMEM = "Your~hand~pushes!";
-// char const messageText_12[] PROGMEM = "You~have~Blackjack!";
-// char const messageText_13[] PROGMEM = "First~hand~wins!";
-// char const messageText_14[] PROGMEM = "First~hand~loses!";
-// char const messageText_15[] PROGMEM = "First~hand~pushes!";
-// char const messageText_16[] PROGMEM = "First~hand~has~Blackjack!";
-// char const messageText_17[] PROGMEM = "Second~hand~wins!";
-// char const messageText_18[] PROGMEM = "Second~hand~loses!";
-// char const messageText_19[] PROGMEM = "Second~hand~pushes!";
-// char const messageText_20[] PROGMEM = "Second~hand~has~Blackjack!";
+char const messageText_01[] PROGMEM = "Two~blackjacks!";
+char const messageText_02[] PROGMEM = "Dealer~has~Blackjack!";
+char const messageText_03[] PROGMEM = "Dealer~has~nothing!";
+char const messageText_04[] PROGMEM = "Insured Blackjack!";
+char const messageText_05[] PROGMEM = "Push~on~two~Blackjacks!";
 
 char const * const messageTexts[] = {
-	// messageText_01,
-	// messageText_02,
-	// messageText_03,
-	messageText_04,
-	messageText_05,
-	messageText_06,
-  messageText_07,
-  messageText_08,
-  // messageText_09,
-  // messageText_10,
-  // messageText_11,
-  // messageText_12,
-  // messageText_13,
-  // messageText_14,
-  // messageText_15,
-  // messageText_16,
-  // messageText_17,
-  // messageText_18,
-  // messageText_19,
-  // messageText_20,
+	messageText_01,
+	messageText_02,
+	messageText_03,
+  messageText_04,
+  messageText_05,
 };
-
 
 enum class ButtonDisplay: uint8_t {
   DoNotChange,
@@ -222,15 +180,15 @@ struct PlayerHand {
 
   void reset() {
 
-    stand = false;
-    doubleUp = false;
-    bust = false;
-    cardCount = 0;
-    bet = 0;
+    this->stand = false;
+    this->doubleUp = false;
+    this->bust = false;
+    this->cardCount = 0;
+    this->bet = 0;
 
     for (uint8_t i = 0; i < 12; i++) {
 
-      cards[i] = 0;  
+      this->cards[i] = 0;  
 
     }
 
@@ -238,12 +196,12 @@ struct PlayerHand {
 
   bool cardIsAce(uint8_t index) {
 
-    return (cards[index] % 13 == 0);
+    return (this->cards[index] % 13 == 0);
   }
 
   bool isBlackjack() {
 
-    return (cardCount == 2 && ((cards[0] % 13 == 0 && cards[1] % 13 >= 9) || (cards[1] % 13 == 0 && cards[0] % 13 >= 9)));
+    return (this->cardCount == 2 && ((this->cards[0] % 13 == 0 && this->cards[1] % 13 >= 9) || (this->cards[1] % 13 == 0 && this->cards[0] % 13 >= 9)));
 
   }
 
@@ -259,39 +217,39 @@ struct Player {
 
   void reset() {
   
-    purse = STARTING_PURSE;
-    split = false;
-    firstHand.reset();
-    secondHand.reset();
+    this->purse = STARTING_PURSE;
+    this->split = false;
+    this->firstHand.reset();
+    this->secondHand.reset();
 
   }
 
   void resetHand() {
 
-    firstHand.reset();
-    secondHand.reset();
+    this->firstHand.reset();
+    this->secondHand.reset();
 
   }
 
   bool canSplit() {
 
-    return firstHand.cardCount == 2 && secondHand.cardCount == 0 && firstHand.cards[0] % 13 == firstHand.cards[1] % 13;
+    return this->firstHand.cardCount == 2 && this->secondHand.cardCount == 0 && this->firstHand.cards[0] % 13 == this->firstHand.cards[1] % 13;
 
   }
 
   bool hasSecondHand() {
 
-    return secondHand.cardCount > 0;
+    return this->secondHand.cardCount > 0;
 
   }
 
   PlayerHand * getPlayerHand(Hand hand) {
 
     if (hand == Hand::First) {
-      return &firstHand;
+      return &this->firstHand;
     }
     else {
-      return &secondHand;
+      return &this->secondHand;
     }
 
   }
@@ -307,6 +265,7 @@ struct Dealer {
   DealerFace face;
   uint8_t counter;
   uint8_t yPos;
+  bool cardsShown;
 
   void setComment(DealerComment comment, DealerFace face, uint8_t yPos = DEALER_COMMENT_YPOS_MID) {
     this->counter = DEALER_COMMENT_LENGTH;
@@ -316,7 +275,7 @@ struct Dealer {
   }
 
   bool hasComment() {
-    return counter != 0;
+    return this->counter != 0;
   }
 
   bool noComment() {
@@ -325,7 +284,8 @@ struct Dealer {
 
   void reset() {
 
-    cardCount = 0;
+    this->cardCount = 0;
+    this->cardsShown = false;
     resetHand();
 
   }
@@ -334,7 +294,7 @@ struct Dealer {
 
     for (uint8_t i = 0; i < 12; i++) {
 
-      cards[i] = 0;  
+      this->cards[i] = 0;  
 
     }
 
@@ -342,12 +302,12 @@ struct Dealer {
 
   bool cardIsAce(uint8_t index) {
 
-    return (cards[index] % 13 == 0);
+    return (this->cards[index] % 13 == 0);
   }
 
   bool isBlackjack() {
 
-    return (cardCount == 2 && ((cards[0] % 13 == 0 && cards[1] % 13 >= 9) || (cards[1] % 13 == 0 && cards[0] % 13 >= 9)));
+    return (this->cardCount == 2 && ((this->cards[0] % 13 == 0 && this->cards[1] % 13 >= 9) || (this->cards[1] % 13 == 0 && this->cards[0] % 13 >= 9)));
     
   }
 
@@ -362,10 +322,10 @@ struct GameStats {
 
   void reset() {
     
-    gamesPlayed = 0;
-    gamesWon = 0;
-    gamesLost = 0;
-    gamesPush = 0;
+    this->gamesPlayed = 0;
+    this->gamesWon = 0;
+    this->gamesLost = 0;
+    this->gamesPush = 0;
 
   }    
 
