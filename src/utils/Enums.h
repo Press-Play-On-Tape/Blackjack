@@ -36,6 +36,9 @@ extern uint8_t hpISR;
 // ------------------------------------------------------------------------------------------------
 
 
+static const uint8_t BETS[] = { 1, 5, 10, 25 };
+static const int8_t BET_BUTTONS_LEFT[] = { -1, 17, 35, 53 };
+
 constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
 constexpr const static uint8_t STARTING_PURSE = 100;

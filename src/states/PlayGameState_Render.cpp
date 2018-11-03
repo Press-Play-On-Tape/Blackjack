@@ -1,6 +1,7 @@
 #include "PlayGameState.h"
 #include "../images/Images.h"
 
+
 void PlayGameState::render4DigitNumber(uint16_t val) {
 	
 	uint8_t digits[4] = {};
@@ -153,10 +154,6 @@ void PlayGameState::drawCard(StateMachine & machine, uint8_t xPos, uint8_t yPos,
 	}
 	else if (rotated) {
 
-		// ardBitmap.drawCompressed(xPos, yPos + 6, Images::Card_Outline_Rotated_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
-		// ardBitmap.drawCompressed(xPos, yPos + 6, Images::Card_Outline_Rotated, WHITE, ALIGN_NONE, MIRROR_NONE);
-		// ardBitmap.drawCompressed(xPos + 13, yPos + 16, Images::Suits_Rot[card / 13], BLACK, ALIGN_NONE, MIRROR_NONE);
-		// ardBitmap.drawCompressed(xPos + 23, yPos + 10, Images::Pips_Rot[cardNumber], BLACK, ALIGN_NONE, MIRROR_NONE);
 		ardBitmap.drawCompressed(xPos - 4, yPos + 6, Images::Card_Outline_Rotated_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
 		ardBitmap.drawCompressed(xPos - 4, yPos + 6, Images::Card_Outline_Rotated, WHITE, ALIGN_NONE, MIRROR_NONE);
 		ardBitmap.drawCompressed(xPos + 9, yPos + 16, Images::Suits_Rot[card / 13], BLACK, ALIGN_NONE, MIRROR_NONE);
@@ -267,8 +264,6 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 			if (handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(-1, 52, Images::Button_30_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(-1, 52, Images::Button_HitMe, WHITE, ALIGN_NONE, MIRROR_NONE); 
-      }
-			if (handInPlay != Hand::Dealer) { 
         ardBitmap.drawCompressed(29, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(29, 52, Images::Button_Stand, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
@@ -284,25 +279,34 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			if (flash) {
 
+        uint8_t const *imageName = nullptr;
+        int8_t x = -1;
+
 				switch (this->highlightedButton) {
 
 					case 0:
-						ardBitmap.drawCompressed(-1, 52, Images::Button_30_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_30_Highlight;
+            x = -1;
 						break;
 
 					case 1:
-						ardBitmap.drawCompressed(29, 52, Images::Button_28_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_28_Highlight;
+            x = 29;
 						break;
 
 					case 2:
-						ardBitmap.drawCompressed(57, 52, Images::Button_32_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_32_Highlight;
+            x = 57;
 						break;
 
 					case 3:
-						ardBitmap.drawCompressed(89, 52, Images::Button_28_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_28_Highlight;
+            x = 89;
 						break;
         
         }
+
+        if (imageName != nullptr) ardBitmap.drawCompressed(x, 52, imageName, BLACK, ALIGN_NONE, MIRROR_NONE);
 
       }
 
@@ -350,33 +354,29 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			if (flash) {
 
+        uint8_t const *imageName = nullptr;
+        int8_t x = -1;
+
 				switch (this->highlightedButton) {
 
-					case 0:
-						ardBitmap.drawCompressed(-1, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
-
-					case 1:
-						ardBitmap.drawCompressed(17, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
-
-					case 2:
-						ardBitmap.drawCompressed(35, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
-
-					case 3:
-						ardBitmap.drawCompressed(53, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
+					case 0 ... 3:
+            imageName = Images::Bet_Highlight;
+            x = BET_BUTTONS_LEFT[this->highlightedButton];
+            break;
 
 					case 4:
-						ardBitmap.drawCompressed(75, 52, Images::Button_24_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_24_Highlight;
+            x = 75;
 						break;
 
 					case 5:
-						ardBitmap.drawCompressed(99, 52, Images::Button_28_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_28_Highlight;
+            x = 99;
 						break;
 						
 				}
+
+        if (imageName != nullptr) ardBitmap.drawCompressed(x, 52, imageName, BLACK, ALIGN_NONE, MIRROR_NONE);
 
 			}
   
@@ -415,38 +415,34 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			if (flash) {
 
+        uint8_t const *imageName = nullptr;
+        int8_t x = -1;
+
 				switch (this->highlightedButton) {
 
-					case 0:
-						ardBitmap.drawCompressed(-1, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
-
-					case 1:
-						ardBitmap.drawCompressed(17, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
-
-					case 2:
-						ardBitmap.drawCompressed(35, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
-
-					case 3:
-						ardBitmap.drawCompressed(53, 52, Images::Bet_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
+					case 0 ... 3:
+            imageName = Images::Bet_Highlight;
+            x = BET_BUTTONS_LEFT[this->highlightedButton];
+            break;
 
 					case 4:
-						ardBitmap.drawCompressed(75, 52, Images::Button_24_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_24_Highlight;
+            x = 75;
 						break;
 
 					case 5:
+            imageName = Images::Button_28_Highlight;
             if (insurance != 0) {
-              ardBitmap.drawCompressed(99, 52, Images::Button_28_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+              x = 99;
             }
             else {
-              ardBitmap.drawCompressed(103, 52, Images::Button_24_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+              x = 103;
             }
 						break;
 						
 				}
+
+        if (imageName != nullptr) ardBitmap.drawCompressed(x, 52, imageName, BLACK, ALIGN_NONE, MIRROR_NONE);
 
 			}
     
@@ -461,18 +457,25 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			if (flash) {
 
+        uint8_t const *imageName = nullptr;
+        int8_t x = -1;
+
 				switch (this->highlightedButton) {
 
 					case 0:
-						ardBitmap.drawCompressed(63, 52, Images::Button_40_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
-						break;
+            imageName = Images::Button_40_Highlight;
+            x = 63;
+            break;
 
 					case 1:
-						ardBitmap.drawCompressed(103, 52, Images::Button_24_Highlight, BLACK, ALIGN_NONE, MIRROR_NONE);
+            imageName = Images::Button_24_Highlight;
+            x = 103;
 						break;
 
 				}
 	
+        if (imageName != nullptr) ardBitmap.drawCompressed(x, 52, imageName, BLACK, ALIGN_NONE, MIRROR_NONE);
+
 			}
 
 			break;
@@ -619,7 +622,8 @@ Serial.println(this->highlightEndOfGame.counter);
     }
 
   }
-
+//SJH
+ //renderDealer(machine, 0, 0);
 }
 
 void PlayGameState::updateStats() {
@@ -642,5 +646,18 @@ void PlayGameState::updateStats() {
     default: break;
 
   }
+
+}
+
+void PlayGameState::renderDealer(StateMachine & machine, uint8_t dealerFace, uint8_t comment) {
+
+	auto & ardBitmap = machine.getContext().ardBitmap;
+
+  ardBitmap.drawCompressed(79, 8, Images::Dealer_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(79, 8, Images::Dealer_BlankFace, WHITE, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(91, 18, Images::Dealer_Face[dealerFace], WHITE, ALIGN_NONE, MIRROR_NONE);
+
+  ardBitmap.drawCompressed(10, 22, Images::Speech_Blank_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(10, 22, Images::Speech_Blank, WHITE, ALIGN_NONE, MIRROR_NONE);
 
 }

@@ -2,7 +2,6 @@
 #include "../images/Images.h"
 #define xDEBUG_CASE
 
-static const uint8_t BETS[] = { 1, 5, 10, 25 };
 
 // ----------------------------------------------------------------------------
 //  Initialise state ..
@@ -258,20 +257,14 @@ Serial.println(F("PeekOnTen "));
 
               if (calculateHand(Turn::Player, Hand::First, true) == 21) {
               
-//                this->insuranceResult = InsuranceResult::BothHaveBlackjack;			
-                //player.purse = player.purse + this->currentBetTotal + (2 * this->insurance);
                 this->buttonMode = ButtonDisplay::EndOfGame;
 								this->flashDetails = true;  
                 gameStats.gamesPush++;
 
 								if (this->insurance == 0) {
-	                // this->winStatus = WinStatus::Push;
-									// this->winStatusAmount = this->currentBetInit;
                   highlightPush(Hand::First, currentBetInit, MessageNumber::BothHaveBlackjack);
 								}
 								else {
-	                // this->winStatus = WinStatus::Win;
-									// this->winStatusAmount = (2 * this->insurance);
                   highlightWin(Hand::First, (2 * this->insurance), (2 * this->insurance) + currentBetInit,  MessageNumber::BothHaveBlackjack);
 								}
 
@@ -279,30 +272,20 @@ Serial.println(F("PeekOnTen "));
               else {
 
 								this->buttonMode = ButtonDisplay::EndOfGame;
-								// this->flashDetails = true;
-								// this->winStatusAmount = this->currentBetInit - (this->insurance * 2);
                 gameStats.gamesLost++;
 
 								if (this->insurance == 0) {
-									Serial.println(F("highlightLoss A"));	
+Serial.println(F("highlightLoss A"));	
 									highlightLoss(Hand::First, -currentBetInit, MessageNumber::DealerHasBlackjack);
-//									this->insuranceResult = InsuranceResult::DealerHasBlackjack;
-									// this->winStatus = WinStatus::Lose;
-
 								}
 								else {
 
-									// this->insuranceResult = InsuranceResult::DealerHasBlackjackWithInsurance;
-	                // player.purse = player.purse + this->winStatusAmount;
-
 									if (this->currentBetInit - (this->insurance * 2) == 0) {
-//										this->winStatus = WinStatus::Push;
 										highlightPush(Hand::First, 0, MessageNumber::DealerHasBlackjackWithInsurance);
 									}
 									else {
-									Serial.println(F("highlightLoss B"));	
+  Serial.println(F("highlightLoss B"));	
 										highlightLoss(Hand::First, -(this->currentBetInit - (this->insurance * 2)), MessageNumber::DealerHasBlackjack);
-//										this->winStatus = WinStatus::Lose;
 									}
 
 								}
@@ -313,11 +296,7 @@ Serial.println(F("PeekOnTen "));
             else {
 
 							if (this->insurance != 0) {
-								// this->insuranceResult = InsuranceResult::DealerNoBlackjack;
-								// this->winStatus = WinStatus::Lose;
-								// this->flashDetails = true;
-								// this->winStatusAmount = this->insurance;
-								Serial.println(F("highlightLoss C"));	
+Serial.println(F("highlightLoss C"));	
 								highlightLoss(Hand::First, -this->insurance, MessageNumber::DealerNoBlackjack);
 								this->currentBetTotal = this->currentBetInit;
 							}
@@ -434,7 +413,7 @@ Serial.println((uint8_t)handInPlay);
             break;
 
           case Buttons::PlayHand_Split:
-          Serial.println(F("Split"));
+Serial.println(F("Split"));
             changeView(machine, ViewState::SplitCards);
             break;
 
@@ -665,13 +644,13 @@ Serial.println(this->highlightEndOfGame.counter);
 
 								if (isBlackjack(Turn::Player, Hand::Second)) {
 
-									Serial.println(F("highlightWin C"));	
+Serial.println(F("highlightWin C"));	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandBlackjack, FLASH_DELAY * 2);
 
 								}
 								else {        
 								
-									Serial.println(F("highlightWin D"));	
+Serial.println(F("highlightWin D"));	
 									highlightWin(Hand::Second, player.secondHand.bet, player.secondHand.bet * 2, MessageNumber::SecondHandWinner, FLASH_DELAY * 2);
 									
 								}
@@ -679,7 +658,7 @@ Serial.println(this->highlightEndOfGame.counter);
 							}
               else if (calculateHand(Turn::Player, Hand::Second, true) == calculateHand(Turn::Dealer, true)) {
 								
-                Serial.println(F("highlightWin D2"));	
+Serial.println(F("highlightWin D2"));	
                 highlightPush(Hand::Second, player.secondHand.bet, MessageNumber::SecondHandPush, FLASH_DELAY * 2);
                 
               }
@@ -687,13 +666,13 @@ Serial.println(this->highlightEndOfGame.counter);
 								
 								if (isBlackjack(Turn::Player, Hand::Second)) {
 
-									Serial.println(F("highlightWin E"));	
+Serial.println(F("highlightWin E"));	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandWinner, FLASH_DELAY * 2);
 
 								}
 								else {        
 								
-									Serial.println(F("highlightLoss E"));	
+Serial.println(F("highlightLoss E"));	
 									highlightLoss(Hand::Second, -player.secondHand.bet, MessageNumber::SecondHandLoser, FLASH_DELAY * 2);
 									
 								}
@@ -725,12 +704,12 @@ Serial.println(this->highlightEndOfGame.counter);
 							if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
 								if (isBlackjack(Turn::Player, Hand::First)) {
-									Serial.println(F("highlightWin F"));	
+Serial.println(F("highlightWin F"));	
 									highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2, MessageNumber::FirstHandBlackjack);
 
 								}
 								else {        
-									Serial.println(F("highlightWin G"));									
+Serial.println(F("highlightWin G"));									
 									highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2, MessageNumber::FirstHandWinner);
 									
 								}        
@@ -761,12 +740,12 @@ Serial.println(this->highlightEndOfGame.counter);
 							if (calculateHand(Turn::Player, Hand::Second, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 				
 								if (isBlackjack(Turn::Player, Hand::Second)) {
-									Serial.println(F("highlightWin H"));	
+Serial.println(F("highlightWin H"));	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandBlackjack);
 
 								}
 								else {        
-									Serial.println(F("highlightWin I"));									
+Serial.println(F("highlightWin I"));									
 									highlightWin(Hand::Second, player.secondHand.bet, player.secondHand.bet * 2, MessageNumber::SecondHandWinner);
 									
 								}
@@ -775,12 +754,12 @@ Serial.println(this->highlightEndOfGame.counter);
 							else {
 								
 								if (isBlackjack(Turn::Player, Hand::Second)) {
-									Serial.println(F("highlightWin J"));	
+Serial.println(F("highlightWin J"));	
 									highlightWin(Hand::Second, player.secondHand.bet * 3 / 2, player.secondHand.bet * 5 / 2, MessageNumber::SecondHandBlackjack);
 
 								}
 								else {        
-									Serial.println(F("highlightLoss F"));	
+Serial.println(F("highlightLoss F"));	
 									highlightLoss(Hand::Second, -player.secondHand.bet, MessageNumber::SecondHandLoser);
 									
 								}
@@ -816,12 +795,12 @@ Serial.println(this->highlightEndOfGame.counter);
 						if (calculateHand(Turn::Player, Hand::First, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 				
 							if (isBlackjack(Turn::Player, Hand::First)) {
-									Serial.println(F("highlightWin K"));	
+Serial.println(F("highlightWin K"));	
 								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2, MessageNumber::OnlyHandBlackjack);
 
 							}
 							else {        
-									Serial.println(F("highlightWin L"));									
+Serial.println(F("highlightWin L"));									
 								highlightWin(Hand::First, player.firstHand.bet, player.firstHand.bet * 2, MessageNumber::OnlytHandWinner);
 									
 							} 
@@ -830,17 +809,17 @@ Serial.println(this->highlightEndOfGame.counter);
 						else {
 
 							if (isBlackjack(Turn::Player, Hand::First) && isBlackjack(Turn::Dealer, Hand::First)) {
-									Serial.println(F("highlightPush M1"));	
+Serial.println(F("highlightPush M1"));	
 								highlightPush(Hand::First, currentBetInit, MessageNumber::PushOnBlackjack);
 
               }
 							else if (isBlackjack(Turn::Player, Hand::First)) {
-									Serial.println(F("highlightWin M"));	
+Serial.println(F("highlightWin M"));	
 								highlightWin(Hand::First, player.firstHand.bet * 3 / 2, player.firstHand.bet * 5 / 2, MessageNumber::OnlytHandWinner);
 
 							}
 							else {        
-								Serial.println(F("highlightLoss G"));	
+Serial.println(F("highlightLoss G"));	
 								highlightLoss(Hand::First, -player.firstHand.bet, MessageNumber::OnlyHandLoser);
 								
 							}
@@ -952,12 +931,12 @@ Serial.println(this->counter);
           switch (this->counter) {
 
             case 0 ... 10:
-              Serial.println(F("Bust::playNextHand 21"));
+Serial.println(F("Bust::playNextHand 21"));
               highlightLoss(this->handInPlay, this->player.secondHand.bet, MessageNumber::BustSecondHand);
               break;
 
             case 11:
-              Serial.println(F("Bust::playNextHand 22"));
+Serial.println(F("Bust::playNextHand 22"));
               playNextHand(machine);
               break;
 
@@ -1045,11 +1024,11 @@ void PlayGameState::render(StateMachine & machine) {
 	auto & arduboy = machine.getContext().arduboy;
 	auto & ardBitmap = machine.getContext().ardBitmap;
 
+	font3x5.setCursor(0, 22);
+
 	switch (this->viewState) {
 
 		case ViewState::InitBet:
-
-			font3x5.setCursor(0, 22);
 			font3x5.print(F("Initial~bet? "));
 			arduboy.fillRect(49, 22, 13, 7);
 			font3x5.setTextColor(BLACK);
@@ -1060,14 +1039,11 @@ void PlayGameState::render(StateMachine & machine) {
 		case ViewState::OfferInsurance:
 			drawPlayerHands(machine);
 			drawDealerHand(machine, true);
-
-			font3x5.setCursor(0, 22);
 			font3x5.print(F("Insurance? "));
 			arduboy.fillRect(43, 22, 13, 7);
 			font3x5.setTextColor(BLACK);
 			render3DigitNumber(this->insurance);
 			font3x5.setTextColor(WHITE);
-
 			break;
 
 		case ViewState::InitDeal:
@@ -1076,90 +1052,19 @@ void PlayGameState::render(StateMachine & machine) {
 			break;
 
 		case ViewState::Peeking:
-
 			drawPlayerHands(machine);
-			font3x5.setCursor(0, 22);
-
+      drawDealerHand(machine, true);
       font3x5.print(F("Dealer~is~peeking~"));
+
       for (uint8_t x = 0; x < (this->counter / 8); x++) {
         font3x5.print(F("."));
       }
 
-      drawDealerHand(machine, true);
       break;
 				
-			// 	case InsuranceResult::BothHaveBlackjack:
-			// 		font3x5.print(F("Two~blackjacks!"));
-			// 		drawDealerHand(machine, false);
-			// 		break;
-				
-			// 	case InsuranceResult::DealerHasBlackjack:
-			// 		font3x5.print(F("Dealer~has~Blackjack!"));
-			// 		drawDealerHand(machine, false);
-			// 		break;
-
-			// 	case InsuranceResult::DealerNoBlackjack:
-			// 		font3x5.print(F("Dealer~has~nothing!"));
-			// 		drawDealerHand(machine, true);
-			// 		break;
-
-			// 	case InsuranceResult::DealerHasBlackjackWithInsurance:
-			// 		font3x5.print(F("Insured Blackjack!"));
-			// 		drawDealerHand(machine, false);
-			// 		break;
-
-			// }
-			// break;
-
 		case ViewState::PeekOnTen:
-
 			drawPlayerHands(machine);
-			font3x5.setCursor(0, 22);
-  
-			switch (this->highlightEndOfGame.status) {
-				
-				case WinStatus::None:
-					drawDealerHand(machine, true);
-					break;
-				
-				default:
-					drawDealerHand(machine, false);
-					break;
-
-			}
-
-			// switch (this->insuranceResult) {
-				
-			// 	case InsuranceResult::Peeking:
-			// 		font3x5.print(F("Dealer~is~peeking~"));
-			// 		for (uint8_t x = 0; x < (this->counter / 8); x++) {
-			// 			font3x5.print(F("."));
-			// 		}
-			// 		drawDealerHand(machine, true);
-			// 		break;
-				
-			// 	case InsuranceResult::BothHaveBlackjack:
-			// 		font3x5.print(F("Two~blackjacks!"));
-			// 		drawDealerHand(machine, false);
-			// 		break;
-				
-			// 	case InsuranceResult::DealerHasBlackjack:
-			// 		font3x5.print(F("Dealer~has~Blackjack!"));
-			// 		drawDealerHand(machine, false);
-			// 		break;
-
-			// 	case InsuranceResult::DealerNoBlackjack:
-			// 		font3x5.print(F("Dealer~has~nothing!"));
-			// 		drawDealerHand(machine, true);
-			// 		break;
-
-			// 	case InsuranceResult::DealerHasBlackjackWithInsurance:
-			// 		font3x5.print(F("Insured Blackjack!"));
-			// 		drawDealerHand(machine, false);
-			// 		break;
-
-			// }
-
+      drawDealerHand(machine, this->highlightEndOfGame.status == WinStatus::None);
 			break;
 
     case ViewState::SplitCards:
@@ -1183,7 +1088,6 @@ void PlayGameState::render(StateMachine & machine) {
       break;
 
     case ViewState::EndOfGame:
-      font3x5.setCursor(0, 22);
       drawPlayerHands(machine);
       drawDealerHand(machine, false);
 
@@ -1196,11 +1100,11 @@ void PlayGameState::render(StateMachine & machine) {
     default: break;
 
 	}
-
+/*
   arduboy.fillRect(0, 52, WIDTH, HEIGHT, BLACK);
   ardBitmap.drawCompressed(0, 51, Images::Background, WHITE, ALIGN_NONE, MIRROR_NONE); 
   drawPlayerHands_Lines(machine);
 	drawButtons(machine);
   drawStats(machine, this->highlightEndOfGame);
-
+*/
 }

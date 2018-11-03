@@ -6,62 +6,6 @@
 #include "../images/Images.h"
 #include "BaseState.h"
 
-// enum class MessageNumber : uint8_t {
-//   None = 0,
-//   BustFirstHand,
-//   BustOnlyHand,
-//   BustSecondHand,
-//   BothHaveBlackjack,
-//   DealerHasBlackjack,
-// 	DealerNoBlackjack,
-//   DealerHasBlackjackWithInsurance,
-//   PushOnBlackjack,
-//   FirstHandWinner,
-//   FirstHandLoser,
-//   FirstHandPush,
-//   FirstHandBlackjack,
-//   SecondHandWinner,
-//   SecondHandLoser,
-//   SecondHandPush,
-//   SecondHandBlackjack
-// };
-
-// char const messageText_01[] PROGMEM = "First~hand~is~bust!";
-// char const messageText_02[] PROGMEM = "Bust!";
-// char const messageText_03[] PROGMEM = "Second~hand~is~bust!";
-// char const messageText_04[] PROGMEM = "Two~blackjacks!";
-// char const messageText_05[] PROGMEM = "Dealer~has~Blackjack!";
-// char const messageText_06[] PROGMEM = "Dealer~has~nothing!";
-// char const messageText_07[] PROGMEM = "Insured Blackjack!";
-// char const messageText_08[] PROGMEM = "Push~on~two~Blackjacks!";
-// char const messageText_09[] PROGMEM = "First~hand~wins!";
-// char const messageText_10[] PROGMEM = "First~hand~loses!";
-// char const messageText_11[] PROGMEM = "First~hand~pushes!";
-// char const messageText_12[] PROGMEM = "First~hand~has~Blackjack!";
-// char const messageText_13[] PROGMEM = "Second~hand~wins!";
-// char const messageText_14[] PROGMEM = "Second~hand~loses!";
-// char const messageText_15[] PROGMEM = "Second~hand~pushes!";
-// char const messageText_16[] PROGMEM = "Second~hand~has~Blackjack!";
-
-// char const * const messageTexts[] = {
-// 	messageText_01,
-// 	messageText_02,
-// 	messageText_03,
-// 	messageText_04,
-// 	messageText_05,
-// 	messageText_06,
-//   messageText_07,
-//   messageText_08,
-//   messageText_09,
-//   messageText_10,
-//   messageText_11,
-//   messageText_12,
-//   messageText_13,
-//   messageText_14,
-//   messageText_15,
-//   messageText_16,
-// };
-
 class PlayGameState : public BaseState {
   
   enum class ViewState : uint8_t {
@@ -144,6 +88,7 @@ class PlayGameState : public BaseState {
 
     void render4DigitNumber(uint16_t val);
     void render3DigitNumber(uint16_t val);
+    void renderDealer(StateMachine & machine, uint8_t dealerFace, uint8_t comment);
 
     uint8_t isValidButton_BettingButtons(uint8_t highlightedButton);
     uint8_t decreaseHighlightButton_BettingButtons(uint8_t highlightedButton);
