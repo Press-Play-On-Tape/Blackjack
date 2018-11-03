@@ -17,12 +17,12 @@ extern uint8_t hpISR;
 //#define DEBUG_DEALER_BLACKJACK_10_A
 //#define DEBUG_DEALER_BLACKJACK_A_10
 //#define DEBUG_DEALER_PAIR_10
-#define DEBUG_DEALER_LOW_HAND
+//#define DEBUG_DEALER_LOW_HAND
 //#define DEBUG_DEALER_6_A
 
 //#define DEBUG_PLAYER_INIT_BLACKJACK_10_A
 //#define DEBUG_PLAYER_INIT_BLACKJACK_A_10
-#define DEBUG_PLAYER_INIT_PAIR_10
+//#define DEBUG_PLAYER_INIT_PAIR_10
 //#define DEBUG_PLAYER_INIT_PAIR_A
 //#define DEBUG_PLAYER_INIT_LOW_HAND
 //#define DEBUG_PLAYER_SPLIT_FIRST_A
@@ -42,8 +42,8 @@ static const int8_t BET_BUTTONS_LEFT[] = { -1, 17, 35, 53 };
 
 constexpr const static uint8_t FLASH_DELAY = 32;
 constexpr const static uint8_t NO_VALID_BUTTON = 255;
-constexpr const static uint8_t STARTING_PURSE = 100;
-constexpr const static uint8_t GAME_WINNING_AMOUNT = 200;
+constexpr const static uint16_t STARTING_PURSE = 500;
+constexpr const static uint16_t GAME_WINNING_AMOUNT = 1000;
 
 constexpr const static uint8_t DEALER_COMMENT_LENGTH = 64;
 constexpr const static uint8_t DEALER_BLINK_IMAGE = 3;
@@ -52,7 +52,7 @@ constexpr const static uint8_t DEALER_COMMENT_YPOS_MID = 22;
 constexpr const static uint8_t DEALER_COMMENT_YPOS_BOT = 33;
 
 constexpr const static uint8_t CARD_LARGE_SPACING = 12;
-constexpr const static uint8_t CARD_LARGE_SPACING_DEALER = 10;
+constexpr const static uint8_t CARD_LARGE_SPACING_DEALER = 12;
 constexpr const static uint8_t CARD_LARGE_SPACING_FULL = 22;
 constexpr const static uint8_t CARD_LARGE_SPACING_ROTATED = 9;
 constexpr const static uint8_t CARD_HAND_SPACING = 12;
@@ -266,12 +266,14 @@ struct Dealer {
   uint8_t counter;
   uint8_t yPos;
   bool cardsShown;
+  bool dealerOnLeft;
 
-  void setComment(DealerComment comment, DealerFace face, uint8_t yPos = DEALER_COMMENT_YPOS_MID) {
+  void setComment(DealerComment comment, DealerFace face, uint8_t yPos, bool dealerOnLeft) {
     this->counter = DEALER_COMMENT_LENGTH;
     this->comment = comment;
     this->face = face;
     this->yPos = yPos;
+    this->dealerOnLeft = dealerOnLeft;
   }
 
   bool hasComment() {

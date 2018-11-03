@@ -14,7 +14,7 @@ void PlayGameState::activate(StateMachine & machine) {
   dealer.reset();
   gameStats.reset();
 
-  dealer.setComment(DealerComment::Welcome, DealerFace::Normal);
+  dealer.setComment(DealerComment::Welcome, DealerFace::Normal, DEALER_COMMENT_YPOS_MID, false);
 	changeView(machine, ViewState::StartHand);
 
 }
@@ -169,7 +169,7 @@ void PlayGameState::update(StateMachine & machine) {
 
 					if (dealer.cardIsAce(1) && player.purse >= 1) {
 
-            dealer.setComment(DealerComment::Insurance, DealerFace::RaisedEye);
+            dealer.setComment(DealerComment::Insurance, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_MID, false);
 						changeView(machine, ViewState::OfferInsurance);
 
 					}
@@ -254,14 +254,14 @@ void PlayGameState::update(StateMachine & machine) {
                 gameStats.gamesPush++;
 
 								if (this->insurance == 0) {
-                  dealer.setComment(DealerComment::PlayerPushes, DealerFace::RaisedEye);
+                  dealer.setComment(DealerComment::PlayerPushes, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_MID, false);
 #ifdef DEBUG                  
 Serial.println(F("highlightPush A"));	
 #endif
                   highlightPush(Hand::First, currentBetInit, MessageNumber::BothHaveBlackjack);
 								}
 								else {
-                  dealer.setComment(DealerComment::PlayerHas21, DealerFace::Angry);
+                  dealer.setComment(DealerComment::PlayerHas21, DealerFace::Angry, DEALER_COMMENT_YPOS_MID, false);
                   highlightWin(Hand::First, (2 * this->insurance), (2 * this->insurance) + currentBetInit,  MessageNumber::BothHaveBlackjack);
 								}
 
@@ -274,7 +274,7 @@ Serial.println(F("highlightPush A"));
 #ifdef DEBUG                  
 Serial.println(F("highlightLoss A"));	
 #endif
-                  dealer.setComment(DealerComment::DealerHas21, DealerFace::RaisedEye);
+                  dealer.setComment(DealerComment::DealerHas21, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_MID, false);
 									highlightLoss(Hand::First, -currentBetInit, MessageNumber::None);
 								}
 								else {
@@ -283,14 +283,14 @@ Serial.println(F("highlightLoss A"));
 #ifdef DEBUG                  
 Serial.println(F("highlightPush B"));	
 #endif
-                    dealer.setComment(DealerComment::InsurancePaysHandLoses, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_TOP);
+                    dealer.setComment(DealerComment::InsurancePaysHandLoses, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_TOP, false);
 										highlightPush(Hand::First, this->insurance * 2, MessageNumber::DealerHasBlackjackWithInsurance);
 									}
 									else {
 #ifdef DEBUG                  
 Serial.println(F("highlightLoss B"));	
 #endif
-                    dealer.setComment(DealerComment::DealerWins, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_BOT);
+                    dealer.setComment(DealerComment::DealerWins, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_BOT, false);
 										highlightLoss(Hand::First, -(this->currentBetInit - (this->insurance * 2)), MessageNumber::DealerHasBlackjack);
 									}
 
@@ -305,12 +305,12 @@ Serial.println(F("highlightLoss B"));
 #ifdef DEBUG                  
 Serial.println(F("highlightLoss C"));	
 #endif
-                dealer.setComment(DealerComment::PlayerLosesInsurance, DealerFace::RaisedEye);
+                dealer.setComment(DealerComment::PlayerLosesInsurance, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_MID, false);
 								highlightLoss(Hand::First, -this->insurance, MessageNumber::DealerNoBlackjack);
 								this->currentBetTotal = this->currentBetInit;
 							}
               else {
-                dealer.setComment(DealerComment::DealerDoesNotHave21, DealerFace::RaisedEye);
+                dealer.setComment(DealerComment::DealerDoesNotHave21, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_MID, false);
               }
 
 							this->buttonMode = ButtonDisplay::OKOnly;
@@ -711,7 +711,7 @@ Serial.println(F("highlightLoss C"));
       switch (this->counter) {
 
         case 0:
-          dealer.setComment(DealerComment::PlayerBust, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_TOP);
+          dealer.setComment(DealerComment::PlayerBust, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_TOP, handInPlay == Hand::Second);
           highlightLoss(this->handInPlay, playerHandInPlay->bet, MessageNumber::None);
           this->counter = 1;
           break;
@@ -791,12 +791,12 @@ void PlayGameState::checkForWinOrLoss(Hand hand, uint16_t playerBet) {
   if (calculateHand(Turn::Player, hand, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
     if (isBlackjack(Turn::Player, hand)) {
-      dealer.setComment(DealerComment::PlayerHas21, DealerFace::Angry);
+      dealer.setComment(DealerComment::PlayerHas21, DealerFace::Angry, DEALER_COMMENT_YPOS_MID, hand == Hand::Second);
       highlightWin(hand, playerBet * 3 / 2, playerBet * 5 / 2, MessageNumber::None, FLASH_DELAY * 2);
 
     }
     else {        
-      dealer.setComment(DealerComment::PlayerWins, DealerFace::Angry);
+      dealer.setComment(DealerComment::PlayerWins, DealerFace::Angry, DEALER_COMMENT_YPOS_MID, hand == Hand::Second);
       highlightWin(hand, playerBet, playerBet * 2, MessageNumber::None, FLASH_DELAY * 2);
       
     }
@@ -804,7 +804,7 @@ void PlayGameState::checkForWinOrLoss(Hand hand, uint16_t playerBet) {
   }
   else if (calculateHand(Turn::Player, hand, true) == calculateHand(Turn::Dealer, true)) {
     
-    dealer.setComment(DealerComment::PlayerPushes, DealerFace::RaisedEye);
+    dealer.setComment(DealerComment::PlayerPushes, DealerFace::RaisedEye, DEALER_COMMENT_YPOS_MID, hand == Hand::Second);
 #ifdef DEBUG                  
 Serial.println(F("highlightPush C"));	
 #endif
@@ -813,7 +813,7 @@ Serial.println(F("highlightPush C"));
   }
   else {
 
-    dealer.setComment(DealerComment::DealerWins, DealerFace::Normal);
+    dealer.setComment(DealerComment::DealerWins, DealerFace::Normal, DEALER_COMMENT_YPOS_MID, hand == Hand::Second);
     highlightLoss(hand, -playerBet, MessageNumber::None, FLASH_DELAY * 2);
     
   }

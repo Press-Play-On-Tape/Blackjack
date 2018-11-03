@@ -136,7 +136,7 @@ void PlayGameState::drawDealerHand(StateMachine & machine, bool hideDealersFirst
 		}
 		else {
 
-			drawDealerCard(machine, rightHandSide - (x * CARD_LARGE_SPACING_DEALER), CARD_LARGE_TOP_DEALER, dealer.cards[x], true, hideDealersFirstCard && x == 0);   
+			drawDealerCard(machine, rightHandSide - (x * CARD_LARGE_SPACING_DEALER) + 2, CARD_LARGE_TOP_DEALER, dealer.cards[x], true, hideDealersFirstCard && x == 0);   
 
 		}
     
@@ -724,41 +724,43 @@ void PlayGameState::renderDealer(StateMachine & machine) {
 	auto & ardBitmap = machine.getContext().ardBitmap;
   auto justPressed = arduboy.justPressedButtons();
 
-  ardBitmap.drawCompressed(79, 8, Images::Dealer_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(79, 8, Images::Dealer_BlankFace, WHITE, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(91, 18, Images::Dealer_Face[arduboy.getFrameCount(32) == 0 ? DEALER_BLINK_IMAGE : static_cast<uint8_t>(dealer.face)], WHITE, ALIGN_NONE, MIRROR_NONE);
+  uint8_t x = (dealer.dealerOnLeft ? 0 : 79);
 
-  uint8_t const *imageName = nullptr;
-  uint8_t const *maskName = nullptr;
-  int8_t x = 0;
+  ardBitmap.drawCompressed(x, 8, Images::Dealer_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(x, 8, Images::Dealer_BlankFace, WHITE, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(x + 12, 18, Images::Dealer_Face[arduboy.getFrameCount(32) == 0 ? DEALER_BLINK_IMAGE : static_cast<uint8_t>(dealer.face)], WHITE, ALIGN_NONE, MIRROR_NONE);
 
   switch (dealer.comment) {
 
     case DealerComment::Insurance:
-      imageName = Images::Speech_Insurance;
-      maskName = Images::Speech_Insurance_Mask;
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_Insurance_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_Insurance, WHITE, ALIGN_NONE, MIRROR_NONE);
       break;
 
     case DealerComment::PlayerLosesInsurance:
-      imageName = Images::Speech_PlayerLosesInsurance;
-      maskName = Images::Speech_Insurance_Mask;
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_Insurance_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_PlayerLosesInsurance, WHITE, ALIGN_NONE, MIRROR_NONE);
       break;
 
     case DealerComment::InsurancePaysHandLoses:
-      imageName = Images::Speech_InsurPays_HandLoses;
-      maskName = Images::Speech_InsurPays_HandLoses_Mask;
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_InsurPays_HandLoses_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_InsurPays_HandLoses, WHITE, ALIGN_NONE, MIRROR_NONE);
       break;
 
     default:
-      x = 10;
-      imageName = Images::Dealer_Comment[static_cast<uint8_t>(dealer.comment)];
-      maskName = Images::Speech_Blank_Mask;
+      if (dealer.dealerOnLeft) {
+        ardBitmap.drawCompressed(52, dealer.yPos, Images::Speech_Blank_Mask, BLACK, ALIGN_NONE, MIRROR_HORIZONTAL);
+        ardBitmap.drawCompressed(53, dealer.yPos + 12, Images::Speech_Blank, WHITE, ALIGN_NONE, MIRROR_HORIZONTAL);
+        ardBitmap.drawCompressed(60, dealer.yPos, Images::Dealer_Comment[static_cast<uint8_t>(dealer.comment)], WHITE, ALIGN_NONE, MIRROR_NONE);
+      }
+      else {
+        ardBitmap.drawCompressed(10, dealer.yPos, Images::Speech_Blank_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+        ardBitmap.drawCompressed(71, dealer.yPos + 12, Images::Speech_Blank, WHITE, ALIGN_NONE, MIRROR_NONE);
+        ardBitmap.drawCompressed(10, dealer.yPos, Images::Dealer_Comment[static_cast<uint8_t>(dealer.comment)], WHITE, ALIGN_NONE, MIRROR_NONE);
+      }
       break;
 
   }
-  
-  ardBitmap.drawCompressed(x, dealer.yPos, maskName, BLACK, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(x, dealer.yPos, imageName, WHITE, ALIGN_NONE, MIRROR_NONE);
 
   dealer.counter--;
 
