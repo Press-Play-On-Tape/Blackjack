@@ -794,7 +794,7 @@ void PlayGameState::renderDealer(StateMachine & machine) {
 
   }
 
-  //dealer.counter--;
+  dealer.counter--;
 
   if (justPressed > 0) { dealer.counter = 0; }
 
