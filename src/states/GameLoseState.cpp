@@ -7,6 +7,7 @@
 //
 void GameLoseState::activate(StateMachine & machine) {
 
+  (void)machine;
   this->counter = 0;
 
 	for (uint8_t i = 0; i < 16; ++i) {
@@ -26,7 +27,6 @@ void GameLoseState::update(StateMachine & machine) {
 
   auto & arduboy = machine.getContext().arduboy;
   auto justPressed = arduboy.justPressedButtons();
-  auto pressed = arduboy.pressedButtons();
 
 
 	// Update stars ..

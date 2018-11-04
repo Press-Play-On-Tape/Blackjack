@@ -19,7 +19,6 @@ void GameWinState::update(StateMachine & machine) {
 
   auto & arduboy = machine.getContext().arduboy;
   auto justPressed = arduboy.justPressedButtons();
-  auto pressed = arduboy.pressedButtons();
 
 
 	// Update stars ..

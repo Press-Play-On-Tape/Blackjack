@@ -791,12 +791,12 @@ void PlayGameState::checkForWinOrLoss(Hand hand, uint16_t playerBet) {
   if (calculateHand(Turn::Player, hand, true) > calculateHand(Turn::Dealer, true) || calculateHand(Turn::Dealer, true) > 21) {
 
     if (isBlackjack(Turn::Player, hand)) {
-      dealer.setComment(DealerComment::PlayerHas21, DealerFace::Angry, DEALER_COMMENT_YPOS_MID, hand == Hand::Second);
+      dealer.setComment(DealerComment::PlayerHas21, DealerFace::Angry, DEALER_COMMENT_YPOS_TOP, hand == Hand::Second);
       highlightWin(hand, playerBet * 3 / 2, playerBet * 5 / 2, MessageNumber::None, FLASH_DELAY * 2);
 
     }
     else {        
-      dealer.setComment(DealerComment::PlayerWins, DealerFace::Angry, DEALER_COMMENT_YPOS_MID, hand == Hand::Second);
+      dealer.setComment(DealerComment::PlayerWins, DealerFace::Angry, DEALER_COMMENT_YPOS_TOP, hand == Hand::Second);
       highlightWin(hand, playerBet, playerBet * 2, MessageNumber::None, FLASH_DELAY * 2);
       
     }

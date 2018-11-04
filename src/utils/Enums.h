@@ -47,8 +47,8 @@ constexpr const static uint16_t GAME_WINNING_AMOUNT = 1000;
 
 constexpr const static uint8_t DEALER_COMMENT_LENGTH = 64;
 constexpr const static uint8_t DEALER_BLINK_IMAGE = 3;
-constexpr const static uint8_t DEALER_COMMENT_YPOS_TOP = 13;
-constexpr const static uint8_t DEALER_COMMENT_YPOS_MID = 22;
+constexpr const static uint8_t DEALER_COMMENT_YPOS_TOP = 6;
+constexpr const static uint8_t DEALER_COMMENT_YPOS_MID = 19;
 constexpr const static uint8_t DEALER_COMMENT_YPOS_BOT = 33;
 
 constexpr const static uint8_t CARD_LARGE_SPACING = 12;
@@ -63,6 +63,11 @@ constexpr const static uint8_t CARD_SMALL_TOP_PLAYER = 37;
 constexpr const static uint8_t CARD_LARGE_TOP_DEALER = 0;
 
 constexpr const static uint8_t HIGHLIGHT_BUTTON_DO_NOT_CHANGE = 255;
+
+enum class DealerMode : uint8_t {
+  Normal,
+  Mario
+};
 
 enum class DealerComment : uint8_t {
   Welcome,
@@ -266,14 +271,14 @@ struct Dealer {
   uint8_t counter;
   uint8_t yPos;
   bool cardsShown;
-  bool dealerOnLeft;
+  bool renderOnLeft;
 
-  void setComment(DealerComment comment, DealerFace face, uint8_t yPos, bool dealerOnLeft) {
+  void setComment(DealerComment comment, DealerFace face, uint8_t yPos, bool renderOnLeft) {
     this->counter = DEALER_COMMENT_LENGTH;
     this->comment = comment;
     this->face = face;
     this->yPos = yPos;
-    this->dealerOnLeft = dealerOnLeft;
+    this->renderOnLeft = renderOnLeft;
   }
 
   bool hasComment() {

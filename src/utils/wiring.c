@@ -39,12 +39,12 @@
 
 volatile unsigned long timer0_overflow_count = 0;
 volatile unsigned long timer0_millis = 0;
-static   unsigned char timer0_fract = 0;
+static   uint8_t timer0_fract = 0;
 
-volatile unsigned char button_ticks_hold = 0;
-volatile unsigned char button_ticks_now  = 0;
-volatile unsigned char button_ticks_last = 0;
-volatile unsigned char bootloader_timer  = 0;
+volatile uint8_t button_ticks_hold = 0;
+volatile uint8_t button_ticks_now  = 0;
+volatile uint8_t button_ticks_last = 0;
+volatile uint8_t bootloader_timer  = 0;
 
 #if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__)
 ISR(TIM0_OVF_vect)
@@ -56,7 +56,7 @@ ISR(TIMER0_OVF_vect, ISR_NAKED)
     // (volatile variables must be read from memory on every access)
 /*
     unsigned long m = timer0_millis;
-    unsigned char f = timer0_fract;
+    uint8_t f = timer0_fract;
 
     m += MILLIS_INC;
     f += FRACT_INC;
@@ -217,14 +217,14 @@ ISR(TIMER0_OVF_vect, ISR_NAKED)
     );
 }
 
-unsigned char buttonsIdleTime()
+uint8_t buttonsIdleTime()
 {
   return button_ticks_now - button_ticks_last;
 }
 
-unsigned char millisChar()
+uint8_t millisChar()
 {
-  return *(unsigned char*)&timer0_millis;
+  return *(uint8_t*)&timer0_millis;
 }
 
 unsigned long millis()

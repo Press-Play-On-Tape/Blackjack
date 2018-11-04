@@ -57,6 +57,7 @@ class GameContext {
 
     Arduboy2Ext arduboy;
     ArdBitmap<WIDTH, HEIGHT> ardBitmap;
+    DealerMode mode;
 
     GameStats gameStats;
 

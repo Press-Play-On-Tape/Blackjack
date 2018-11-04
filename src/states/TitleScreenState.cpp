@@ -11,6 +11,7 @@ constexpr const static uint8_t UPLOAD_DELAY = 16;
 //
 void TitleScreenState::activate(StateMachine & machine) {
 
+  (void)machine;
 	this->counter = 0;	
 }
 
@@ -56,6 +57,14 @@ void TitleScreenState::update(StateMachine & machine) {
 
 	if (justPressed & A_BUTTON) {
 
+    machine.getContext().mode = DealerMode::Normal;
+	  machine.changeState(GameStateType::PlayGame); 
+
+  }
+
+	if (justPressed & B_BUTTON) {
+
+    machine.getContext().mode = DealerMode::Mario;
 	  machine.changeState(GameStateType::PlayGame); 
 
   }
@@ -68,7 +77,6 @@ void TitleScreenState::update(StateMachine & machine) {
 //
 void TitleScreenState::render(StateMachine & machine) {
 
-	auto & arduboy = machine.getContext().arduboy;
 	auto & ardBitmap = machine.getContext().ardBitmap;
 
 	ardBitmap.drawCompressed(0, 0, Images::Title, WHITE, ALIGN_NONE, MIRROR_NONE);

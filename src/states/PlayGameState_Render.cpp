@@ -172,32 +172,36 @@ void PlayGameState::drawPlayerHands(StateMachine & machine) {
 
   // Render first hand ..
 
-  for (uint8_t x = 0; x < this->player.firstHand.cardCount; x++) {
+  if ((dealer.hasComment() && !dealer.renderOnLeft) || dealer.noComment()) {
 
-    if (this->player.firstHand.doubleUp) {
+    for (uint8_t x = 0; x < this->player.firstHand.cardCount; x++) {
 
-      if (x == this->player.firstHand.cardCount - 1) {
-        drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], true, false);   
+      if (this->player.firstHand.doubleUp) {
+
+        if (x == this->player.firstHand.cardCount - 1) {
+          drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], true, false);   
+        }
+        else if (x == this->player.firstHand.cardCount - 2) {
+          drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
+        }
+        else {
+          drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
+        }
+
       }
-      else if (x == this->player.firstHand.cardCount - 2) {
-        drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
-      }
-			else {
-	      drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
-			}
-
-    }
-    else {
-			
-			if (x < this->player.firstHand.cardCount - 1) {
-	      drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
-			}
-			else {
-	      drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
-			}
-  
-    }
+      else {
+        
+        if (x < this->player.firstHand.cardCount - 1) {
+          drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, false);   
+        }
+        else {
+          drawCard(machine, leftHand1 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.firstHand.cards[x], false, true);   
+        }
     
+      }
+      
+    }
+
   }
     
 
@@ -205,34 +209,38 @@ void PlayGameState::drawPlayerHands(StateMachine & machine) {
 
   if (!player.hasSecondHand()) return;
 
-  fullHeight = (handInPlay == Hand::Second) || (handInPlay == Hand::Dealer);
+  if ((dealer.hasComment() && dealer.renderOnLeft) || dealer.noComment()) {
 
-  for (uint8_t x = 0; x < this->player.secondHand.cardCount; x++) {
+    fullHeight = (handInPlay == Hand::Second) || (handInPlay == Hand::Dealer);
 
-    if (this->player.secondHand.doubleUp) {
+    for (uint8_t x = 0; x < this->player.secondHand.cardCount; x++) {
 
-      if (x == this->player.secondHand.cardCount - 1) {
-        drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], true, false);   
+      if (this->player.secondHand.doubleUp) {
+
+        if (x == this->player.secondHand.cardCount - 1) {
+          drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], true, false);   
+        }
+        else if (x == this->player.secondHand.cardCount - 2) {
+          drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
+        }
+        else {
+          drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
+        }
+
       }
-      else if (x == this->player.secondHand.cardCount - 2) {
-        drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
-      }
-			else {
-	      drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
-			}
-
-    }
-    else {
-			
-			if (x < this->player.secondHand.cardCount - 1) {
-	      drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
-			}
-			else {
-	      drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
-			}
-  
-    }
+      else {
+        
+        if (x < this->player.secondHand.cardCount - 1) {
+          drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, false);   
+        }
+        else {
+          drawCard(machine, leftHand2 + (x * CARD_LARGE_SPACING), (fullHeight ? CARD_LARGE_TOP_PLAYER : CARD_SMALL_TOP_PLAYER), this->player.secondHand.cards[x], false, true);   
+        }
     
+      }
+      
+    }
+
   }
       
 }
@@ -322,9 +330,14 @@ void PlayGameState::drawPlayerHands_Lines(StateMachine & machine) {
 
     if (!player.hasSecondHand()) {
 
-      leftHand1 = CARD_DEALER_CENTER - (width1 / 2);
-      arduboy.drawFastHLine(0, 51, leftHand1 + 1, WHITE);
-      arduboy.drawFastHLine(leftHand1 + width1 - 1, 51, WIDTH, WHITE);
+      if ((dealer.hasComment() && !dealer.renderOnLeft) || dealer.noComment()) {
+        leftHand1 = CARD_DEALER_CENTER - (width1 / 2);
+        arduboy.drawFastHLine(0, 51, leftHand1 + 1, WHITE);
+        arduboy.drawFastHLine(leftHand1 + width1 - 1, 51, WIDTH, WHITE);
+      }
+      else {
+        arduboy.drawFastHLine(0, 51, WIDTH, WHITE);
+      }
 
     }
     else {
@@ -332,9 +345,25 @@ void PlayGameState::drawPlayerHands_Lines(StateMachine & machine) {
       leftHand1 = CARD_PLAYER_CENTER - (widthTot / 2);
       leftHand2 = leftHand1 + width1 + CARD_HAND_SPACING;
 
-      arduboy.drawFastHLine(0, 51, leftHand1 + 1, WHITE);
-      arduboy.drawFastHLine(leftHand1 + width1 - 1, 51, leftHand2 - leftHand1 - width1 + 1, WHITE);
-      arduboy.drawFastHLine(leftHand2 + width2, 51, WIDTH, WHITE);
+      if (dealer.hasComment()) {
+
+        if (dealer.renderOnLeft) {
+          arduboy.drawFastHLine(0, 51, leftHand2 + 1, WHITE);
+          arduboy.drawFastHLine(leftHand2 + width2, 51, WIDTH, WHITE);
+        }
+        else {
+          arduboy.drawFastHLine(0, 51, leftHand1 + 1, WHITE);
+          arduboy.drawFastHLine(leftHand1 + width1 - 1, 51, WIDTH, WHITE);
+        }
+      
+      }
+      else {
+
+        arduboy.drawFastHLine(0, 51, leftHand1 + 1, WHITE);
+        arduboy.drawFastHLine(leftHand1 + width1 - 1, 51, leftHand2 - leftHand1 - width1 + 1, WHITE);
+        arduboy.drawFastHLine(leftHand2 + width2, 51, WIDTH, WHITE);
+
+      }
 
     }
 
@@ -365,12 +394,12 @@ void PlayGameState::drawButtons(StateMachine & machine) {
         ardBitmap.drawCompressed(29, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
         ardBitmap.drawCompressed(29, 52, Images::Button_Stand, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-      if (currentBetInit <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == Hand::First) || 
-                                             (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == Hand::Second))) {
+      if (static_cast<int16_t>(currentBetInit) <= player.purse && ((this->player.firstHand.cardCount == 2 && !this->player.firstHand.isBlackjack() && handInPlay == Hand::First) || 
+                                                                   (this->player.secondHand.cardCount == 2 && !this->player.secondHand.isBlackjack() && handInPlay == Hand::Second))) {
 			  ardBitmap.drawCompressed(57, 52, Images::Button_32_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
 			  ardBitmap.drawCompressed(57, 52, Images::Button_Double, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
-      if (currentBetInit <= player.purse && handInPlay == Hand::First && player.canSplit()) {
+      if (static_cast<int16_t>(currentBetInit) <= player.purse && handInPlay == Hand::First && player.canSplit()) {
 			  ardBitmap.drawCompressed(89, 52, Images::Button_28_Mask, BLACK, ALIGN_NONE, MIRROR_NONE); 
 			  ardBitmap.drawCompressed(89, 52, Images::Button_Split, WHITE, ALIGN_NONE, MIRROR_NONE); 
       }
@@ -579,6 +608,8 @@ void PlayGameState::drawButtons(StateMachine & machine) {
 
 			break;
 
+    default: break;
+
   }
   
 }
@@ -724,11 +755,12 @@ void PlayGameState::renderDealer(StateMachine & machine) {
 	auto & ardBitmap = machine.getContext().ardBitmap;
   auto justPressed = arduboy.justPressedButtons();
 
-  uint8_t x = (dealer.dealerOnLeft ? 0 : 79);
+  uint8_t mode = (machine.getContext().mode == DealerMode::Mario ? 4 : 0);
+  uint8_t x = (dealer.renderOnLeft ? 0 : 79);
 
   ardBitmap.drawCompressed(x, 8, Images::Dealer_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(x, 8, Images::Dealer_BlankFace, WHITE, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(x + 12, 18, Images::Dealer_Face[arduboy.getFrameCount(32) == 0 ? DEALER_BLINK_IMAGE : static_cast<uint8_t>(dealer.face)], WHITE, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(x, 8, Images::Dealer_BlankFaces[static_cast<uint8_t>(machine.getContext().mode)], WHITE, ALIGN_NONE, MIRROR_NONE);
+  ardBitmap.drawCompressed(x + 12, 18 - (machine.getContext().mode == DealerMode::Mario ? 2 : 0), Images::Dealer_Faces[arduboy.getFrameCount(32) == 0 ? DEALER_BLINK_IMAGE + mode : static_cast<uint8_t>(dealer.face) + mode], WHITE, ALIGN_NONE, MIRROR_NONE);
 
   switch (dealer.comment) {
 
@@ -748,7 +780,7 @@ void PlayGameState::renderDealer(StateMachine & machine) {
       break;
 
     default:
-      if (dealer.dealerOnLeft) {
+      if (dealer.renderOnLeft) {
         ardBitmap.drawCompressed(52, dealer.yPos, Images::Speech_Blank_Mask, BLACK, ALIGN_NONE, MIRROR_HORIZONTAL);
         ardBitmap.drawCompressed(53, dealer.yPos + 12, Images::Speech_Blank, WHITE, ALIGN_NONE, MIRROR_HORIZONTAL);
         ardBitmap.drawCompressed(60, dealer.yPos, Images::Dealer_Comment[static_cast<uint8_t>(dealer.comment)], WHITE, ALIGN_NONE, MIRROR_NONE);
@@ -762,7 +794,7 @@ void PlayGameState::renderDealer(StateMachine & machine) {
 
   }
 
-  dealer.counter--;
+  //dealer.counter--;
 
   if (justPressed > 0) { dealer.counter = 0; }
 
