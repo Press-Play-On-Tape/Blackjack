@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------------------------------------------------------
 //  Render the state .. 
 // ---------------------------------------------------------------------------------------------------------------------------
-//
+// 
 void PlayGameState::render(StateMachine & machine) {
 
 	auto & arduboy = machine.getContext().arduboy;
@@ -637,7 +637,7 @@ void PlayGameState::drawStats(StateMachine & machine, HighlightEndOfGame highlig
 	font3x5.setCursor(76, 0);
 	font3x5.setHeight(7);
   font3x5.setTextColor(WHITE);
-	font3x5.print(F("  ~Purse:~"));
+	font3x5.print(F("~~ ~Purse:~"));
 
   if (flash && highlightEndOfGame.status != WinStatus::None) {
     arduboy.fillRect(111, 0, 17, 7);
