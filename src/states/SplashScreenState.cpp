@@ -21,13 +21,19 @@ void SplashScreenState::update(StateMachine & machine) {
 	auto & arduboy = machine.getContext().arduboy;
 	auto justPressed = arduboy.justPressedButtons();
 
-  if (justPressed > 0 && this->counter > 0) {
+  if (justPressed > 0 && justPressed != UP_BUTTON && this->counter > 0) {
 
     this->counter = 124;
 
   }
+
+  if (justPressed == UP_BUTTON && this->version == 0) {
+
+    this->version = 96;
+
+  }
   
-  if (justPressed > 0 && this->counter == 0) {
+  if (justPressed > 0 && justPressed != UP_BUTTON && this->counter == 0) {
 
     this->counter = 1;
 
@@ -60,6 +66,8 @@ void SplashScreenState::update(StateMachine & machine) {
 
   }
 
+  if (this->version > 0) this->version--;
+
 }
 
 
@@ -70,11 +78,16 @@ void SplashScreenState::render(StateMachine & machine) {
 
 	auto & ardBitmap = machine.getContext().ardBitmap;
 	auto & arduboy = machine.getContext().arduboy;
-
+  
   ardBitmap.drawCompressed(47, 17, Images::Ppot_Buttons, WHITE, ALIGN_NONE, MIRROR_NONE);
   ardBitmap.drawCompressed(43, 26, Images::Ppot_ButtonUp, WHITE, ALIGN_NONE, MIRROR_NONE);
   ardBitmap.drawCompressed(73, 26, Images::Ppot_ButtonUp, WHITE, ALIGN_NONE, MIRROR_NONE);
 
+  if (this->version > 0) {
+    font3x5.setCursor(112, 58);
+    font3x5.print(F("V1.0"));
+  }
+	
   if (this->counter == 0) {
 
     ardBitmap.drawCompressed(58, 26, Images::Ppot_ButtonUp, WHITE, ALIGN_NONE, MIRROR_NONE);
