@@ -779,6 +779,11 @@ void PlayGameState::renderDealer(StateMachine & machine) {
       ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_InsurPays_HandLoses, WHITE, ALIGN_NONE, MIRROR_NONE);
       break;
 
+    case DealerComment::DealerDoesNotHave21:
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_Insurance_Mask, BLACK, ALIGN_NONE, MIRROR_NONE);
+      ardBitmap.drawCompressed(0, dealer.yPos, Images::Speech_DealerDoesNotHave21, WHITE, ALIGN_NONE, MIRROR_NONE);
+      break;
+
     default:
       if (dealer.renderOnLeft) {
         ardBitmap.drawCompressed(52, dealer.yPos, Images::Speech_Blank_Mask, BLACK, ALIGN_NONE, MIRROR_HORIZONTAL);

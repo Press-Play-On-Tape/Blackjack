@@ -452,6 +452,10 @@ Serial.println(F("highlightLoss C"));
               player.firstHand.cards[1] = 0;
               #endif
             
+              #ifdef DEBUG_PLAYER_SPLIT_FIRST_2
+              player.firstHand.cards[1] = 1;
+              #endif
+            
               #ifdef DEBUG_PLAYER_SPLIT_FIRST_10
               player.firstHand.cards[1] = 10;
               #endif
@@ -463,6 +467,10 @@ Serial.println(F("highlightLoss C"));
             
               #ifdef DEBUG_PLAYER_SPLIT_SECOND_A
               player.secondHand.cards[1] = 0;
+              #endif
+            
+              #ifdef DEBUG_PLAYER_SPLIT_SECOND_2
+              player.secondHand.cards[1] = 1;
               #endif
             
               #ifdef DEBUG_PLAYER_SPLIT_SECOND_10
