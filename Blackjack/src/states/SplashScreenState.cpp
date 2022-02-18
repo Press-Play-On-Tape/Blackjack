@@ -78,35 +78,32 @@ void SplashScreenState::render(StateMachine & machine) {
 
 	auto & ardBitmap = machine.getContext().ardBitmap;
 	auto & arduboy = machine.getContext().arduboy;
-  
-  ardBitmap.drawCompressed(47, 17, Images::Ppot_Buttons, WHITE, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(43, 26, Images::Ppot_ButtonUp, WHITE, ALIGN_NONE, MIRROR_NONE);
-  ardBitmap.drawCompressed(73, 26, Images::Ppot_ButtonUp, WHITE, ALIGN_NONE, MIRROR_NONE);
 
-  if (this->version > 0) {
-    font3x5.setCursor(112, 58);
-    font3x5.print(F("V1.0"));
+  Sprites::drawOverwrite(32, 17, Images::PPOT, 0);
+
+  uint8_t y = 17; // Default pixel position 1 is hidden in the top line of the image
+  switch (arduboy.getFrameCount(48)) {
+
+      case 12 ... 23:
+          y = 30; // Move pixel down to position 2
+          /*-fallthrough*/
+      case 0 ... 11:
+          Sprites::drawOverwrite(91, 25, Images::PPOT_Arrow, 0); // Flash 'Play' arrow
+          break;
+
+      case 24 ... 35:
+          y = 31; // Move pixel down to position 3
+          break;
+
+      default: // 36 ... 47:
+          y = 32; // Move pixel down to position 4
+          break;
+
   }
-	
-  if (this->counter == 0) {
 
-    ardBitmap.drawCompressed(58, 26, Images::Ppot_ButtonUp, WHITE, ALIGN_NONE, MIRROR_NONE);
-    ardBitmap.drawCompressed(26, 46, Images::Ppot_Caption, WHITE, ALIGN_NONE, MIRROR_NONE);
-
-  }
-  else {
-
-    ardBitmap.drawCompressed(58, 26, Images::Ppot_ButtonDown, WHITE, ALIGN_NONE, MIRROR_NONE);
-    ardBitmap.drawCompressed(44, 46, Images::Ppot_Loading, WHITE, ALIGN_NONE, MIRROR_NONE);
-
-    uint8_t i = (this->counter / 15) % 4;
-
-    for (uint8_t j = 0; j < i; j++) {
-      
-        arduboy.drawPixel(79 + (j * 2), 49);
-
-    }
-
+  arduboy.drawPixel(52, y, WHITE); // Falling pixel represents the tape spooling
+  if (y % 2 == 0) { // On even steps of pixel movement, update the spindle image
+      Sprites::drawOverwrite(45, 28, Images::PPOT_Spindle, 0);
   }
 
 }
