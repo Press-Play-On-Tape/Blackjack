@@ -23,7 +23,7 @@ void SplashScreenState::update(StateMachine & machine) {
 
   if (justPressed > 0 && justPressed != UP_BUTTON && this->counter > 0) {
 
-    this->counter = 124;
+    this->counter = 21;
 
   }
 
@@ -55,7 +55,7 @@ void SplashScreenState::update(StateMachine & machine) {
         TCCR3A = 0;       
         break;
         
-      case 125:   
+      case 25:   
         machine.changeState(GameStateType::TitleScreen);    
         break;
 
